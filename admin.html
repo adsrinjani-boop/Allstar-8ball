@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Panel — Rainbow SL 2026</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+  body{ font-family:'Inter', -apple-system, sans-serif; background:#0b192c; }
+  .card{ background:#fff; border-radius:16px; }
+  input,select{ font-family:inherit; }
+  ::-webkit-scrollbar{ height:6px; width:6px; }
+  ::-webkit-scrollbar-thumb{ background:rgba(37,99,235,0.4); border-radius:10px; }
+</style>
+</head>
+<body class="min-h-screen text-slate-800">
+
+<!-- =========== KONFIGURASI — GANTI SESUAI PROYEK SUPABASE ANDA =========== -->
+<script>
+  const SUPABASE_URL = "https://mwcfbinobdiotnyoknii.supabase.co";
+  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im13Y2ZiaW5vYmRpb3RueW9rok5paSIsInJvbGUiOiJhbm9uIiwiaWF0IjoxNzg0NzE4NTM4LCJleHAiOjIxMDAyOTQ1Mzh9.J86beVUL7fYj_MzCxnmnVW4EU4OghLIwXPGZfNi2aCQ";
+  // Email akun admin yang dibuat manual di Supabase Auth (lihat langkah 5 di supabase_setup.sql)
+  const ADMIN_EMAIL = "admin@rainbowsl.local";
+</script>
+<!-- ======================================================================= -->
+
+<div id="loginScreen" class="min-h-screen flex items-center justify-center p-6">
+  <div class="card shadow-2xl w-full max-w-sm p-8">
+    <div class="text-center mb-6">
+      <div class="w-14 h-14 rounded-full bg-blue-600 text-white flex items-center justify-center mx-auto mb-3 text-xl">
+        <i class="fa-solid fa-lock"></i>
+      </div>
+      <h1 class="text-lg font-bold">Admin Panel</h1>
+      <p class="text-sm text-slate-500">Turnamen Bilyard Rainbow SL 2026</p>
+    </div>
+    <label class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Masukkan PIN Admin</label>
+    <input id="pinInput" type="password" inputmode="numeric" placeholder="••••••"
+      class="w-full mt-1 mb-3 px-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 outline-none text-lg tracking-widest text-center">
+    <button id="loginBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl">
+      Masuk
+    </button>
+    <p id="loginError" class="text-red-500 text-xs mt-3 text-center hidden"></p>
+  </div>
+</div>
+
+<div id="dashboard" class="hidden">
+  <header class="bg-[#0b192c] border-b border-white/10 px-5 py-4 flex items-center justify-between sticky top-0 z-30">
+    <div class="flex items-center gap-3">
+      <div class="w-9 h-9 rounded-full bg-blue-600 flex items-center justify-center text-white"><i class="fa-solid fa-table-tennis-paddle-ball"></i></div>
+      <div>
+        <div class="text-white font-bold text-sm">Admin Panel</div>
+        <div class="text-white/50 text-xs">Rainbow SL 2026</div>
+      </div>
+    </div>
+    <button id="logoutBtn" class="text-white/70 hover:text-white text-sm flex items-center gap-2">
+      <i class="fa-solid fa-right-from-bracket"></i> Keluar
+    </button>
+  </header>
+
+  <nav class="bg-[#0b192c] px-5 pb-3 flex gap-2 overflow-x-auto sticky top-[65px] z-20 border-b border-white/10">
+    <!-- tabs injected by JS -->
+  </nav>
+
+  <main class="max-w-5xl mx-auto p-4 md:p-6" id="mainContent"></main>
+</div>
+
+<input type="file" id="fileInput" accept="image/*" class="hidden">
+<div id="toast" class="fixed left-1/2 bottom-6 -translate-x-1/2 bg-slate-900 text-white px-5 py-3 rounded-full text-sm opacity-0 pointer-events-none transition-all z-50"></div>
+
+<script>
+"use strict";
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+/* ---------- TOAST ---------- */
+let toastTimer;
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.remove('opacity-0'); t.classList.add('opacity-100');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>{ t.classList.add('opacity-0'); t.classList.remove('opacity-100'); }, 2500);
+}
+function esc(s){ return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+/* ---------- AUTH ---------- */
+document.getElementById('loginBtn').addEventListener('click', doLogin);
+document.getElementById('pinInput').addEventListener('keydown', e => { if(e.key === 'Enter') doLogin(); });
+
+async function doLogin(){
+  const pin = document.getElementById('pinInput').value.trim();
+  const errEl = document.getElementById('loginError');
+  errEl.classList.add('hidden');
+  if(!pin){ return; }
+  const { data, error } = await sb.auth.signInWithPassword({ email: ADMIN_EMAIL, password: pin });
+  if(error){
+    errEl.textContent = 'PIN salah atau akun admin belum dibuat di Supabase Auth.';
+    errEl.classList.remove('hidden');
+    return;
+  }
+  enterDashboard();
+}
+
+document.getElementById('logoutBtn').addEventListener('click', async () => {
+  await sb.auth.signOut();
+  location.reload();
+});
+
+async function checkSession(){
+  const { data } = await sb.auth.getSession();
+  if(data.session){ enterDashboard(); }
+}
+
+function enterDashboard(){
+  document.getElementById('loginScreen').classList.add('hidden');
+  document.getElementById('dashboard').classList.remove('hidden');
+  buildTabs();
+  loadTab('settings');
+}
+checkSession();
+
+/* ---------- TABS ---------- */
+const TABS = [
+  { key:'settings',   label:'Teks Utama', icon:'fa-font' },
+  { key:'banners',    label:'Banner',     icon:'fa-images' },
+  { key:'sponsors',   label:'Sponsor',    icon:'fa-handshake' },
+  { key:'committees', label:'Panitia',    icon:'fa-user-tie' },
+  { key:'groups',     label:'Grup & Tim', icon:'fa-users' },
+  { key:'matches',    label:'Jadwal Grup',icon:'fa-clipboard-list' },
+  { key:'bracket',    label:'Babak Gugur',icon:'fa-trophy' },
+];
+function buildTabs(){
+  const nav = document.querySelector('nav');
+  nav.innerHTML = TABS.map(t => `
+    <button data-tab="${t.key}" class="tab-btn shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-t-lg text-xs font-bold uppercase tracking-wide text-white/60 hover:text-white border-b-2 border-transparent">
+      <i class="fa-solid ${t.icon}"></i>${t.label}
+    </button>
+  `).join('');
+  nav.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => loadTab(btn.getAttribute('data-tab')));
+  });
+}
+function setActiveTab(key){
+  document.querySelectorAll('.tab-btn').forEach(b => {
+    const active = b.getAttribute('data-tab') === key;
+    b.classList.toggle('text-white', active);
+    b.classList.toggle('border-yellow-500', active);
+    b.classList.toggle('text-white/60', !active);
+  });
+}
+function loadTab(key){
+  setActiveTab(key);
+  const map = { settings:renderSettingsTab, banners:renderBannersTab, sponsors:renderSponsorsTab,
+    committees:renderCommitteesTab, groups:renderGroupsTab, matches:renderMatchesTab, bracket:renderBracketTab };
+  map[key]();
+}
+
+/* ---------- IMAGE UPLOAD HELPER ---------- */
+let uploadResolver = null;
+document.getElementById('fileInput').addEventListener('change', async (e) => {
+  const file = e.target.files && e.target.files[0];
+  e.target.value = '';
+  if(!file || !uploadResolver) return;
+  const resolve = uploadResolver; uploadResolver = null;
+  const path = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.]/g,'_')}`;
+  showToast('Mengunggah foto...');
+  const { error } = await sb.storage.from('media').upload(path, file, { upsert:true });
+  if(error){ showToast('Gagal upload: ' + error.message); resolve(null); return; }
+  const { data } = sb.storage.from('media').getPublicUrl(path);
+  showToast('Foto berhasil diunggah');
+  resolve(data.publicUrl);
+});
+function pickImage(){
+  return new Promise(resolve => {
+    uploadResolver = resolve;
+    document.getElementById('fileInput').click();
+  });
+}
+
+/* ---------- GENERIC SAFE QUERY ---------- */
+async function q(promise, okMsg){
+  const { data, error } = await promise;
+  if(error){ showToast('Error: ' + error.message); return null; }
+  if(okMsg) showToast(okMsg);
+  return data;
+}
+
+/* =====================================================================
+   TAB 1: TEKS UTAMA (site_settings)
+===================================================================== */
+async function renderSettingsTab(){
+  const main = document.getElementById('mainContent');
+  main.innerHTML = `<div class="card p-5 shadow"><p class="text-sm text-slate-400">Memuat...</p></div>`;
+  const rows = await q(sb.from('site_settings').select('*').order('key'));
+  if(!rows) return;
+  main.innerHTML = `
+    <div class="card p-5 md:p-6 shadow">
+      <h2 class="font-bold text-lg mb-1">Teks Utama Halaman</h2>
+      <p class="text-sm text-slate-500 mb-5">Teks ini muncul di bagian hero / banner halaman utama.</p>
+      <div class="space-y-4" id="settingsList">
+        ${rows.map(r => `
+          <div>
+            <label class="text-xs font-semibold text-slate-500 uppercase">${esc(r.key)}</label>
+            <input data-key="${esc(r.key)}" value="${esc(r.value)}" class="w-full mt-1 px-3 py-2.5 rounded-lg border border-slate-200 focus:border-blue-500 outline-none text-sm">
+          </div>
+        `).join('')}
+      </div>
+      <button id="saveSettingsBtn" class="mt-5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm px-5 py-2.5 rounded-lg">
+        <i class="fa-solid fa-floppy-disk mr-2"></i>Simpan Semua Teks
+      </button>
+    </div>
+  `;
+  document.getElementById('saveSettingsBtn').addEventListener('click', async () => {
+    const inputs = document.querySelectorAll('#settingsList input[data-key]');
+    for(const inp of inputs){
+      await sb.from('site_settings').update({ value: inp.value }).eq('key', inp.getAttribute('data-key'));
+    }
+    showToast('Teks berhasil disimpan');
+  });
+}
+
+/* =====================================================================
+   TAB 2: BANNER SLIDER
+===================================================================== */
+async function renderBannersTab(){
+  const main = document.getElementById('mainContent');
+  const rows = await q(sb.from('banners').select('*').order('sort_order')) || [];
+  main.innerHTML = `
+    <div class="card p-5 md:p-6 shadow mb-4">
+      <h2 class="font-bold text-lg mb-1">Banner Slider</h2>
+      <p class="text-sm text-slate-500 mb-5">Gambar akan tampil bergantian di halaman utama. Urutan berdasarkan angka urut.</p>
+      <div class="space-y-3" id="bannerList">
+        ${rows.map(b => bannerRowHtml(b)).join('') || '<p class="text-sm text-slate-400">Belum ada banner.</p>'}
+      </div>
+      <button id="addBannerBtn" class="mt-4 border-2 border-dashed border-slate-200 hover:border-blue-400 text-slate-500 hover:text-blue-600 font-bold text-sm px-5 py-2.5 rounded-lg w-full">
+        <i class="fa-solid fa-plus mr-2"></i>Tambah Banner
+      </button>
+    </div>
+  `;
+  bindBannerEvents();
+  document.getElementById('addBannerBtn').addEventListener('click', async () => {
+    await q(sb.from('banners').insert({ image_url:'', caption_sub:'', caption_main:'', sort_order:(rows.length+1), active:true }), 'Banner ditambahkan');
+    renderBannersTab();
+  });
+}
+function bannerRowHtml(b){
+  return `
+    <div class="border border-slate-200 rounded-xl p-4 flex flex-col md:flex-row gap-3 md:items-center" data-id="${b.id}">
+      <div class="w-full md:w-32 h-20 rounded-lg bg-slate-100 overflow-hidden shrink-0 cursor-pointer banner-img" title="Klik untuk unggah gambar">
+        ${b.image_url ? `<img src="${esc(b.image_url)}" class="w-full h-full object-cover">` : `<div class="w-full h-full flex items-center justify-center text-slate-300"><i class="fa-solid fa-image text-xl"></i></div>`}
+      </div>
+      <div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-2">
+        <input class="b-sub px-3 py-2 rounded-lg border border-slate-200 text-sm" placeholder="Sub caption" value="${esc(b.caption_sub)}">
+        <input class="b-main px-3 py-2 rounded-lg border border-slate-200 text-sm" placeholder="Caption utama" value="${esc(b.caption_main)}">
+        <input class="b-order px-3 py-2 rounded-lg border border-slate-200 text-sm" type="number" placeholder="Urutan" value="${b.sort_order ?? 0}">
+        <label class="flex items-center gap-2 text-sm px-1"><input type="checkbox" class="b-active" ${b.active ? 'checked':''}> Aktif</label>
+      </div>
+      <div class="flex gap-2 shrink-0">
+        <button class="b-save bg-blue-600 text-white text-xs font-bold px-3 py-2 rounded-lg"><i class="fa-solid fa-check"></i></button>
+        <button class="b-del bg-red-50 text-red-500 text-xs font-bold px-3 py-2 rounded-lg"><i class="fa-solid fa-trash"></i></button>
+      </div>
+    </div>
+  `;
+}
+function bindBannerEvents(){
+  document.querySelectorAll('#bannerList > div').forEach(row => {
+    const id = row.getAttribute('data-id');
+    row.querySelector('.banner-img').addEventListener('click', async () => {
+      const url = await pickImage();
+      if(url){ await q(sb.from('banners').update({ image_url:url }).eq('id', id), 'Gambar disimpan'); renderBannersTab(); }
+    });
+    row.querySelector('.b-save').addEventListener('click', async () => {
+      await q(sb.from('banners').update({
+        caption_sub: row.querySelector('.b-sub').value,
+        caption_main: row.querySelector('.b-main').value,
+        sort_order: Number(row.querySelector('.b-order').value) || 0,
+        active: row.querySelector('.b-active').checked
+      }).eq('id', id), 'Banner disimpan');
+    });
+    row.querySelector('.b-del').addEventListener('click', async () => {
+      if(!confirm('Hapus banner ini?')) return;
+      await q(sb.from('banners').delete().eq('id', id), 'Banner dihapus');
+      renderBannersTab();
+    });
+  });
+}
+
+/* =====================================================================
+   TAB 3: SPONSOR
+===================================================================== */
+async function renderSponsorsTab(){
+  const main = document.getElementById('mainContent');
+  const rows = await q(sb.from('sponsors').select('*').order('sort_order')) || [];
+  main.innerHTML = `
+    <div class="card p-5 md:p-6 shadow">
+      <h2 class="font-bold text-lg mb-1">Sponsor</h2>
+      <p class="text-sm text-slate-500 mb-5">Kelola logo dan nama sponsor.</p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3" id="sponsorList">
+        ${rows.map(s => `
+          <div class="border border-slate-200 rounded-xl p-3 flex gap-3 items-center" data-id="${s.id}">
+            <div class="w-14 h-14 rounded-lg bg-slate-100 overflow-hidden shrink-0 cursor-pointer sp-img">
+              ${s.photo_url ? `<img src="${esc(s.photo_url)}" class="w-full h-full object-cover">` : `<div class="w-full h-full flex items-center justify-center text-slate-300"><i class="fa-solid fa-image"></i></div>`}
+            </div>
+            <input class="sp-name flex-1 px-3 py-2 rounded-lg border border-slate-200 text-sm" value="${esc(s.name)}">
+            <button class="sp-save bg-blue-600 text-white text-xs font-bold px-3 py-2 rounded-lg"><i class="fa-solid fa-check"></i></button>
+            <button class="sp-del bg-red-50 text-red-500 text-xs font-bold px-3 py-2 rounded-lg"><i class="fa-solid fa-trash"></i></button>
+          </div>
+        `).join('') || '<p class="text-sm text-slate-400">Belum ada sponsor.</p>'}
+      </div>
+      <button id="addSponsorBtn" class="mt-4 border-2 border-dashed border-slate-200 hover:border-blue-400 text-slate-500 hover:text-blue-600 font-bold text-sm px-5 py-2.5 rounded-lg w-full">
+        <i class="fa-solid fa-plus mr-2"></i>Tambah Sponsor
+      </button>
+    </div>
+  `;
+  document.querySelectorAll('#sponsorList > div').forEach(row => {
+    const id = row.getAttribute('data-id');
+    row.querySelector('.sp-img').addEventListener('click', async () => {
+      const url = await pickImage();
+      if(url){ await q(sb.from('sponsors').update({ photo_url:url }).eq('id', id), 'Logo disimpan'); renderSponsorsTab(); }
+    });
+    row.querySelector('.sp-save').addEventListener('click', async () => {
+      await q(sb.from('sponsors').update({ name: row.querySelector('.sp-name').value }).eq('id', id), 'Sponsor disimpan');
+    });
+    row.querySelector('.sp-del').addEventListener('click', async () => {
+      if(!confirm('Hapus sponsor ini?')) return;
+      await q(sb.from('sponsors').delete().eq('id', id), 'Sponsor dihapus');
+      renderSponsorsTab();
+    });
+  });
+  document.getElementById('addSponsorBtn').addEventListener('click', async () => {
+    await q(sb.from('sponsors').insert({ name:'Sponsor Baru', sort_order:(rows.length+1) }), 'Sponsor ditambahkan');
+    renderSponsorsTab();
+  });
+}
+
+/* =====================================================================
+   TAB 4: PANITIA
+===================================================================== */
+async function renderCommitteesTab(){
+  const main = document.getElementById('mainContent');
+  const rows = await q(sb.from('committees').select('*').order('sort_order')) || [];
+  main.innerHTML = `
+    <div class="card p-5 md:p-6 shadow">
+      <h2 class="font-bold text-lg mb-1">Panitia / Pengurus</h2>
+      <p class="text-sm text-slate-500 mb-5">Kelola nama, jabatan, dan foto panitia.</p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3" id="commList">
+        ${rows.map(c => `
+          <div class="border border-slate-200 rounded-xl p-3 flex gap-3 items-center" data-id="${c.id}">
+            <div class="w-14 h-14 rounded-full bg-slate-100 overflow-hidden shrink-0 cursor-pointer c-img">
+              ${c.photo_url ? `<img src="${esc(c.photo_url)}" class="w-full h-full object-cover">` : `<div class="w-full h-full flex items-center justify-center text-slate-300"><i class="fa-solid fa-user"></i></div>`}
+            </div>
+            <div class="flex-1 space-y-1.5">
+              <input class="c-name w-full px-3 py-1.5 rounded-lg border border-slate-200 text-sm" placeholder="Nama" value="${esc(c.name)}">
+              <input class="c-role w-full px-3 py-1.5 rounded-lg border border-slate-200 text-sm" placeholder="Jabatan" value="${esc(c.role)}">
+            </div>
+            <div class="flex flex-col gap-1.5">
+              <button class="c-save bg-blue-600 text-white text-xs font-bold px-3 py-2 rounded-lg"><i class="fa-solid fa-check"></i></button>
+              <button class="c-del bg-red-50 text-red-500 text-xs font-bold px-3 py-2 rounded-lg"><i class="fa-solid fa-trash"></i></button>
+            </div>
+          </div>
+        `).join('') || '<p class="text-sm text-slate-400">Belum ada panitia.</p>'}
+      </div>
+      <button id="addCommBtn" class="mt-4 border-2 border-dashed border-slate-200 hover:border-blue-400 text-slate-500 hover:text-blue-600 font-bold text-sm px-5 py-2.5 rounded-lg w-full">
+        <i class="fa-solid fa-user-plus mr-2"></i>Tambah Panitia
+      </button>
+    </div>
+  `;
+  document.querySelectorAll('#commList > div').forEach(row => {
+    const id = row.getAttribute('data-id');
+    row.querySelector('.c-img').addEventListener('click', async () => {
+      const url = await pickImage();
+      if(url){ await q(sb.from('committees').update({ photo_url:url }).eq('id', id), 'Foto disimpan'); renderCommitteesTab(); }
+    });
+    row.querySelector('.c-save').addEventListener('click', async () => {
+      await q(sb.from('committees').update({
+        name: row.querySelector('.c-name').value,
+        role: row.querySelector('.c-role').value
+      }).eq('id', id), 'Panitia disimpan');
+    });
+    row.querySelector('.c-del').addEventListener('click', async () => {
+      if(!confirm('Hapus panitia ini?')) return;
+      await q(sb.from('committees').delete().eq('id', id), 'Panitia dihapus');
+      renderCommitteesTab();
+    });
+  });
+  document.getElementById('addCommBtn').addEventListener('click', async () => {
+    await q(sb.from('committees').insert({ name:'', role:'Panitia', sort_order:(rows.length+1) }), 'Panitia ditambahkan');
+    renderCommitteesTab();
+  });
+}
+
+/* =====================================================================
+   TAB 5: GRUP & TIM
+===================================================================== */
+async function renderGroupsTab(){
+  const main = document.getElementById('mainContent');
+  const groups = await q(sb.from('groups').select('*').order('sort_order')) || [];
+  const teams = await q(sb.from('teams').select('*').order('sort_order')) || [];
+
+  main.innerHTML = `
+    <div class="card p-5 md:p-6 shadow mb-4">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="font-bold text-lg">Grup &amp; Tim</h2>
+        <button id="addGroupBtn" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-4 py-2 rounded-lg"><i class="fa-solid fa-plus mr-1"></i>Grup Baru</button>
+      </div>
+      <div class="space-y-6" id="groupsWrap"></div>
+    </div>
+  `;
+  const wrap = document.getElementById('groupsWrap');
+  if(groups.length === 0){
+    wrap.innerHTML = '<p class="text-sm text-slate-400">Belum ada grup. Klik "Grup Baru" untuk membuat.</p>';
+  }
+  groups.forEach(g => {
+    const gTeams = teams.filter(t => t.group_id === g.id);
+    const section = document.createElement('div');
+    section.className = 'border border-slate-200 rounded-xl p-4';
+    section.innerHTML = `
+      <div class="flex flex-wrap gap-2 items-center mb-3">
+        <input class="g-name px-3 py-2 rounded-lg border border-slate-200 text-sm font-bold w-32" value="${esc(g.name)}">
+        <input class="g-date px-3 py-2 rounded-lg border border-slate-200 text-sm" type="date" value="${g.match_date ?? ''}">
+        <input class="g-race px-3 py-2 rounded-lg border border-slate-200 text-sm w-24" type="number" min="1" value="${g.race_to ?? 2}" title="Race to">
+        <button class="g-save bg-blue-600 text-white text-xs font-bold px-3 py-2 rounded-lg"><i class="fa-solid fa-check"></i> Simpan Grup</button>
+        <button class="g-del bg-red-50 text-red-500 text-xs font-bold px-3 py-2 rounded-lg ml-auto"><i class="fa-solid fa-trash"></i> Hapus Grup</button>
+      </div>
+      <div class="space-y-2 team-list">
+        ${gTeams.map(t => `
+          <div class="flex flex-wrap gap-2 items-center bg-slate-50 rounded-lg p-2" data-id="${t.id}">
+            <input class="t-name px-2 py-1.5 rounded-lg border border-slate-200 text-sm flex-1 min-w-[120px]" placeholder="Nama tim" value="${esc(t.name)}">
+            <input class="t-p1 px-2 py-1.5 rounded-lg border border-slate-200 text-sm flex-1 min-w-[100px]" placeholder="Pemain 1" value="${esc(t.player1)}">
+            <input class="t-p2 px-2 py-1.5 rounded-lg border border-slate-200 text-sm flex-1 min-w-[100px]" placeholder="Pemain 2" value="${esc(t.player2)}">
+            <button class="t-save bg-blue-600 text-white text-xs font-bold px-3 py-1.5 rounded-lg"><i class="fa-solid fa-check"></i></button>
+            <button class="t-del bg-red-50 text-red-500 text-xs font-bold px-3 py-1.5 rounded-lg"><i class="fa-solid fa-trash"></i></button>
+          </div>
+        `).join('')}
+      </div>
+      <button class="add-team-btn mt-2 text-blue-600 text-xs font-bold"><i class="fa-solid fa-plus mr-1"></i>Tambah Tim</button>
+    `;
+    wrap.appendChild(section);
+
+    section.querySelector('.g-save').addEventListener('click', async () => {
+      await q(sb.from('groups').update({
+        name: section.querySelector('.g-name').value,
+        match_date: section.querySelector('.g-date').value || null,
+        race_to: Number(section.querySelector('.g-race').value) || 2
+      }).eq('id', g.id), 'Grup disimpan');
+    });
+    section.querySelector('.g-del').addEventListener('click', async () => {
+      if(!confirm(`Hapus ${g.name}? Semua tim di dalamnya juga akan dilepas dari grup.`)) return;
+      await q(sb.from('groups').delete().eq('id', g.id), 'Grup dihapus');
+      renderGroupsTab();
+    });
+    section.querySelector('.add-team-btn').addEventListener('click', async () => {
+      await q(sb.from('teams').insert({ group_id:g.id, name:'Tim Baru', sort_order:(gTeams.length+1) }), 'Tim ditambahkan');
+      renderGroupsTab();
+    });
+    section.querySelectorAll('.team-list > div').forEach(row => {
+      const tid = row.getAttribute('data-id');
+      row.querySelector('.t-save').addEventListener('click', async () => {
+        await q(sb.from('teams').update({
+          name: row.querySelector('.t-name').value,
+          player1: row.querySelector('.t-p1').value,
+          player2: row.querySelector('.t-p2').value
+        }).eq('id', tid), 'Tim disimpan');
+      });
+      row.querySelector('.t-del').addEventListener('click', async () => {
+        if(!confirm('Hapus tim ini?')) return;
+        await q(sb.from('teams').delete().eq('id', tid), 'Tim dihapus');
+        renderGroupsTab();
+      });
+    });
+  });
+  document.getElementById('addGroupBtn').addEventListener('click', async () => {
+    await q(sb.from('groups').insert({ name:`GRUP ${groups.length+1}`, race_to:2, sort_order:(groups.length+1) }), 'Grup ditambahkan');
+    renderGroupsTab();
+  });
+}
+
+/* =====================================================================
+   TAB 6: JADWAL & SKOR FASE GRUP
+===================================================================== */
+async function renderMatchesTab(){
+  const main = document.getElementById('mainContent');
+  const groups = await q(sb.from('groups').select('*').order('sort_order')) || [];
+  const teams = await q(sb.from('teams').select('*').order('sort_order')) || [];
+  const matches = await q(sb.from('matches').select('*').eq('stage','group').order('match_order')) || [];
+
+  main.innerHTML = `<div class="space-y-4" id="matchesWrap"></div>`;
+  const wrap = document.getElementById('matchesWrap');
+  if(groups.length === 0){
+    wrap.innerHTML = '<div class="card p-5 shadow text-sm text-slate-400">Buat grup &amp; tim terlebih dahulu di tab "Grup & Tim".</div>';
+    return;
+  }
+
+  groups.forEach(g => {
+    const gTeams = teams.filter(t => t.group_id === g.id);
+    const gMatches = matches.filter(m => m.group_id === g.id);
+    const section = document.createElement('div');
+    section.className = 'card p-5 shadow';
+    section.innerHTML = `
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="font-bold">${esc(g.name)}</h3>
+        <button class="add-match-btn text-blue-600 text-xs font-bold"><i class="fa-solid fa-plus mr-1"></i>Tambah Match</button>
+      </div>
+      ${gTeams.length < 2 ? '<p class="text-xs text-slate-400 mb-2">Tambahkan minimal 2 tim di grup ini untuk membuat pertandingan.</p>' : ''}
+      <div class="space-y-2 match-list">
+        ${gMatches.map(m => matchRowHtml(m, gTeams)).join('') || '<p class="text-sm text-slate-400">Belum ada jadwal.</p>'}
+      </div>
+    `;
+    wrap.appendChild(section);
+
+    section.querySelector('.add-match-btn').addEventListener('click', async () => {
+      if(gTeams.length < 2){ showToast('Tambahkan minimal 2 tim dahulu'); return; }
+      await q(sb.from('matches').insert({
+        stage:'group', group_id:g.id, match_order:(gMatches.length+1),
+        race_to: g.race_to || 2
+      }), 'Match ditambahkan');
+      renderMatchesTab();
+    });
+    bindMatchRowEvents(section, gTeams, 'group');
+  });
+}
+function matchRowHtml(m, teamOptions){
+  const teamOpts = (sel) => teamOptions.map(t => `<option value="${t.id}" ${sel===t.id?'selected':''}>${esc(t.name)}</option>`).join('');
+  return `
+    <div class="flex flex-wrap gap-2 items-center bg-slate-50 rounded-lg p-2" data-id="${m.id}">
+      <select class="m-team1 px-2 py-1.5 rounded-lg border border-slate-200 text-sm flex-1 min-w-[110px]">
+        <option value="">— pilih tim —</option>${teamOpts(m.team1_id)}
+      </select>
+      <input class="m-score1 w-14 px-2 py-1.5 rounded-lg border border-slate-200 text-sm text-center" type="number" min="0" value="${m.score1 ?? ''}">
+      <span class="text-xs text-slate-400 font-bold">VS</span>
+      <input class="m-score2 w-14 px-2 py-1.5 rounded-lg border border-slate-200 text-sm text-center" type="number" min="0" value="${m.score2 ?? ''}">
+      <select class="m-team2 px-2 py-1.5 rounded-lg border border-slate-200 text-sm flex-1 min-w-[110px]">
+        <option value="">— pilih tim —</option>${teamOpts(m.team2_id)}
+      </select>
+      <button class="m-save bg-blue-600 text-white text-xs font-bold px-3 py-1.5 rounded-lg"><i class="fa-solid fa-check"></i></button>
+      <button class="m-del bg-red-50 text-red-500 text-xs font-bold px-3 py-1.5 rounded-lg"><i class="fa-solid fa-trash"></i></button>
+    </div>
+  `;
+}
+function bindMatchRowEvents(section){
+  section.querySelectorAll('.match-list > div').forEach(row => {
+    const id = row.getAttribute('data-id');
+    row.querySelector('.m-save').addEventListener('click', async () => {
+      const s1 = row.querySelector('.m-score1').value;
+      const s2 = row.querySelector('.m-score2').value;
+      await q(sb.from('matches').update({
+        team1_id: row.querySelector('.m-team1').value || null,
+        team2_id: row.querySelector('.m-team2').value || null,
+        score1: s1 === '' ? null : Number(s1),
+        score2: s2 === '' ? null : Number(s2),
+        updated_at: new Date().toISOString()
+      }).eq('id', id), 'Hasil disimpan');
+    });
+    row.querySelector('.m-del').addEventListener('click', async () => {
+      if(!confirm('Hapus match ini?')) return;
+      await q(sb.from('matches').delete().eq('id', id), 'Match dihapus');
+      renderMatchesTab();
+    });
+  });
+}
+
+/* =====================================================================
+   TAB 7: BABAK GUGUR (QF / SF / FINAL)
+===================================================================== */
+const ROUND_DEFS = [
+  { key:'qf', label:'8 Besar', defaultRace:3 },
+  { key:'sf', label:'4 Besar', defaultRace:4 },
+  { key:'final', label:'Final', defaultRace:5 },
+];
+async function renderBracketTab(){
+  const main = document.getElementById('mainContent');
+  const teams = await q(sb.from('teams').select('*').order('sort_order')) || [];
+  main.innerHTML = `<div class="space-y-4" id="bracketWrap"></div>`;
+  const wrap = document.getElementById('bracketWrap');
+
+  for(const def of ROUND_DEFS){
+    const rows = await q(sb.from('matches').select('*').eq('stage', def.key).order('match_order')) || [];
+    const section = document.createElement('div');
+    section.className = 'card p-5 shadow';
+    section.innerHTML = `
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="font-bold">${def.label}</h3>
+        <button class="add-elim-btn text-blue-600 text-xs font-bold"><i class="fa-solid fa-plus mr-1"></i>Tambah Match</button>
+      </div>
+      <div class="space-y-2 elim-list">
+        ${rows.map(m => elimRowHtml(m, teams)).join('') || '<p class="text-sm text-slate-400">Belum ada match.</p>'}
+      </div>
+    `;
+    wrap.appendChild(section);
+
+    section.querySelector('.add-elim-btn').addEventListener('click', async () => {
+      await q(sb.from('matches').insert({ stage:def.key, match_order:(rows.length+1), race_to:def.defaultRace }), 'Match ditambahkan');
+      renderBracketTab();
+    });
+    section.querySelectorAll('.elim-list > div').forEach(row => {
+      const id = row.getAttribute('data-id');
+      row.querySelector('.e-save').addEventListener('click', async () => {
+        const s1 = row.querySelector('.e-score1').value;
+        const s2 = row.querySelector('.e-score2').value;
+        await q(sb.from('matches').update({
+          team1_id: row.querySelector('.e-team1').value || null,
+          team2_id: row.querySelector('.e-team2').value || null,
+          team1_label: row.querySelector('.e-label1').value,
+          team2_label: row.querySelector('.e-label2').value,
+          race_to: Number(row.querySelector('.e-race').value) || def.defaultRace,
+          score1: s1 === '' ? null : Number(s1),
+          score2: s2 === '' ? null : Number(s2),
+          updated_at: new Date().toISOString()
+        }).eq('id', id), 'Match disimpan');
+      });
+      row.querySelector('.e-del').addEventListener('click', async () => {
+        if(!confirm('Hapus match ini?')) return;
+        await q(sb.from('matches').delete().eq('id', id), 'Match dihapus');
+        renderBracketTab();
+      });
+    });
+  }
+}
+function elimRowHtml(m, teamOptions){
+  const teamOpts = (sel) => `<option value="">— pilih tim (kosongkan jika pakai label) —</option>` +
+    teamOptions.map(t => `<option value="${t.id}" ${sel===t.id?'selected':''}>${esc(t.name)}</option>`).join('');
+  return `
+    <div class="border border-slate-200 rounded-lg p-3 space-y-2" data-id="${m.id}">
+      <div class="flex flex-wrap gap-2 items-center">
+        <select class="e-team1 px-2 py-1.5 rounded-lg border border-slate-200 text-sm flex-1 min-w-[130px]">${teamOpts(m.team1_id)}</select>
+        <input class="e-label1 px-2 py-1.5 rounded-lg border border-slate-200 text-sm flex-1 min-w-[110px]" placeholder="atau label, mis. 'Juara Grup 1'" value="${esc(m.team1_label)}">
+        <input class="e-score1 w-14 px-2 py-1.5 rounded-lg border border-slate-200 text-sm text-center" type="number" min="0" value="${m.score1 ?? ''}">
+      </div>
+      <div class="flex flex-wrap gap-2 items-center">
+        <select class="e-team2 px-2 py-1.5 rounded-lg border border-slate-200 text-sm flex-1 min-w-[130px]">${teamOpts(m.team2_id)}</select>
+        <input class="e-label2 px-2 py-1.5 rounded-lg border border-slate-200 text-sm flex-1 min-w-[110px]" placeholder="atau label, mis. 'Runner-up Grup 2'" value="${esc(m.team2_label)}">
+        <input class="e-score2 w-14 px-2 py-1.5 rounded-lg border border-slate-200 text-sm text-center" type="number" min="0" value="${m.score2 ?? ''}">
+      </div>
+      <div class="flex flex-wrap gap-2 items-center justify-between pt-1">
+        <label class="text-xs text-slate-500 flex items-center gap-1.5">Race to
+          <input class="e-race w-16 px-2 py-1 rounded-lg border border-slate-200 text-sm text-center" type="number" min="1" value="${m.race_to}">
+        </label>
+        <div class="flex gap-2">
+          <button class="e-save bg-blue-600 text-white text-xs font-bold px-3 py-1.5 rounded-lg"><i class="fa-solid fa-check"></i> Simpan</button>
+          <button class="e-del bg-red-50 text-red-500 text-xs font-bold px-3 py-1.5 rounded-lg"><i class="fa-solid fa-trash"></i></button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+</script>
+</body>
+</html>
