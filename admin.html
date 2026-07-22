@@ -35,16 +35,27 @@
       <h1 class="text-lg font-bold">Admin Panel</h1>
       <p class="text-sm text-slate-500">Turnamen Bilyard Rainbow SL 2026</p>
     </div>
-    <label class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Masukkan PIN Admin</label>
-    <input id="pinInput" type="password" inputmode="numeric" placeholder="••••••"
-      class="w-full mt-1 mb-3 px-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 outline-none text-lg tracking-widest text-center">
+
+    <!-- Field Input Email / Username -->
+    <div class="mb-4 text-left">
+      <label class="text-xs font-semibold text-slate-500 uppercase tracking-wide block mb-1">Email / User</label>
+      <input id="emailInput" type="email" placeholder="admin@rainbowsl.local"
+        class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 outline-none text-sm">
+    </div>
+
+    <!-- Field Input Kata Sandi -->
+    <div class="mb-5 text-left">
+      <label class="text-xs font-semibold text-slate-500 uppercase tracking-wide block mb-1">Kata Sandi</label>
+      <input id="passwordInput" type="password" placeholder="••••••••"
+        class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 outline-none text-sm">
+    </div>
+
     <button id="loginBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl">
       Masuk
     </button>
     <p id="loginError" class="text-red-500 text-xs mt-3 text-center hidden"></p>
   </div>
 </div>
-
 <div id="dashboard" class="hidden">
   <header class="bg-[#0b192c] border-b border-white/10 px-5 py-4 flex items-center justify-between sticky top-0 z-30">
     <div class="flex items-center gap-3">
@@ -86,39 +97,36 @@ function esc(s){ return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','
 
 /* ---------- AUTH ---------- */
 document.getElementById('loginBtn').addEventListener('click', doLogin);
-document.getElementById('pinInput').addEventListener('keydown', e => { if(e.key === 'Enter') doLogin(); });
+document.getElementById('emailInput').addEventListener('keydown', e => { if(e.key === 'Enter') doLogin(); });
+document.getElementById('passwordInput').addEventListener('keydown', e => { if(e.key === 'Enter') doLogin(); });
 
 async function doLogin(){
-  const pin = document.getElementById('pinInput').value.trim();
+  const email = document.getElementById('emailInput').value.trim();
+  const password = document.getElementById('passwordInput').value.trim();
   const errEl = document.getElementById('loginError');
+  
   errEl.classList.add('hidden');
-  if(!pin){ return; }
-  const { data, error } = await sb.auth.signInWithPassword({ email: ADMIN_EMAIL, password: pin });
-  if(error){
-    errEl.textContent = 'PIN salah atau akun admin belum dibuat di Supabase Auth.';
+
+  if(!email || !password){
+    errEl.textContent = 'Harap isi email/user dan kata sandi.';
     errEl.classList.remove('hidden');
     return;
   }
+
+  // Melakukan login menggunakan Email dan Kata Sandi dinamis yang diinputkan
+  const { data, error } = await sb.auth.signInWithPassword({ 
+    email: email, 
+    password: password 
+  });
+
+  if(error){
+    errEl.textContent = 'Email atau Kata Sandi salah.';
+    errEl.classList.remove('hidden');
+    return;
+  }
+
   enterDashboard();
 }
-
-document.getElementById('logoutBtn').addEventListener('click', async () => {
-  await sb.auth.signOut();
-  location.reload();
-});
-
-async function checkSession(){
-  const { data } = await sb.auth.getSession();
-  if(data.session){ enterDashboard(); }
-}
-
-function enterDashboard(){
-  document.getElementById('loginScreen').classList.add('hidden');
-  document.getElementById('dashboard').classList.remove('hidden');
-  buildTabs();
-  loadTab('settings');
-}
-checkSession();
 
 /* ---------- TABS ---------- */
 const TABS = [
