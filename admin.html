@@ -21,12 +21,15 @@
 <script>
   const SUPABASE_URL = "https://mwcfbinobdiotnyoknii.supabase.co";
   const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im13Y2ZiaW5vYmRpb3RueW9rbmlpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3MTg1MzgsImV4cCI6MjEwMDI5NDUzOH0.J86beVUL7fYj_MzCxnmnVW4EU4OghLIwXPGZfNi2aCQ";
-  // Email akun admin yang dibuat manual di Supabase Auth (lihat langkah 5 di supabase_setup.sql)
-  const ADMIN_EMAIL = "admin@rainbowsl.local";
 </script>
 <!-- ======================================================================= -->
 
-<div id="loginScreen" class="min-h-screen flex items-center justify-center p-6">
+<!-- Layar transisi saat mengecek sesi login yang sudah ada -->
+<div id="bootScreen" class="min-h-screen flex items-center justify-center text-white/40 text-sm">
+  <i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Memuat...
+</div>
+
+<div id="loginScreen" class="min-h-screen hidden items-center justify-center p-6">
   <div class="card shadow-2xl w-full max-w-sm p-8">
     <div class="text-center mb-6">
       <div class="w-14 h-14 rounded-full bg-blue-600 text-white flex items-center justify-center mx-auto mb-3 text-xl">
@@ -51,7 +54,7 @@
     </div>
 
     <button id="loginBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl">
-      Masuk
+      <span id="loginBtnLabel">Masuk</span>
     </button>
     <p id="loginError" class="text-red-500 text-xs mt-3 text-center hidden"></p>
   </div>
@@ -95,6 +98,30 @@ function showToast(msg){
 }
 function esc(s){ return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
+/* ---------- SCREEN HELPERS ---------- */
+function showBoot(){
+  document.getElementById('bootScreen').classList.remove('hidden');
+  document.getElementById('loginScreen').classList.add('hidden');
+  document.getElementById('loginScreen').classList.remove('flex');
+  document.getElementById('dashboard').classList.add('hidden');
+}
+function showLogin(){
+  document.getElementById('bootScreen').classList.add('hidden');
+  document.getElementById('dashboard').classList.add('hidden');
+  const login = document.getElementById('loginScreen');
+  login.classList.remove('hidden');
+  login.classList.add('flex');
+}
+function enterDashboard(){
+  document.getElementById('bootScreen').classList.add('hidden');
+  const login = document.getElementById('loginScreen');
+  login.classList.add('hidden');
+  login.classList.remove('flex');
+  document.getElementById('dashboard').classList.remove('hidden');
+  buildTabs();
+  loadTab('settings');
+}
+
 /* ---------- AUTH ---------- */
 document.getElementById('loginBtn').addEventListener('click', doLogin);
 document.getElementById('emailInput').addEventListener('keydown', e => { if(e.key === 'Enter') doLogin(); });
@@ -104,7 +131,9 @@ async function doLogin(){
   const email = document.getElementById('emailInput').value.trim();
   const password = document.getElementById('passwordInput').value.trim();
   const errEl = document.getElementById('loginError');
-  
+  const btn = document.getElementById('loginBtn');
+  const btnLabel = document.getElementById('loginBtnLabel');
+
   errEl.classList.add('hidden');
 
   if(!email || !password){
@@ -113,11 +142,17 @@ async function doLogin(){
     return;
   }
 
+  btn.disabled = true;
+  btnLabel.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin mr-1"></i> Memproses...';
+
   // Melakukan login menggunakan Email dan Kata Sandi dinamis yang diinputkan
-  const { data, error } = await sb.auth.signInWithPassword({ 
-    email: email, 
-    password: password 
+  const { data, error } = await sb.auth.signInWithPassword({
+    email: email,
+    password: password
   });
+
+  btn.disabled = false;
+  btnLabel.textContent = 'Masuk';
 
   if(error){
     errEl.textContent = 'Email atau Kata Sandi salah.';
@@ -125,8 +160,33 @@ async function doLogin(){
     return;
   }
 
+  document.getElementById('passwordInput').value = '';
   enterDashboard();
 }
+
+document.getElementById('logoutBtn').addEventListener('click', async () => {
+  await sb.auth.signOut();
+  document.getElementById('emailInput').value = '';
+  document.getElementById('passwordInput').value = '';
+  showLogin();
+});
+
+/* Cek sesi yang sudah ada saat halaman dimuat / di-refresh */
+(async function initAuth(){
+  const { data: { session } } = await sb.auth.getSession();
+  if(session){
+    enterDashboard();
+  } else {
+    showLogin();
+  }
+})();
+
+/* Jika sesi berakhir/di-invalidate di tab lain, kembali ke layar login */
+sb.auth.onAuthStateChange((event) => {
+  if(event === 'SIGNED_OUT'){
+    showLogin();
+  }
+});
 
 /* ---------- TABS ---------- */
 const TABS = [
@@ -525,7 +585,7 @@ async function renderMatchesTab(){
       }), 'Match ditambahkan');
       renderMatchesTab();
     });
-    bindMatchRowEvents(section, gTeams, 'group');
+    bindMatchRowEvents(section);
   });
 }
 function matchRowHtml(m, teamOptions){
