@@ -146,6 +146,28 @@
   .chip.gold{ background:var(--gold-dim); border-color:var(--gold-line); color:var(--gold-bright); }
   .chip.gold i{ color:var(--gold-bright); }
 
+  /* --- Home sponsor strip --- */
+  .home-sponsors{ margin-bottom:20px; }
+  .home-sponsors-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+  .hsh-title{ display:flex; align-items:center; gap:8px; font-size:10.5px; font-weight:700; letter-spacing:1.8px; color:var(--text-muted); text-transform:uppercase; }
+  .hsh-title i{ color:var(--gold); font-size:11px; }
+  .hsh-link{ font-size:10.5px; font-weight:700; letter-spacing:0.3px; color:var(--gold-bright); cursor:pointer; }
+  .sponsor-strip{ display:grid; grid-template-columns:repeat(2,1fr); gap:9px; }
+  @media(min-width:480px){ .sponsor-strip{ grid-template-columns:repeat(3,1fr); } }
+  .sponsor-badge{
+    display:flex; align-items:center; gap:9px;
+    background:linear-gradient(160deg, rgba(201,164,76,0.09), var(--panel));
+    border:1px solid var(--gold-line); border-radius:12px; padding:10px 11px;
+    backdrop-filter:blur(8px); overflow:hidden;
+  }
+  .sponsor-badge .sb-icon{
+    width:30px; height:30px; min-width:30px; border-radius:8px; overflow:hidden;
+    background:var(--gold-dim); border:1px solid var(--gold-line);
+    display:flex; align-items:center; justify-content:center; color:var(--gold-bright); font-size:12px;
+  }
+  .sponsor-badge .sb-icon img{ width:100%; height:100%; object-fit:cover; }
+  .sponsor-badge .sb-name{ font-size:10.8px; font-weight:700; color:var(--text-hi); line-height:1.25; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
   .quick-grid{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:6px; }
   .quick-card{
     background:var(--panel); border:1px solid var(--line); border-radius:var(--radius-lg);
@@ -282,6 +304,24 @@
   .info-panel li{ font-size:13.5px; color:var(--text-mid); display:flex; gap:9px; align-items:flex-start; }
   .info-panel li i{ color:var(--gold); font-size:11px; margin-top:4px; }
 
+  /* --- Numbered official rules --- */
+  .rules-list{ display:flex; flex-direction:column; gap:12px; }
+  .rule-item{ display:flex; gap:13px; background:var(--panel); border:1px solid var(--line); border-radius:var(--radius-lg); padding:15px 16px; backdrop-filter:blur(10px); }
+  .rule-item .ri-num{
+    width:32px; height:32px; min-width:32px; border-radius:10px;
+    background:var(--gold-dim); border:1px solid var(--gold-line); color:var(--gold-bright);
+    font-family:'JetBrains Mono',monospace; font-weight:700; font-size:12.5px;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .rule-item .ri-body{ flex:1; min-width:0; }
+  .rule-item .ri-body .ri-title{ font-size:13px; font-weight:800; color:var(--text-hi); margin-bottom:5px; display:flex; align-items:center; gap:7px; }
+  .rule-item .ri-body .ri-title i{ color:var(--gold); font-size:11.5px; }
+  .rule-item .ri-body .ri-desc{ font-size:12.5px; color:var(--text-mid); line-height:1.6; }
+  .rule-item .ri-body .ri-desc strong{ color:var(--text-hi); font-weight:700; }
+  .ri-sub{ margin:9px 0 0; padding-left:16px; }
+  .ri-sub li{ font-size:12px; color:var(--text-mid); margin-bottom:5px; line-height:1.5; }
+  .ri-sub li:last-child{ margin-bottom:0; }
+
   /* ===== SPONSOR / COMMITTEE CARDS ===== */
   .people-grid{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
   @media(min-width:560px){ .people-grid{ grid-template-columns:1fr 1fr 1fr; } }
@@ -353,8 +393,20 @@
   }
   @media(min-width:640px){ .modal-box{ border-radius:18px; } }
   @keyframes slideUp{ from{ transform:translateY(24px); opacity:0;} to{ transform:translateY(0); opacity:1;} }
-  .modal-title{ font-size:10.5px; letter-spacing:2.2px; text-transform:uppercase; color:var(--gold-bright); font-weight:700; margin-bottom:5px; }
+  .modal-title{ display:flex; align-items:center; gap:8px; font-size:10.5px; letter-spacing:2.2px; text-transform:uppercase; color:var(--gold-bright); font-weight:700; margin-bottom:5px; }
   .modal-subtitle{ font-family:'Fraunces', serif; font-size:17px; font-weight:600; margin-bottom:18px; }
+
+  /* --- Generic info modal (prize / race-off) --- */
+  .info-modal-list{ display:flex; flex-direction:column; gap:10px; margin-bottom:20px; }
+  .info-modal-row{ display:flex; align-items:flex-start; gap:12px; background:var(--panel-solid); border:1px solid var(--line); border-radius:var(--radius-md); padding:13px 14px; }
+  .info-modal-row.gold{ border-color:var(--gold-line); background:linear-gradient(160deg, rgba(201,164,76,0.12), var(--panel-solid)); }
+  .info-modal-row .imr-rank{
+    width:36px; height:36px; min-width:36px; border-radius:10px; display:flex; align-items:center; justify-content:center;
+    font-family:'JetBrains Mono',monospace; font-weight:700; font-size:13px;
+    background:var(--gold-dim); border:1px solid var(--gold-line); color:var(--gold-bright);
+  }
+  .info-modal-row .imr-body .imr-title{ font-size:12.5px; font-weight:800; color:var(--text-hi); margin-bottom:4px; }
+  .info-modal-row .imr-body .imr-desc{ font-size:12px; color:var(--text-mid); line-height:1.5; }
   .score-input-row{ display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:12px; margin-bottom:16px; }
   .score-input-col{ display:flex; flex-direction:column; align-items:center; gap:10px; }
   .score-input-col label{ font-size:12px; font-weight:700; color:var(--text-mid); text-align:center; min-height:32px; display:flex; align-items:center; justify-content:center; }
@@ -466,6 +518,14 @@
       <span class="chip gold"><i class="fa-solid fa-flag-checkered"></i>Race to 2</span>
     </div>
 
+    <div class="home-sponsors">
+      <div class="home-sponsors-head">
+        <span class="hsh-title"><i class="fa-solid fa-handshake"></i>Didukung Oleh Sponsor Official</span>
+        <span class="hsh-link" data-goto="sponsors">Lihat Semua</span>
+      </div>
+      <div class="sponsor-strip" id="homeSponsorStrip"></div>
+    </div>
+
     <div class="quick-grid">
       <div class="quick-card" data-goto="bracket">
         <div class="qi"><i class="fa-solid fa-sitemap"></i></div>
@@ -554,26 +614,68 @@
   <!-- ===== PAGE: RULES ===== -->
   <section class="page" id="page-rules">
     <div class="page-title">Aturan Pertandingan</div>
-    <div class="page-sub">Ketentuan &amp; tata tertib turnamen Rainbow SL</div>
+    <div class="page-sub">Peraturan dan ketentuan resmi turnamen Rainbow SL</div>
     <div class="section-rule"></div>
-    <div class="info-panel">
-      <h3><i class="fa-solid fa-note-sticky"></i>Catatan</h3>
-      <ul>
-        <li><i class="fa-solid fa-check"></i>Hadir 15 menit sebelum pertandingan</li>
-        <li><i class="fa-solid fa-check"></i>Sportifitas diutamakan</li>
-        <li><i class="fa-solid fa-check"></i>Jaga ketertiban &amp; kebersihan</li>
-        <li><i class="fa-solid fa-check"></i>Good luck &amp; have fun</li>
-      </ul>
-    </div>
-    <div class="info-panel">
-      <h3><i class="fa-solid fa-scale-balanced"></i>Keterangan</h3>
-      <ul>
-        <li><i class="fa-solid fa-check"></i>Sistem Gugur (Single Elimination)</li>
-        <li><i class="fa-solid fa-check"></i>Jenis Permainan: 8 Ball</li>
-        <li><i class="fa-solid fa-check"></i>Jumlah Team: 16 &nbsp;·&nbsp; Jumlah Peserta: 32</li>
-        <li><i class="fa-solid fa-check"></i>Semua pertandingan Race To 2</li>
-        <li><i class="fa-solid fa-check"></i>Keputusan wasit bersifat mutlak</li>
-      </ul>
+    <div class="rules-list">
+      <div class="rule-item">
+        <div class="ri-num">01</div>
+        <div class="ri-body">
+          <div class="ri-title"><i class="fa-solid fa-clock"></i>Kehadiran</div>
+          <div class="ri-desc">Wajib hadir pukul <strong>09.15 WIB</strong>. Jika pukul <strong>09.30 WIB</strong> belum hadir, pemain dinyatakan <strong>DISKUALIFIKASI</strong>.</div>
+        </div>
+      </div>
+      <div class="rule-item">
+        <div class="ri-num">02</div>
+        <div class="ri-body">
+          <div class="ri-title"><i class="fa-solid fa-broom"></i>Kebersihan</div>
+          <div class="ri-desc">Setiap pemain wajib menjaga kebersihan Dapur MBG.</div>
+        </div>
+      </div>
+      <div class="rule-item">
+        <div class="ri-num">03</div>
+        <div class="ri-body">
+          <div class="ri-title"><i class="fa-solid fa-sitemap"></i>Format Turnamen</div>
+          <ul class="ri-sub">
+            <li>Babak 16 Besar: Sistem Klasemen Grup (Poin menang terbanyak lolos ke 8 besar).</li>
+            <li>Babak 8 Besar s/d Final: Sistem Gugur (Single Elimination).</li>
+          </ul>
+        </div>
+      </div>
+      <div class="rule-item">
+        <div class="ri-num">04</div>
+        <div class="ri-body">
+          <div class="ri-title"><i class="fa-solid fa-stopwatch"></i>Shot Clock</div>
+          <div class="ri-desc">Batas waktu membidik maksimal <strong>60 Detik / 1 Menit</strong>. Lewat waktu, giliran berlanjut ke lawan (bukan Foul/Freeball). Waktu diskusi tim maksimal 60 detik.</div>
+        </div>
+      </div>
+      <div class="rule-item">
+        <div class="ri-num">05</div>
+        <div class="ri-body">
+          <div class="ri-title"><i class="fa-solid fa-circle-dot"></i>Break &amp; Bola 8</div>
+          <div class="ri-desc">Break diawali SUIT, selanjutnya oleh pemenang frame. Bola 8 dimasukkan terakhir setelah bola target habis. Breakshoot masuk Bola 8 dihitung <strong>POINT / WIN</strong>.</div>
+        </div>
+      </div>
+      <div class="rule-item">
+        <div class="ri-num">06</div>
+        <div class="ri-body">
+          <div class="ri-title"><i class="fa-solid fa-triangle-exclamation"></i>Pelanggaran (Foul)</div>
+          <div class="ri-desc">Foul terjadi jika bola putih tidak kena target DAN tidak menyentuh BAN. Lawan mendapat <strong>FREEBALL</strong> (bebas peletakan bola putih). Foul 3x berturut-turut dihitung <strong>KALAH</strong> frame.</div>
+        </div>
+      </div>
+      <div class="rule-item">
+        <div class="ri-num">07</div>
+        <div class="ri-body">
+          <div class="ri-title"><i class="fa-solid fa-ban"></i>Kalah Instan</div>
+          <div class="ri-desc">Bola 8 masuk sebelum bola lain habis = <strong>KALAH</strong>. Bola 8 keluar/melompat dari meja = <strong>KALAH</strong>.</div>
+        </div>
+      </div>
+      <div class="rule-item">
+        <div class="ri-num">08</div>
+        <div class="ri-body">
+          <div class="ri-title"><i class="fa-solid fa-toolbox"></i>Stik Biliar</div>
+          <div class="ri-desc">Lokasi menyediakan 2 PCS stik meja. Pemain diperbolehkan membawa stik pribadi.</div>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -610,6 +712,8 @@
       <div class="drawer-close" id="drawerClose"><i class="fa-solid fa-xmark"></i></div>
     </div>
     <div class="drawer-item" data-goto="rules"><span class="di"><i class="fa-solid fa-scroll"></i></span><span class="dl">Aturan Pertandingan</span></div>
+    <div class="drawer-item" data-modal="prizeModal"><span class="di"><i class="fa-solid fa-trophy"></i></span><span class="dl">Hadiah Pemenang</span></div>
+    <div class="drawer-item" data-modal="raceoffModal"><span class="di"><i class="fa-solid fa-bolt"></i></span><span class="dl">Race Off</span></div>
     <div class="drawer-item" data-goto="sponsors"><span class="di"><i class="fa-solid fa-handshake"></i></span><span class="dl">Sponsor</span></div>
     <div class="drawer-item" data-goto="committee"><span class="di"><i class="fa-solid fa-user-tie"></i></span><span class="dl">Pengurus / Penanggung Jawab</span></div>
   </div>
@@ -640,6 +744,81 @@
       <div class="modal-actions">
         <button class="btn btn-ghost" id="scCancel">Batal</button>
         <button class="btn btn-primary" id="scSave"><i class="fa-solid fa-check"></i>Simpan Hasil</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- HADIAH PEMENANG MODAL -->
+  <div class="modal-overlay" id="prizeModal">
+    <div class="modal-box">
+      <div class="modal-title"><i class="fa-solid fa-trophy"></i>Hadiah Pemenang Tournament</div>
+      <div class="modal-subtitle">Total Hadiah Rainbow SL</div>
+      <div class="info-modal-list">
+        <div class="info-modal-row gold">
+          <div class="imr-rank"><i class="fa-solid fa-trophy"></i></div>
+          <div class="imr-body">
+            <div class="imr-title">Juara 1</div>
+            <div class="imr-desc">200.000 LKR + Stick Billiard + Piala + Penghargaan</div>
+          </div>
+        </div>
+        <div class="info-modal-row">
+          <div class="imr-rank"><i class="fa-solid fa-medal"></i></div>
+          <div class="imr-body">
+            <div class="imr-title">Juara 2</div>
+            <div class="imr-desc">150.000 LKR + Stick Billiard + Piala + Penghargaan</div>
+          </div>
+        </div>
+        <div class="info-modal-row">
+          <div class="imr-rank"><i class="fa-solid fa-award"></i></div>
+          <div class="imr-body">
+            <div class="imr-title">Juara 3</div>
+            <div class="imr-desc">75.000 LKR + Stick Billiard + Piala + Penghargaan</div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-primary" data-close-modal="prizeModal">Tutup</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- RACE OFF MODAL -->
+  <div class="modal-overlay" id="raceoffModal">
+    <div class="modal-box">
+      <div class="modal-title"><i class="fa-solid fa-bolt"></i>Format Race Off Pertandingan</div>
+      <div class="modal-subtitle">Ketentuan Race Per Babak</div>
+      <div class="info-modal-list">
+        <div class="info-modal-row">
+          <div class="imr-rank">R2</div>
+          <div class="imr-body">
+            <div class="imr-title">Babak Penyisihan Grup</div>
+            <div class="imr-desc">Race to 2</div>
+          </div>
+        </div>
+        <div class="info-modal-row">
+          <div class="imr-rank">R3</div>
+          <div class="imr-body">
+            <div class="imr-title">8 Besar / Perempat Final</div>
+            <div class="imr-desc">Race to 3</div>
+          </div>
+        </div>
+        <div class="info-modal-row">
+          <div class="imr-rank">R4</div>
+          <div class="imr-body">
+            <div class="imr-title">4 Besar / Semi Final</div>
+            <div class="imr-desc">Race to 4</div>
+          </div>
+        </div>
+        <div class="info-modal-row gold">
+          <div class="imr-rank">R5</div>
+          <div class="imr-body">
+            <div class="imr-title">Laga Final</div>
+            <div class="imr-desc">Race to 5</div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-primary" data-close-modal="raceoffModal">Tutup</button>
       </div>
     </div>
   </div>
@@ -901,6 +1080,21 @@
     showToast('Nama peserta tersimpan');
   });
 
+  /* ===== RENDER: HOME SPONSOR BANNER ===== */
+  function renderHomeSponsors(){
+    const strip = document.getElementById('homeSponsorStrip');
+    strip.innerHTML = '';
+    state.sponsors.forEach(sp => {
+      const badge = document.createElement('div');
+      badge.className = 'sponsor-badge';
+      badge.innerHTML = `
+        <div class="sb-icon">${sp.photo ? `<img src="${sp.photo}" alt="${escapeHtml(sp.name)}">` : `<i class="fa-solid fa-star"></i>`}</div>
+        <div class="sb-name">${escapeHtml(sp.name)}</div>
+      `;
+      strip.appendChild(badge);
+    });
+  }
+
   /* ===== RENDER: SPONSORS PAGE ===== */
   function renderSponsorsPage(){
     const grid = document.getElementById('sponsorsGrid');
@@ -1033,6 +1227,7 @@
     renderChampionPage();
     renderHomeStatus();
     renderTracker();
+    renderHomeSponsors();
     renderSponsorsPage();
     renderCommitteePage();
     bindDynamicEvents();
@@ -1132,8 +1327,28 @@
   document.querySelectorAll('.quick-card').forEach(card => {
     card.addEventListener('click', () => goToPage(card.getAttribute('data-goto')));
   });
-  document.querySelectorAll('.drawer-item').forEach(item => {
+  document.querySelectorAll('.drawer-item[data-goto]').forEach(item => {
     item.addEventListener('click', () => goToPage(item.getAttribute('data-goto')));
+  });
+  document.querySelectorAll('.hsh-link[data-goto]').forEach(link => {
+    link.addEventListener('click', () => goToPage(link.getAttribute('data-goto')));
+  });
+
+  /* ===== INFO MODALS (Hadiah Pemenang / Race Off) ===== */
+  function openInfoModal(id){ document.getElementById(id).classList.add('open'); }
+  function closeInfoModal(id){ document.getElementById(id).classList.remove('open'); }
+  document.querySelectorAll('[data-modal]').forEach(el => {
+    el.addEventListener('click', () => {
+      openInfoModal(el.getAttribute('data-modal'));
+      closeDrawer();
+    });
+  });
+  document.querySelectorAll('[data-close-modal]').forEach(btn => {
+    btn.addEventListener('click', () => closeInfoModal(btn.getAttribute('data-close-modal')));
+  });
+  ['prizeModal','raceoffModal'].forEach(id => {
+    const overlay = document.getElementById(id);
+    overlay.addEventListener('click', (e) => { if(e.target === overlay) closeInfoModal(id); });
   });
 
   /* ===== BURGER DRAWER TOGGLE ===== */
