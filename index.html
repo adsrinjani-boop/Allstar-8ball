@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<title>TURNAMENT BILLIARD — RAINBOW SL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --panel:rgba(15,20,32,0.86);
+    --panel-solid:#0f1420;
+    --line: rgba(255,255,255,0.12);
+    --line-strong: rgba(255,255,255,0.2);
+    --blue:#3b82f6;
+    --blue-line: rgba(59,130,246,0.45);
+    --gold:#fbbf24;
+    --gold-dim: rgba(251,191,36,0.16);
+    --gold-line: rgba(251,191,36,0.45);
+    --text-hi:#ffffff;
+    --text-mid:#d7dae2;
+    --text-muted:#a8adba;
+    --radius-lg:18px;
+    --radius-md:12px;
+    --radius-sm:8px;
+    --nav-h:72px;
+  }
+  *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body{ margin:0; padding:0; }
+  body{
+    font-family:'Plus Jakarta Sans', -apple-system, sans-serif;
+    color:var(--text-hi);
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+    background-image:
+      linear-gradient(180deg, rgba(4,6,10,0.32), rgba(4,6,10,0.4)),
+      url('https://i.imgur.com/N4ngRsc.jpeg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    padding-bottom: calc(var(--nav-h) + 18px);
+  }
+  .mono{ font-family:'Space Mono', monospace; }
+  ::-webkit-scrollbar{ height:7px; width:7px; }
+  ::-webkit-scrollbar-thumb{ background:rgba(59,130,246,0.35); border-radius:10px; }
+  ::-webkit-scrollbar-track{ background:transparent; }
+
+  /* ===== TOP MINI HEADER ===== */
+  .topbar{
+    position:sticky; top:0; z-index:60;
+    background:rgba(8,10,16,0.68);
+    backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
+    border-bottom:1px solid var(--line);
+    padding:12px 14px;
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+  }
+  .topbar-brand{ display:flex; align-items:center; gap:9px; margin:0 auto; }
+  .topbar-side{ width:40px; display:flex; }
+  .ball8{
+    width:30px; height:30px; min-width:30px; border-radius:50%;
+    background: radial-gradient(circle at 32% 28%, #3a3a3a 0%, #111214 55%, #050506 100%);
+    position:relative;
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.08), 0 0 14px 2px rgba(251,191,36,0.25);
+  }
+  .ball8::before{
+    content:''; position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+    width:15px; height:15px; border-radius:50%;
+    background: radial-gradient(circle at 35% 30%, #ffffff, #eceef1 55%, #d8dade 100%);
+  }
+  .ball8::after{
+    content:'8'; position:absolute; left:50%; top:50%; transform:translate(-50%,-56%);
+    font-family:'Space Mono', monospace; font-weight:700; font-size:8px; color:#0d0e11;
+  }
+  .topbar-title{ font-size:13px; font-weight:800; letter-spacing:2px; color:var(--text-hi); white-space:nowrap; }
+  .topbar-title span{ color:var(--gold); }
+
+  .burger-btn{
+    width:40px; height:40px; border-radius:12px;
+    background:rgba(255,255,255,0.06); border:1px solid var(--line-strong);
+    display:flex; align-items:center; justify-content:center; cursor:pointer;
+    flex-direction:column; gap:3.5px;
+  }
+  .burger-btn span{ width:17px; height:2px; background:var(--text-hi); border-radius:2px; }
+  .burger-btn:active{ transform:scale(0.94); }
+
+  /* ===== PAGE WRAP ===== */
+  .page{ display:none; max-width:900px; margin:0 auto; padding:20px 16px 10px; animation:fadeIn .25s ease; }
+  .page.active{ display:block; }
+  @keyframes fadeIn{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+
+  /* ===== HERO (home) ===== */
+  .hero{ text-align:center; padding:14px 4px 6px; }
+  .hero-eyebrow{ font-size:11.5px; letter-spacing:5px; color:var(--text-mid); font-weight:700; text-shadow:0 2px 8px rgba(0,0,0,0.6); }
+  .hero-title{
+    font-size:clamp(34px,11vw,56px); font-weight:900; letter-spacing:1px; line-height:1;
+    margin:8px 0 14px;
+    background:linear-gradient(90deg,#ff5e5e,#ffb84d,#ffe066,#7ee787,#4dd0e1,#7b8cff,#e07bff);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    filter:drop-shadow(0 4px 18px rgba(0,0,0,0.5));
+  }
+  .chips{ display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin-bottom:22px; }
+  .chip{
+    font-size:11px; font-weight:700; letter-spacing:0.5px; color:var(--text-hi);
+    background:rgba(59,130,246,0.28); border:1px solid var(--blue-line);
+    padding:6px 12px; border-radius:999px; backdrop-filter:blur(6px);
+  }
+  .chip.gold{ background:rgba(251,191,36,0.28); border-color:var(--gold-line); color:var(--gold); }
+
+  .quick-grid{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:6px; }
+  .quick-card{
+    background:var(--panel); border:1px solid var(--line); border-radius:var(--radius-lg);
+    padding:18px 14px; text-align:center; cursor:pointer; backdrop-filter:blur(10px);
+  }
+  .quick-card:active{ transform:scale(0.97); }
+  .quick-card .qi{ font-size:26px; margin-bottom:8px; }
+  .quick-card .qt{ font-size:12.5px; font-weight:800; letter-spacing:0.3px; }
+  .quick-card .qs{ font-size:10.5px; color:var(--text-muted); margin-top:3px; }
+
+  .status-banner{
+    margin-top:18px; background:var(--panel); border:1px solid var(--gold-line);
+    border-radius:var(--radius-lg); padding:14px 16px; display:flex; align-items:center; gap:12px;
+    backdrop-filter:blur(10px);
+  }
+  .status-banner .si{ font-size:24px; }
+  .status-banner .st{ font-size:12px; color:var(--text-muted); font-weight:700; letter-spacing:1px; }
+  .status-banner .sv{ font-size:15px; font-weight:800; color:var(--gold); margin-top:2px; }
+
+  /* ===== SECTION LABEL ===== */
+  .page-title{ font-size:20px; font-weight:800; margin:0 0 4px; text-shadow:0 2px 10px rgba(0,0,0,0.5); }
+  .page-sub{ font-size:12.5px; color:var(--text-mid); margin:0 0 18px; text-shadow:0 2px 8px rgba(0,0,0,0.5); }
+
+  /* ===== BAGAN (IMAGE) PAGE ===== */
+  .bracket-image-wrap{
+    background:var(--panel); border:1px solid var(--line); border-radius:var(--radius-lg);
+    padding:10px; overflow:auto; cursor:zoom-in; backdrop-filter:blur(10px);
+  }
+  .bracket-image-wrap img{ width:100%; display:block; border-radius:10px; }
+  .zoom-hint{ text-align:center; font-size:11px; color:var(--text-mid); margin-top:10px; }
+
+  .lightbox{
+    position:fixed; inset:0; background:rgba(4,6,10,0.94); z-index:200;
+    display:none; align-items:center; justify-content:center; padding:14px;
+  }
+  .lightbox.open{ display:flex; }
+  .lightbox img{ max-width:100%; max-height:100%; touch-action:pinch-zoom; border-radius:8px; }
+  .lightbox-close{
+    position:fixed; top:16px; right:16px; width:40px; height:40px; border-radius:50%;
+    background:rgba(255,255,255,0.1); border:1px solid var(--line-strong); color:#fff;
+    font-size:18px; display:flex; align-items:center; justify-content:center; cursor:pointer;
+  }
+
+  /* ===== PARTICIPANTS PAGE ===== */
+  .participant-list{ display:flex; flex-direction:column; gap:8px; }
+  .participant-row{ display:flex; align-items:center; gap:10px; }
+  .participant-row .pnum{
+    width:30px; min-width:30px; text-align:center; font-family:'Space Mono',monospace;
+    font-size:11px; color:var(--text-muted); font-weight:700;
+    background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:9px 0;
+  }
+  .participant-row input{
+    flex:1; background:var(--panel); border:1px solid var(--line-strong); border-radius:var(--radius-sm);
+    padding:11px 12px; color:var(--text-hi); font-size:13.5px; outline:none; font-family:'Plus Jakarta Sans', sans-serif;
+  }
+  .participant-row input:focus{ border-color:var(--blue); }
+  .save-row{ margin-top:16px; display:flex; gap:10px; }
+
+  /* ===== SCORES PAGE ===== */
+  .round-block{ margin-bottom:22px; }
+  .round-block-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+  .round-block-head h3{ margin:0; font-size:13px; letter-spacing:1.5px; text-transform:uppercase; color:var(--gold); font-weight:800; }
+  .round-block-head span{ font-size:10.5px; color:var(--text-mid); font-weight:700; }
+
+  .bracket-match{
+    background:var(--panel); border:1px solid var(--line); border-radius:var(--radius-md);
+    overflow:hidden; cursor:pointer; margin-bottom:9px; transition:transform .1s ease; backdrop-filter:blur(10px);
+  }
+  .bracket-match:active{ transform:scale(0.985); }
+  .bracket-match.disabled{ cursor:default; opacity:0.55; }
+  .bracket-match.completed{ border-color:var(--gold-line); }
+  .bm-team{ display:flex; align-items:center; justify-content:space-between; padding:11px 13px; gap:8px; }
+  .bm-team + .bm-team{ border-top:1px solid var(--line); }
+  .bm-name{ font-size:13px; font-weight:600; color:var(--text-mid); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .bm-team.tbd .bm-name{ color:var(--text-muted); font-style:italic; }
+  .bm-team.winner .bm-name{ color:var(--text-hi); font-weight:800; }
+  .bm-score{ min-width:24px; text-align:center; font-family:'Space Mono',monospace; font-weight:700; font-size:14px; color:var(--text-muted); }
+  .bm-team.winner .bm-score{ color:var(--gold); }
+
+  /* ===== CHAMPION PAGE ===== */
+  .champion-wrap{ text-align:center; padding:30px 10px; }
+  .trophy-icon-big{ font-size:64px; filter:drop-shadow(0 8px 20px rgba(0,0,0,0.5)); margin-bottom:14px; }
+  .trophy-label{ font-size:12px; letter-spacing:3px; color:var(--text-mid); font-weight:700; margin-bottom:10px; }
+  .trophy-name-big{ font-size:26px; font-weight:900; color:var(--gold); min-height:34px; }
+  .trophy-empty{ font-size:14px; color:var(--text-mid); margin-top:10px; }
+
+  /* ===== RULES PAGE ===== */
+  .info-panel{ background:var(--panel); border:1px solid var(--line); border-radius:var(--radius-lg); padding:16px 18px; backdrop-filter:blur(10px); margin-bottom:14px; }
+  .info-panel h3{ margin:0 0 12px; font-size:12px; letter-spacing:2px; text-transform:uppercase; color:var(--gold); font-weight:800; }
+  .info-panel ul{ margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:9px; }
+  .info-panel li{ font-size:13.5px; color:var(--text-mid); display:flex; gap:8px; align-items:flex-start; }
+  .info-panel li::before{ content:'●'; color:var(--blue); font-size:7px; margin-top:6px; }
+
+  /* ===== SPONSOR / COMMITTEE CARDS ===== */
+  .people-grid{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  @media(min-width:560px){ .people-grid{ grid-template-columns:1fr 1fr 1fr; } }
+  .people-card{
+    background:var(--panel); border:1px solid var(--line); border-radius:var(--radius-lg);
+    padding:16px 10px; text-align:center; backdrop-filter:blur(10px);
+    display:flex; flex-direction:column; align-items:center; gap:8px; position:relative;
+  }
+  .avatar{
+    width:66px; height:66px; border-radius:50%; overflow:hidden; cursor:pointer;
+    background:linear-gradient(135deg, rgba(59,130,246,0.25), rgba(251,191,36,0.2));
+    border:1px solid var(--line-strong);
+    display:flex; align-items:center; justify-content:center; position:relative;
+  }
+  .avatar img{ width:100%; height:100%; object-fit:cover; }
+  .avatar .avatar-icon{ font-size:22px; opacity:0.75; }
+  .avatar .avatar-edit{
+    position:absolute; bottom:-2px; right:-2px; width:22px; height:22px; border-radius:50%;
+    background:var(--gold); color:#1a1400; font-size:11px; display:flex; align-items:center; justify-content:center;
+    border:2px solid var(--panel-solid);
+  }
+  .people-card .pname{ font-size:12.5px; font-weight:800; color:var(--text-hi); line-height:1.3; }
+  .people-card .prole{ font-size:10.5px; color:var(--text-muted); font-weight:600; }
+  .people-card input.name-edit{
+    width:100%; text-align:center; background:transparent; border:none; border-bottom:1px dashed var(--line-strong);
+    color:var(--text-hi); font-size:12.5px; font-weight:700; padding:4px 2px; outline:none; font-family:'Plus Jakarta Sans', sans-serif;
+  }
+  .people-card input.name-edit:focus{ border-color:var(--gold); }
+  .people-card .remove-btn{
+    position:absolute; top:6px; right:6px; width:20px; height:20px; border-radius:50%;
+    background:rgba(248,113,113,0.18); border:1px solid rgba(248,113,113,0.4); color:#fca5a5;
+    font-size:10px; display:flex; align-items:center; justify-content:center; cursor:pointer;
+  }
+  .add-person-btn{
+    background:var(--panel); border:1px dashed var(--line-strong); border-radius:var(--radius-lg);
+    padding:16px; text-align:center; cursor:pointer; color:var(--text-mid); font-size:12.5px; font-weight:700;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; min-height:150px;
+  }
+  .add-person-btn .qi{ font-size:22px; }
+  .add-person-btn:active{ transform:scale(0.97); }
+
+  .reset-row{ display:flex; justify-content:center; margin-top:22px; }
+  .reset-btn{
+    background:transparent; border:1px solid rgba(248,113,113,0.4); color:#fca5a5;
+    padding:10px 20px; border-radius:999px; font-size:12.5px; font-weight:700; cursor:pointer;
+    font-family:'Plus Jakarta Sans', sans-serif;
+  }
+
+  .btn{ padding:13px 16px; border-radius:var(--radius-md); border:none; font-weight:700; font-size:13.5px; cursor:pointer; font-family:'Plus Jakarta Sans', sans-serif; }
+  .btn:active{ transform:scale(0.98); }
+  .btn-primary{ background:linear-gradient(180deg,#fdd35c,var(--gold)); color:#1a1400; flex:1; }
+  .btn-ghost{ background:transparent; color:var(--text-mid); border:1px solid var(--line-strong); flex:1; }
+
+  /* ===== SCORE MODAL ===== */
+  .modal-overlay{
+    position:fixed; inset:0; background:rgba(4,6,10,0.78);
+    backdrop-filter:blur(4px); display:none; align-items:flex-end; justify-content:center; z-index:150;
+  }
+  .modal-overlay.open{ display:flex; }
+  @media(min-width:640px){ .modal-overlay{ align-items:center; } }
+  .modal-box{
+    width:100%; max-width:420px; background:linear-gradient(180deg,#151b29,#0e1320);
+    border:1px solid var(--line-strong); border-radius:22px 22px 0 0; padding:22px 20px 26px;
+    animation:slideUp .2s ease; max-height:88vh; overflow-y:auto;
+  }
+  @media(min-width:640px){ .modal-box{ border-radius:18px; } }
+  @keyframes slideUp{ from{ transform:translateY(24px); opacity:0;} to{ transform:translateY(0); opacity:1;} }
+  .modal-title{ font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--gold); font-weight:700; margin-bottom:4px; }
+  .modal-subtitle{ font-size:16px; font-weight:800; margin-bottom:18px; }
+  .score-input-row{ display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:12px; margin-bottom:16px; }
+  .score-input-col{ display:flex; flex-direction:column; align-items:center; gap:10px; }
+  .score-input-col label{ font-size:12px; font-weight:700; color:var(--text-mid); text-align:center; min-height:32px; display:flex; align-items:center; justify-content:center; }
+  .score-input-col input{
+    width:72px; height:60px; text-align:center; font-family:'Space Mono',monospace; font-size:24px; font-weight:700;
+    background:#05070c; color:var(--gold); border:1px solid var(--line-strong); border-radius:var(--radius-md); outline:none;
+  }
+  .score-input-col input:focus{ border-color:var(--gold); box-shadow:0 0 0 3px rgba(251,191,36,0.12); }
+  .vs-label{ color:var(--text-muted); font-weight:700; font-size:13px; }
+  .race-hint{ text-align:center; font-size:11.5px; color:var(--text-muted); margin-bottom:18px; }
+  .modal-actions{ display:flex; gap:10px; }
+
+  .toast{
+    position:fixed; left:50%; bottom:calc(var(--nav-h) + 14px); transform:translateX(-50%) translateY(20px);
+    background:#141a28; border:1px solid var(--gold-line); color:var(--text-hi);
+    padding:11px 20px; border-radius:999px; font-size:13px; font-weight:600;
+    opacity:0; pointer-events:none; transition:all .25s ease; z-index:250;
+    box-shadow:0 8px 24px rgba(0,0,0,0.4); max-width:88vw; text-align:center;
+  }
+  .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+
+  /* ===== BOTTOM NAV ===== */
+  .bottom-nav{
+    position:fixed; left:0; right:0; bottom:0; z-index:120;
+    height:var(--nav-h);
+    background:rgba(8,10,16,0.85);
+    backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px);
+    border-top:1px solid var(--line);
+    display:flex; align-items:stretch; justify-content:space-around;
+    padding-bottom:env(safe-area-inset-bottom);
+  }
+  .nav-btn{
+    flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:3px; background:none; border:none; color:var(--text-muted); cursor:pointer;
+    font-family:'Plus Jakarta Sans', sans-serif; padding:6px 2px;
+  }
+  .nav-btn .ni{ font-size:19px; line-height:1; }
+  .nav-btn .nt{ font-size:9.5px; font-weight:700; letter-spacing:0.3px; }
+  .nav-btn.active{ color:var(--gold); }
+  .nav-btn.active .ni{ transform:translateY(-1px); filter:drop-shadow(0 0 8px rgba(251,191,36,0.5)); }
+  .nav-btn:active{ opacity:0.7; }
+
+  /* ===== BURGER DRAWER ===== */
+  .drawer-overlay{
+    position:fixed; inset:0; background:rgba(4,6,10,0.6); z-index:180;
+    display:none; backdrop-filter:blur(3px);
+  }
+  .drawer-overlay.open{ display:block; }
+  .drawer{
+    position:fixed; top:0; right:0; bottom:0; width:78%; max-width:320px; z-index:190;
+    background:linear-gradient(180deg,#12172480,#0b0f19f2);
+    background-color:#0d1220; border-left:1px solid var(--line-strong);
+    transform:translateX(100%); transition:transform .25s ease;
+    display:flex; flex-direction:column; padding:20px 16px;
+  }
+  .drawer.open{ transform:translateX(0); }
+  .drawer-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:18px; }
+  .drawer-head .dt{ font-size:12px; letter-spacing:2px; font-weight:800; color:var(--gold); text-transform:uppercase; }
+  .drawer-close{
+    width:32px; height:32px; border-radius:50%; background:rgba(255,255,255,0.08); border:1px solid var(--line-strong);
+    color:#fff; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:15px;
+  }
+  .drawer-item{
+    display:flex; align-items:center; gap:12px; padding:14px 10px; border-radius:var(--radius-md);
+    background:rgba(255,255,255,0.03); border:1px solid var(--line); margin-bottom:10px; cursor:pointer;
+  }
+  .drawer-item:active{ transform:scale(0.98); }
+  .drawer-item .di{ font-size:19px; }
+  .drawer-item .dl{ font-size:13.5px; font-weight:700; color:var(--text-hi); }
+</style>
+</head>
+<body>
+
+  <div class="topbar">
+    <div class="topbar-side"></div>
+    <div class="topbar-brand">
+      <div class="ball8"></div>
+      <span class="topbar-title">RAINBOW <span>SL</span></span>
+    </div>
+    <div class="topbar-side" style="justify-content:flex-end;">
+      <div class="burger-btn" id="burgerBtn"><span></span><span></span><span></span></div>
+    </div>
+  </div>
+
+  <!-- ===== PAGE: HOME ===== -->
+  <section class="page active" id="page-home">
+    <div class="hero">
+      <div class="hero-eyebrow">TURNAMENT BILLIARD</div>
+      <div class="hero-title">RAINBOW SL</div>
+      <div class="chips">
+        <span class="chip">8 BALL</span>
+        <span class="chip">32 PESERTA</span>
+        <span class="chip">16 TEAM</span>
+        <span class="chip">SISTEM GUGUR</span>
+        <span class="chip gold">RACE TO 2</span>
+      </div>
+    </div>
+
+    <div class="quick-grid">
+      <div class="quick-card" data-goto="bracket">
+        <div class="qi">🗂️</div>
+        <div class="qt">Bagan Turnamen</div>
+        <div class="qs">Lihat struktur bracket</div>
+      </div>
+      <div class="quick-card" data-goto="scores">
+        <div class="qi">🎱</div>
+        <div class="qt">Input Skor</div>
+        <div class="qs">Catat hasil pertandingan</div>
+      </div>
+      <div class="quick-card" data-goto="participants">
+        <div class="qi">✏️</div>
+        <div class="qt">Atur Peserta</div>
+        <div class="qs">Ubah 32 nama tim</div>
+      </div>
+      <div class="quick-card" data-goto="champion">
+        <div class="qi">🏆</div>
+        <div class="qt">Juara</div>
+        <div class="qs">Lihat pemenang akhir</div>
+      </div>
+    </div>
+
+    <div class="status-banner">
+      <div class="si">🏆</div>
+      <div>
+        <div class="st">STATUS JUARA SAAT INI</div>
+        <div class="sv" id="homeChampionStatus">Belum ditentukan</div>
+      </div>
+    </div>
+
+    <div class="reset-row">
+      <button class="reset-btn" id="resetBtn">↺ Reset Turnamen</button>
+    </div>
+  </section>
+
+  <!-- ===== PAGE: BAGAN (IMAGE) ===== -->
+  <section class="page" id="page-bracket">
+    <div class="page-title">Bagan Turnamen</div>
+    <div class="page-sub">Struktur bracket 32 peserta — sistem gugur, race to 2</div>
+    <div class="bracket-image-wrap" id="bracketImgWrap">
+      <img src="https://i.imgur.com/9dstLbM.png" alt="Bagan Turnamen Billiard Rainbow SL">
+    </div>
+    <div class="zoom-hint">Ketuk gambar untuk memperbesar (pinch-to-zoom didukung)</div>
+  </section>
+
+  <!-- ===== PAGE: PARTICIPANTS ===== -->
+  <section class="page" id="page-participants">
+    <div class="page-title">Atur Peserta</div>
+    <div class="page-sub">Ubah nama 32 tim / pemain yang bertanding</div>
+    <div class="participant-list" id="participantsList"></div>
+    <div class="save-row">
+      <button class="btn btn-primary" id="pSaveBtn">Simpan Semua Nama</button>
+    </div>
+  </section>
+
+  <!-- ===== PAGE: SCORES ===== -->
+  <section class="page" id="page-scores">
+    <div class="page-title">Input Skor Pertandingan</div>
+    <div class="page-sub">Ketuk kotak pertandingan untuk memasukkan hasil (race to 2)</div>
+    <div id="scoresContainer"></div>
+  </section>
+
+  <!-- ===== PAGE: CHAMPION ===== -->
+  <section class="page" id="page-champion">
+    <div class="page-title">Juara Turnamen</div>
+    <div class="page-sub">Pemenang Grand Final akan tampil di sini</div>
+    <div class="champion-wrap">
+      <div class="trophy-icon-big">🏆</div>
+      <div class="trophy-label">JUARA RAINBOW SL</div>
+      <div class="trophy-name-big" id="championName">—</div>
+      <div class="trophy-empty" id="championEmptyNote">Selesaikan semua babak hingga Grand Final untuk menentukan juara.</div>
+    </div>
+  </section>
+
+  <!-- ===== PAGE: RULES ===== -->
+  <section class="page" id="page-rules">
+    <div class="page-title">Aturan Pertandingan</div>
+    <div class="page-sub">Ketentuan &amp; tata tertib turnamen Rainbow SL</div>
+    <div class="info-panel">
+      <h3>Catatan</h3>
+      <ul>
+        <li>Hadir 15 menit sebelum pertandingan</li>
+        <li>Sportifitas diutamakan</li>
+        <li>Jaga ketertiban &amp; kebersihan</li>
+        <li>Good luck &amp; have fun</li>
+      </ul>
+    </div>
+    <div class="info-panel">
+      <h3>Keterangan</h3>
+      <ul>
+        <li>Sistem Gugur (Single Elimination)</li>
+        <li>Jenis Permainan: 8 Ball</li>
+        <li>Jumlah Team: 16 &nbsp;·&nbsp; Jumlah Peserta: 32</li>
+        <li>Semua pertandingan Race To 2</li>
+        <li>Keputusan wasit bersifat mutlak</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===== PAGE: SPONSOR ===== -->
+  <section class="page" id="page-sponsors">
+    <div class="page-title">Sponsor</div>
+    <div class="page-sub">Terima kasih kepada seluruh sponsor Rainbow SL — ketuk foto untuk mengunggah logo/foto sponsor</div>
+    <div class="people-grid" id="sponsorsGrid"></div>
+  </section>
+
+  <!-- ===== PAGE: COMMITTEE ===== -->
+  <section class="page" id="page-committee">
+    <div class="page-title">Pengurus / Penanggung Jawab</div>
+    <div class="page-sub">Susunan panitia &amp; penanggung jawab pertandingan — ketuk foto untuk unggah, ketuk nama untuk mengubah</div>
+    <div class="people-grid" id="committeeGrid"></div>
+  </section>
+
+  <!-- ===== BOTTOM NAVIGATION ===== -->
+  <nav class="bottom-nav">
+    <button class="nav-btn active" data-page="home"><span class="ni">🏠</span><span class="nt">Beranda</span></button>
+    <button class="nav-btn" data-page="bracket"><span class="ni">🗂️</span><span class="nt">Bagan</span></button>
+    <button class="nav-btn" data-page="scores"><span class="ni">🎱</span><span class="nt">Skor</span></button>
+    <button class="nav-btn" data-page="participants"><span class="ni">✏️</span><span class="nt">Peserta</span></button>
+    <button class="nav-btn" data-page="champion"><span class="ni">🏆</span><span class="nt">Juara</span></button>
+  </nav>
+
+  <!-- ===== BURGER DRAWER ===== -->
+  <div class="drawer-overlay" id="drawerOverlay"></div>
+  <div class="drawer" id="drawer">
+    <div class="drawer-head">
+      <span class="dt">Menu Lainnya</span>
+      <div class="drawer-close" id="drawerClose">✕</div>
+    </div>
+    <div class="drawer-item" data-goto="rules"><span class="di">📜</span><span class="dl">Aturan Pertandingan</span></div>
+    <div class="drawer-item" data-goto="sponsors"><span class="di">🤝</span><span class="dl">Sponsor</span></div>
+    <div class="drawer-item" data-goto="committee"><span class="di">🧑‍💼</span><span class="dl">Pengurus / Penanggung Jawab</span></div>
+  </div>
+
+  <!-- LIGHTBOX for bracket image -->
+  <div class="lightbox" id="lightbox">
+    <div class="lightbox-close" id="lightboxClose">✕</div>
+    <img src="https://i.imgur.com/9dstLbM.png" alt="Bagan Turnamen (perbesar)">
+  </div>
+
+  <!-- SCORE MODAL -->
+  <div class="modal-overlay" id="scoreModal">
+    <div class="modal-box">
+      <div class="modal-title" id="scModalRound">BABAK 32 BESAR</div>
+      <div class="modal-subtitle" id="scModalMatchLabel">Team 01 vs Team 02</div>
+      <div class="score-input-row">
+        <div class="score-input-col">
+          <label id="scLabel1">Team 01</label>
+          <input type="number" min="0" max="2" id="scInput1" inputmode="numeric" placeholder="0">
+        </div>
+        <div class="vs-label">VS</div>
+        <div class="score-input-col">
+          <label id="scLabel2">Team 02</label>
+          <input type="number" min="0" max="2" id="scInput2" inputmode="numeric" placeholder="0">
+        </div>
+      </div>
+      <div class="race-hint">Race to 2 — salah satu tim harus mencapai skor 2 untuk menang</div>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" id="scCancel">Batal</button>
+        <button class="btn btn-primary" id="scSave">Simpan Hasil</button>
+      </div>
+    </div>
+  </div>
+
+  <input type="file" accept="image/*" id="photoFileInput" style="display:none;">
+
+  <div class="toast" id="toast">Tersimpan</div>
+
+<script>
+(function(){
+  "use strict";
+
+  const STORAGE_KEY = "rainbow_sl_bracket_v3";
+
+  const ROUND_DEFS = [
+    { key:'r32',  label:'BABAK 32 BESAR',            sub:'16 Pertandingan', matches:16 },
+    { key:'r16',  label:'BABAK 16 BESAR',             sub:'8 Pertandingan',  matches:8  },
+    { key:'qf',   label:'PEREMPAT FINAL (8 BESAR)',   sub:'4 Pertandingan',  matches:4  },
+    { key:'sf',   label:'SEMI FINAL (4 BESAR)',       sub:'2 Pertandingan',  matches:2  },
+    { key:'final',label:'FINAL (GRAND FINAL)',        sub:'1 Pertandingan',  matches:1  },
+  ];
+
+  const SPONSOR_NAMES = [
+    "KO BOBY","KO ANDRE","KO BERNANDO","KO ROBERT","NINE PARFUM",
+    "JASTIP ANDRIAN","JASTIP CHITATO","CHITATO STORE","D LUCKY PERFUME","URBAN CLOUD"
+  ];
+
+  const DEFAULT_COMMITTEE = [
+    { name:"", role:"Penanggung Jawab Turnamen", photo:null },
+    { name:"", role:"Wasit Utama", photo:null },
+    { name:"", role:"Panitia Pelaksana", photo:null }
+  ];
+
+  function pad(n){ return n < 10 ? '0'+n : ''+n; }
+
+  function buildDefaultTeams(){
+    const teams = [];
+    for(let i=1;i<=32;i++) teams.push('TEAM ' + pad(i));
+    return teams;
+  }
+  function buildDefaultRounds(){
+    return ROUND_DEFS.map(def => ({
+      matches: Array.from({length:def.matches}, () => ({ s1:null, s2:null }))
+    }));
+  }
+  function buildDefaultSponsors(){
+    return SPONSOR_NAMES.map(name => ({ name, photo:null }));
+  }
+  function buildDefaultCommittee(){
+    return DEFAULT_COMMITTEE.map(p => ({ ...p }));
+  }
+  function buildDefaultState(){
+    return {
+      teams: buildDefaultTeams(),
+      rounds: buildDefaultRounds(),
+      sponsors: buildDefaultSponsors(),
+      committee: buildDefaultCommittee()
+    };
+  }
+
+  function loadState(){
+    try{
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if(!raw) return buildDefaultState();
+      const parsed = JSON.parse(raw);
+      if(!parsed || !Array.isArray(parsed.teams) || parsed.teams.length !== 32 || !Array.isArray(parsed.rounds) || parsed.rounds.length !== ROUND_DEFS.length){
+        return buildDefaultState();
+      }
+      if(!Array.isArray(parsed.sponsors) || parsed.sponsors.length !== SPONSOR_NAMES.length){
+        parsed.sponsors = buildDefaultSponsors();
+      }
+      if(!Array.isArray(parsed.committee)){
+        parsed.committee = buildDefaultCommittee();
+      }
+      return parsed;
+    }catch(e){ return buildDefaultState(); }
+  }
+  function saveState(){
+    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(e){ showToast('Penyimpanan penuh — coba hapus beberapa foto'); }
+  }
+
+  let state = loadState();
+
+  /* ===== BRACKET RESOLUTION LOGIC ===== */
+  function getMatchWinnerSlot(r, m){
+    const match = state.rounds[r].matches[m];
+    if(match.s1 === null || match.s2 === null || match.s1 === '' || match.s2 === '') return null;
+    const s1 = Number(match.s1), s2 = Number(match.s2);
+    if(Math.max(s1,s2) < 2) return null;
+    if(s1 === s2) return null;
+    return s1 > s2 ? 0 : 1;
+  }
+  function getTeamForSlot(r, m, slot){
+    if(r === 0){
+      const idx = m*2 + slot;
+      return { ready:true, name: state.teams[idx] };
+    }
+    const prevRound = r - 1;
+    const prevMatchIdx = m*2 + slot;
+    const winnerSlot = getMatchWinnerSlot(prevRound, prevMatchIdx);
+    if(winnerSlot === null) return { ready:false, name:'TBD' };
+    return getTeamForSlot(prevRound, prevMatchIdx, winnerSlot);
+  }
+  function isMatchPlayable(r, m){
+    const a = getTeamForSlot(r, m, 0);
+    const b = getTeamForSlot(r, m, 1);
+    return a.ready && b.ready;
+  }
+  function cascadeReset(r, m){
+    if(r + 1 >= state.rounds.length) return;
+    const nextMatchIdx = Math.floor(m/2);
+    const nextMatch = state.rounds[r+1].matches[nextMatchIdx];
+    if(nextMatch.s1 !== null || nextMatch.s2 !== null){
+      nextMatch.s1 = null; nextMatch.s2 = null;
+      cascadeReset(r+1, nextMatchIdx);
+    }
+  }
+  function getChampionName(){
+    const finalRound = ROUND_DEFS.length - 1;
+    const winnerSlot = getMatchWinnerSlot(finalRound, 0);
+    if(winnerSlot === null) return null;
+    return getTeamForSlot(finalRound, 0, winnerSlot).name;
+  }
+
+  function escapeHtml(str){
+    return String(str).replace(/[&<>"']/g, ch => ({
+      "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
+    }[ch]));
+  }
+
+  /* ===== RENDER: SCORES PAGE ===== */
+  function renderScoresPage(){
+    const container = document.getElementById('scoresContainer');
+    container.innerHTML = '';
+    ROUND_DEFS.forEach((def, r) => {
+      const block = document.createElement('div');
+      block.className = 'round-block';
+      block.innerHTML = `<div class="round-block-head"><h3>${def.label}</h3><span>${def.sub}</span></div>`;
+      const list = document.createElement('div');
+      for(let m=0; m<def.matches; m++){
+        list.appendChild(renderMatchCard(r, m));
+      }
+      block.appendChild(list);
+      container.appendChild(block);
+    });
+  }
+
+  function renderMatchCard(r, m){
+    const teamA = getTeamForSlot(r, m, 0);
+    const teamB = getTeamForSlot(r, m, 1);
+    const match = state.rounds[r].matches[m];
+    const playable = isMatchPlayable(r, m);
+    const winnerSlot = playable ? getMatchWinnerSlot(r, m) : null;
+    const completed = winnerSlot !== null;
+
+    const card = document.createElement('div');
+    card.className = 'bracket-match' + (playable ? '' : ' disabled') + (completed ? ' completed' : '');
+
+    const s1 = match.s1 === null ? '' : match.s1;
+    const s2 = match.s2 === null ? '' : match.s2;
+
+    card.innerHTML = `
+      <div class="bm-team ${!teamA.ready ? 'tbd' : ''} ${completed && winnerSlot===0 ? 'winner' : ''}">
+        <span class="bm-name">${escapeHtml(teamA.name)}</span>
+        <span class="bm-score">${s1 !== '' ? s1 : (teamA.ready ? '-' : '')}</span>
+      </div>
+      <div class="bm-team ${!teamB.ready ? 'tbd' : ''} ${completed && winnerSlot===1 ? 'winner' : ''}">
+        <span class="bm-name">${escapeHtml(teamB.name)}</span>
+        <span class="bm-score">${s2 !== '' ? s2 : (teamB.ready ? '-' : '')}</span>
+      </div>
+    `;
+
+    if(playable){
+      card.addEventListener('click', () => openScoreModal(r, m));
+    } else {
+      card.addEventListener('click', () => showToast('Peserta belum ditentukan — selesaikan babak sebelumnya dahulu'));
+    }
+    return card;
+  }
+
+  /* ===== RENDER: PARTICIPANTS PAGE ===== */
+  function renderParticipantsPage(){
+    const list = document.getElementById('participantsList');
+    list.innerHTML = '';
+    state.teams.forEach((name, idx) => {
+      const row = document.createElement('div');
+      row.className = 'participant-row';
+      row.innerHTML = `
+        <span class="pnum mono">${pad(idx+1)}</span>
+        <input type="text" data-idx="${idx}" value="${escapeHtml(name)}" maxlength="24" placeholder="TEAM ${pad(idx+1)}">
+      `;
+      list.appendChild(row);
+    });
+  }
+
+  document.getElementById('pSaveBtn').addEventListener('click', () => {
+    const inputs = document.querySelectorAll('#participantsList input[data-idx]');
+    inputs.forEach(inp => {
+      const idx = Number(inp.getAttribute('data-idx'));
+      const val = inp.value.trim();
+      state.teams[idx] = val === '' ? ('TEAM ' + pad(idx+1)) : val;
+    });
+    saveState();
+    renderEverything();
+    showToast('Nama peserta tersimpan');
+  });
+
+  /* ===== RENDER: SPONSORS PAGE ===== */
+  function renderSponsorsPage(){
+    const grid = document.getElementById('sponsorsGrid');
+    grid.innerHTML = '';
+    state.sponsors.forEach((sp, idx) => {
+      const card = document.createElement('div');
+      card.className = 'people-card';
+      card.innerHTML = `
+        <div class="avatar" data-kind="sponsor" data-idx="${idx}">
+          ${sp.photo ? `<img src="${sp.photo}" alt="${escapeHtml(sp.name)}">` : `<span class="avatar-icon">🖼️</span>`}
+          <span class="avatar-edit">＋</span>
+        </div>
+        <div class="pname">${escapeHtml(sp.name)}</div>
+      `;
+      grid.appendChild(card);
+    });
+  }
+
+  /* ===== RENDER: COMMITTEE PAGE ===== */
+  function renderCommitteePage(){
+    const grid = document.getElementById('committeeGrid');
+    grid.innerHTML = '';
+    state.committee.forEach((p, idx) => {
+      const card = document.createElement('div');
+      card.className = 'people-card';
+      card.innerHTML = `
+        <div class="remove-btn" data-kind="committee-remove" data-idx="${idx}">✕</div>
+        <div class="avatar" data-kind="committee" data-idx="${idx}">
+          ${p.photo ? `<img src="${p.photo}" alt="${escapeHtml(p.name || p.role)}">` : `<span class="avatar-icon">🧑</span>`}
+          <span class="avatar-edit">＋</span>
+        </div>
+        <input class="name-edit" data-kind="committee-name" data-idx="${idx}" type="text" value="${escapeHtml(p.name)}" placeholder="Nama Pengurus" maxlength="30">
+        <div class="prole">${escapeHtml(p.role)}</div>
+      `;
+      grid.appendChild(card);
+    });
+    const addBtn = document.createElement('div');
+    addBtn.className = 'add-person-btn';
+    addBtn.id = 'addCommitteeBtn';
+    addBtn.innerHTML = `<span class="qi">＋</span><span>Tambah Pengurus</span>`;
+    grid.appendChild(addBtn);
+    addBtn.addEventListener('click', () => {
+      state.committee.push({ name:'', role:'Pengurus', photo:null });
+      saveState();
+      renderCommitteePage();
+      bindDynamicEvents();
+    });
+  }
+
+  function bindDynamicEvents(){
+    document.querySelectorAll('.avatar[data-kind="sponsor"], .avatar[data-kind="committee"]').forEach(av => {
+      av.addEventListener('click', () => {
+        pendingPhotoTarget = { kind: av.getAttribute('data-kind'), idx: Number(av.getAttribute('data-idx')) };
+        document.getElementById('photoFileInput').click();
+      });
+    });
+    document.querySelectorAll('input[data-kind="committee-name"]').forEach(inp => {
+      inp.addEventListener('change', () => {
+        const idx = Number(inp.getAttribute('data-idx'));
+        state.committee[idx].name = inp.value.trim();
+        saveState();
+      });
+    });
+    document.querySelectorAll('[data-kind="committee-remove"]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const idx = Number(btn.getAttribute('data-idx'));
+        state.committee.splice(idx, 1);
+        saveState();
+        renderCommitteePage();
+        bindDynamicEvents();
+      });
+    });
+  }
+
+  /* ===== PHOTO UPLOAD (resize via canvas, store as dataURL) ===== */
+  let pendingPhotoTarget = null;
+  document.getElementById('photoFileInput').addEventListener('change', (e) => {
+    const file = e.target.files && e.target.files[0];
+    e.target.value = '';
+    if(!file || !pendingPhotoTarget) return;
+    const target = pendingPhotoTarget;
+    pendingPhotoTarget = null;
+
+    const reader = new FileReader();
+    reader.onload = function(ev){
+      const img = new Image();
+      img.onload = function(){
+        const maxDim = 240;
+        let w = img.width, h = img.height;
+        if(w > h){ if(w > maxDim){ h = Math.round(h * maxDim / w); w = maxDim; } }
+        else { if(h > maxDim){ w = Math.round(w * maxDim / h); h = maxDim; } }
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, w, h);
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.82);
+
+        if(target.kind === 'sponsor'){
+          state.sponsors[target.idx].photo = dataUrl;
+          saveState();
+          renderSponsorsPage();
+          bindDynamicEvents();
+        } else if(target.kind === 'committee'){
+          state.committee[target.idx].photo = dataUrl;
+          saveState();
+          renderCommitteePage();
+          bindDynamicEvents();
+        }
+        showToast('Foto tersimpan');
+      };
+      img.src = ev.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+
+  /* ===== RENDER: CHAMPION & HOME STATUS ===== */
+  function renderChampionPage(){
+    const champ = getChampionName();
+    document.getElementById('championName').textContent = champ ? champ : '—';
+    document.getElementById('championEmptyNote').style.display = champ ? 'none' : 'block';
+  }
+  function renderHomeStatus(){
+    const champ = getChampionName();
+    document.getElementById('homeChampionStatus').textContent = champ ? ('🏆 ' + champ) : 'Belum ditentukan';
+  }
+
+  function renderEverything(){
+    renderScoresPage();
+    renderParticipantsPage();
+    renderChampionPage();
+    renderHomeStatus();
+    renderSponsorsPage();
+    renderCommitteePage();
+    bindDynamicEvents();
+  }
+
+  /* ===== SCORE MODAL ===== */
+  let activeRound = null, activeMatch = null;
+  const scoreModal = document.getElementById('scoreModal');
+  const scModalRound = document.getElementById('scModalRound');
+  const scModalMatchLabel = document.getElementById('scModalMatchLabel');
+  const scLabel1 = document.getElementById('scLabel1');
+  const scLabel2 = document.getElementById('scLabel2');
+  const scInput1 = document.getElementById('scInput1');
+  const scInput2 = document.getElementById('scInput2');
+
+  function openScoreModal(r, m){
+    const teamA = getTeamForSlot(r, m, 0);
+    const teamB = getTeamForSlot(r, m, 1);
+    const match = state.rounds[r].matches[m];
+
+    activeRound = r; activeMatch = m;
+    scModalRound.textContent = ROUND_DEFS[r].label;
+    scModalMatchLabel.textContent = `${teamA.name} vs ${teamB.name}`;
+    scLabel1.textContent = teamA.name;
+    scLabel2.textContent = teamB.name;
+    scInput1.value = match.s1 !== null ? match.s1 : '';
+    scInput2.value = match.s2 !== null ? match.s2 : '';
+
+    scoreModal.classList.add('open');
+    setTimeout(() => scInput1.focus(), 150);
+  }
+  function closeScoreModal(){
+    scoreModal.classList.remove('open');
+    activeRound = null; activeMatch = null;
+  }
+  document.getElementById('scCancel').addEventListener('click', closeScoreModal);
+  scoreModal.addEventListener('click', (e) => { if(e.target === scoreModal) closeScoreModal(); });
+
+  document.getElementById('scSave').addEventListener('click', () => {
+    if(activeRound === null) return;
+    const v1 = scInput1.value.trim();
+    const v2 = scInput2.value.trim();
+    if(v1 === '' || v2 === ''){ showToast('Isi kedua skor terlebih dahulu'); return; }
+    const n1 = Number(v1), n2 = Number(v2);
+    if(isNaN(n1) || isNaN(n2) || n1 < 0 || n2 < 0 || n1 > 2 || n2 > 2){
+      showToast('Skor harus antara 0 - 2 (Race to 2)'); return;
+    }
+    if(Math.max(n1,n2) !== 2 || n1 === n2){
+      showToast('Skor belum valid — salah satu tim harus mencapai 2 untuk menang'); return;
+    }
+    const match = state.rounds[activeRound].matches[activeMatch];
+    match.s1 = n1; match.s2 = n2;
+    cascadeReset(activeRound, activeMatch);
+    saveState();
+    renderEverything();
+    closeScoreModal();
+    showToast('Hasil pertandingan tersimpan');
+  });
+
+  /* ===== LIGHTBOX (bracket image zoom) ===== */
+  const lightbox = document.getElementById('lightbox');
+  document.getElementById('bracketImgWrap').addEventListener('click', () => lightbox.classList.add('open'));
+  document.getElementById('lightboxClose').addEventListener('click', () => lightbox.classList.remove('open'));
+  lightbox.addEventListener('click', (e) => { if(e.target === lightbox) lightbox.classList.remove('open'); });
+
+  /* ===== TOAST ===== */
+  let toastTimer = null;
+  function showToast(msg){
+    const toast = document.getElementById('toast');
+    toast.textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove('show'), 2400);
+  }
+
+  /* ===== RESET ===== */
+  document.getElementById('resetBtn').addEventListener('click', () => {
+    const ok = window.confirm('Reset seluruh turnamen? Semua hasil pertandingan, nama peserta, foto sponsor, dan data pengurus akan dikembalikan ke awal. Tindakan ini tidak bisa dibatalkan.');
+    if(!ok) return;
+    state = buildDefaultState();
+    saveState();
+    renderEverything();
+    showToast('Turnamen berhasil di-reset');
+  });
+
+  /* ===== PAGE NAVIGATION ===== */
+  function goToPage(pageName){
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-' + pageName).classList.add('active');
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.getAttribute('data-page') === pageName));
+    window.scrollTo({ top:0, behavior:'instant' });
+    closeDrawer();
+  }
+  document.querySelectorAll('.nav-btn').forEach(btn => {
+    btn.addEventListener('click', () => goToPage(btn.getAttribute('data-page')));
+  });
+  document.querySelectorAll('.quick-card').forEach(card => {
+    card.addEventListener('click', () => goToPage(card.getAttribute('data-goto')));
+  });
+  document.querySelectorAll('.drawer-item').forEach(item => {
+    item.addEventListener('click', () => goToPage(item.getAttribute('data-goto')));
+  });
+
+  /* ===== BURGER DRAWER TOGGLE ===== */
+  const drawer = document.getElementById('drawer');
+  const drawerOverlay = document.getElementById('drawerOverlay');
+  function openDrawer(){ drawer.classList.add('open'); drawerOverlay.classList.add('open'); }
+  function closeDrawer(){ drawer.classList.remove('open'); drawerOverlay.classList.remove('open'); }
+  document.getElementById('burgerBtn').addEventListener('click', openDrawer);
+  document.getElementById('drawerClose').addEventListener('click', closeDrawer);
+  drawerOverlay.addEventListener('click', closeDrawer);
+
+  /* ===== INIT ===== */
+  renderEverything();
+})();
+</script>
+</body>
+</html>
