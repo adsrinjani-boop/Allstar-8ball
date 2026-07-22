@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-<title>RAINBOW SL — Turnamen Billiard 8 Ball Ganda</title>
+<title>TURNAMEN BILYARD RAINBOW SL 2026</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,800&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
@@ -86,7 +86,7 @@
     content:'8'; position:absolute; left:50%; top:50%; transform:translate(-50%,-56%);
     font-family:'JetBrains Mono', monospace; font-weight:700; font-size:8px; color:#0d0e11;
   }
-  .topbar-title{ font-family:'Fraunces', serif; font-size:14.5px; font-weight:700; letter-spacing:2.5px; color:var(--white-text); white-space:nowrap; }
+  .topbar-title{ font-family:'Fraunces', serif; font-size:13px; font-weight:700; letter-spacing:2px; color:var(--white-text); white-space:nowrap; }
   .topbar-title span{ color:var(--gold); }
 
   .burger-btn{
@@ -106,7 +106,7 @@
   .hero{ text-align:center; padding:10px 4px 4px; }
   .hero-eyebrow{ font-size:11px; letter-spacing:5px; color:var(--gold); font-weight:700; text-transform:uppercase; }
   .hero-title{
-    font-family:'Fraunces', serif; font-size:clamp(32px,10.5vw,50px); font-weight:700; letter-spacing:0.5px; line-height:1.02;
+    font-family:'Fraunces', serif; font-size:clamp(24px,7.5vw,38px); font-weight:700; letter-spacing:0.5px; line-height:1.15;
     margin:6px 0 16px; color:var(--white-text);
   }
   .hero-title em{ font-style:italic; color:var(--gold); }
@@ -252,6 +252,10 @@
     font-family:'JetBrains Mono',monospace; font-weight:700; font-size:12px;
     display:flex; align-items:center; justify-content:center;
   }
+  .team-card-head .team-group-tag{
+    font-size:9px; font-weight:800; letter-spacing:1px; color:var(--gold); background:var(--gold-dim);
+    border:1px solid var(--gold-line); padding:5px 9px; border-radius:999px; white-space:nowrap;
+  }
   input.team-name-input{
     flex:1; background:var(--surface-soft); border:1px solid var(--card-border); border-radius:var(--radius-sm);
     padding:10px 12px; color:var(--text-dark); font-size:13.5px; font-weight:700; outline:none; font-family:'Inter', sans-serif;
@@ -267,7 +271,61 @@
   input.player-input:focus{ border-color:var(--blue); background:#fff; }
   .save-row{ margin-top:16px; display:flex; gap:10px; }
 
-  /* ===== SCORES PAGE ===== */
+  /* ===== GROUP STAGE (SKOR / JADWAL & HASIL) ===== */
+  .groups-scroll-wrap{
+    display:flex; gap:14px; overflow-x:auto; padding:2px 2px 14px;
+    scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch;
+  }
+  .group-col{
+    flex:0 0 auto; width:84vw; max-width:300px; min-width:250px;
+    background:var(--card); border:1px solid var(--card-border); border-radius:var(--radius-lg);
+    overflow:hidden; box-shadow:var(--card-shadow); scroll-snap-align:start;
+  }
+  .group-col-head{
+    background:linear-gradient(135deg, #f7d774 0%, #c9a44c 100%);
+    padding:13px 15px;
+  }
+  .gch-date{ font-size:10px; font-weight:800; letter-spacing:1.6px; text-transform:uppercase; color:#4a3a0a; }
+  .gch-title{ font-family:'Fraunces', serif; font-size:17px; font-weight:700; margin-top:3px; color:#2c2205; }
+  .standings-wrap{ padding:10px 10px 2px; overflow-x:auto; }
+  table.standings-table{ width:100%; border-collapse:collapse; }
+  table.standings-table th{
+    font-size:9px; letter-spacing:0.4px; text-transform:uppercase; color:var(--text-muted); font-weight:800;
+    padding:5px 4px; text-align:center; border-bottom:1.5px solid var(--card-border);
+  }
+  table.standings-table th:nth-child(2){ text-align:left; }
+  table.standings-table td{
+    font-size:10.5px; padding:6px 4px; text-align:center; border-bottom:1px solid var(--card-border); color:var(--text-body);
+  }
+  table.standings-table td.stbl-name{
+    text-align:left; font-weight:700; color:var(--text-dark); max-width:92px;
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  }
+  table.standings-table td.pts{ font-weight:800; color:var(--blue); }
+  table.standings-table tr.qualified td{ background:var(--gold-dim); }
+  table.standings-table tr.qualified td.stbl-name{ color:#a3822f; }
+  .gmatch-list{ border-top:1px solid var(--card-border); margin-top:6px; }
+  .gmatch-row{
+    display:grid; grid-template-columns:1fr 58px 1fr; align-items:center; gap:6px;
+    padding:10px 12px; border-top:1px solid var(--card-border); cursor:pointer; transition:background .1s ease;
+  }
+  .gmatch-row:first-child{ border-top:none; }
+  .gmatch-row:active{ background:var(--surface-soft); }
+  .gmatch-team{ font-size:11px; font-weight:700; color:var(--text-dark); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .gmatch-team.right{ text-align:right; }
+  .gmatch-team.winner{ color:var(--blue); }
+  .gmatch-score-box{
+    text-align:center; font-family:'JetBrains Mono', monospace; font-weight:700; font-size:12px;
+    background:var(--surface-soft); border:1px solid var(--card-border); border-radius:8px; padding:7px 3px; color:var(--text-muted);
+  }
+  .gmatch-score-box.completed{ background:var(--gold-dim); border-color:var(--gold-line); color:var(--gold); }
+  .elim-section-title{
+    display:flex; align-items:center; gap:8px; font-size:11.5px; font-weight:700; letter-spacing:1.6px; text-transform:uppercase;
+    color:var(--white-text); margin:28px 0 14px;
+  }
+  .elim-section-title i{ color:var(--gold); }
+
+  /* ===== SCORES PAGE (elimination rounds) ===== */
   .round-block{ margin-bottom:22px; }
   .round-block-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; flex-wrap:wrap; gap:6px; }
   .round-block-head h3{ margin:0; font-size:12.5px; letter-spacing:1.6px; text-transform:uppercase; color:var(--white-text); font-weight:700; display:flex; align-items:center; gap:8px; }
@@ -484,7 +542,7 @@
     <div class="topbar-side"></div>
     <div class="topbar-brand">
       <div class="ball8"></div>
-      <span class="topbar-title">RAINBOW <span>SL</span></span>
+      <span class="topbar-title">TURNAMEN BILYARD RAINBOW <span>SL 2026</span></span>
     </div>
     <div class="topbar-side" style="justify-content:flex-end;">
       <div class="burger-btn" id="burgerBtn"><i class="fa-solid fa-bars"></i></div>
@@ -495,7 +553,7 @@
   <section class="page active" id="page-home">
     <div class="hero">
       <div class="hero-eyebrow">Turnamen Billiard Ganda</div>
-      <div class="hero-title">RAINBOW <em>SL</em></div>
+      <div class="hero-title">TURNAMEN BILYARD <em>RAINBOW SL 2026</em></div>
     </div>
 
     <div class="hero-banner">
@@ -503,8 +561,8 @@
         <!-- GANTI GAMBAR BANNER UTAMA DI SINI -->
         <img src="https://i.imgur.com/8luxRCm.jpeg" alt="Banner Turnamen Rainbow SL">
         <div class="hero-banner-caption">
-          <div class="sub">Turnamen Billiard Rainbow SL</div>
-          <div class="main">8 Ball · 16 Team (32 Pemain / Ganda) — Sistem Gugur &amp; Race Off</div>
+          <div class="sub">Turnamen Bilyard Rainbow SL 2026</div>
+          <div class="main">8 Ball · 16 Team (32 Pemain / Ganda) — Fase Grup &amp; Sistem Gugur</div>
         </div>
       </div>
     </div>
@@ -513,7 +571,7 @@
       <span class="chip"><i class="fa-solid fa-circle-dot"></i>8 Ball</span>
       <span class="chip"><i class="fa-solid fa-user-group"></i>16 Team</span>
       <span class="chip"><i class="fa-solid fa-users"></i>32 Pemain / Ganda</span>
-      <span class="chip"><i class="fa-solid fa-sitemap"></i>Sistem Gugur</span>
+      <span class="chip"><i class="fa-solid fa-table-cells"></i>4 Grup</span>
       <span class="chip gold"><i class="fa-solid fa-bolt"></i>Race Off</span>
     </div>
 
@@ -533,8 +591,8 @@
       </div>
       <div class="quick-card" data-goto="scores">
         <div class="qi"><i class="fa-solid fa-clipboard-list"></i></div>
-        <div class="qt">Input Skor</div>
-        <div class="qs">Catat hasil pertandingan</div>
+        <div class="qt">Jadwal &amp; Skor</div>
+        <div class="qs">Grup, klasemen &amp; hasil</div>
       </div>
       <div class="quick-card" data-goto="participants">
         <div class="qi"><i class="fa-solid fa-users-gear"></i></div>
@@ -571,7 +629,7 @@
   <!-- ===== PAGE: BAGAN (IMAGE) ===== -->
   <section class="page" id="page-bracket">
     <div class="page-title">Bagan Turnamen</div>
-    <div class="page-sub">Struktur bracket 16 team (32 pemain / ganda) — sistem gugur, race off</div>
+    <div class="page-sub">Struktur bracket 16 team (32 pemain / ganda) — fase grup, lanjut sistem gugur</div>
     <div class="section-rule"></div>
     <div class="bracket-image-wrap" id="bracketImgWrap">
       <!-- GANTI GAMBAR BAGAN 16 TEAM DI SINI -->
@@ -591,11 +649,14 @@
     </div>
   </section>
 
-  <!-- ===== PAGE: SCORES ===== -->
+  <!-- ===== PAGE: SCORES (JADWAL & HASIL) ===== -->
   <section class="page" id="page-scores">
-    <div class="page-title">Input Skor Pertandingan</div>
-    <div class="page-sub">Ketuk kotak pertandingan untuk memasukkan hasil (race off per babak)</div>
+    <div class="page-title">Jadwal dan Hasil Pertandingan</div>
+    <div class="page-sub">Fase grup round-robin (4 tim / grup) — ketuk kotak skor untuk input hasil &amp; update klasemen otomatis</div>
     <div class="section-rule"></div>
+    <div class="groups-scroll-wrap" id="groupsScrollWrap"></div>
+
+    <div class="elim-section-title"><i class="fa-solid fa-trophy"></i>Babak Selanjutnya (Sistem Gugur)</div>
     <div id="scoresContainer"></div>
   </section>
 
@@ -609,7 +670,7 @@
       <div class="trophy-label">Juara Rainbow SL</div>
       <div class="trophy-name-big" id="championName">—</div>
       <div class="trophy-players" id="championPlayers"></div>
-      <div class="trophy-empty" id="championEmptyNote">Selesaikan semua babak hingga Grand Final untuk menentukan juara.</div>
+      <div class="trophy-empty" id="championEmptyNote">Selesaikan fase grup dan seluruh babak gugur hingga Grand Final untuk menentukan juara.</div>
     </div>
   </section>
 
@@ -638,7 +699,7 @@
         <div class="ri-body">
           <div class="ri-title"><i class="fa-solid fa-sitemap"></i>Format Turnamen</div>
           <ul class="ri-sub">
-            <li>Babak 16 Besar: Sistem Klasemen Grup (Poin menang terbanyak lolos ke 8 besar).</li>
+            <li>Fase Grup (16 Besar): Sistem Klasemen Grup, 4 grup berisi 4 tim (round-robin). 2 tim teratas tiap grup lolos ke 8 besar.</li>
             <li>Babak 8 Besar s/d Final: Sistem Gugur (Single Elimination).</li>
           </ul>
         </div>
@@ -674,7 +735,7 @@
       <div class="rule-item">
         <div class="ri-num">08</div>
         <div class="ri-body">
-          <div class="ri-title"><i class="fa-solid fa-toolbox"></i>Stik Biliar</div>
+          <div class="ri-title"><i class="fa-solid fa-toolbox"></i>Stick billiard</div>
           <div class="ri-desc">Panitia menyediakan 2 PCS stik meja. Pemain diperbolehkan membawa stik pribadi.</div>
         </div>
       </div>
@@ -730,7 +791,7 @@
   <!-- SCORE MODAL -->
   <div class="modal-overlay" id="scoreModal">
     <div class="modal-box">
-      <div class="modal-title" id="scModalRound"><i class="fa-solid fa-clipboard-list"></i>BABAK 16 BESAR</div>
+      <div class="modal-title" id="scModalRound"><i class="fa-solid fa-clipboard-list"></i>GRUP 1 — MATCH 1</div>
       <div class="modal-subtitle" id="scModalMatchLabel">Team 01 vs Team 02</div>
       <div class="modal-players" id="scModalPlayers"></div>
       <div class="score-input-row">
@@ -795,7 +856,7 @@
         <div class="info-modal-row">
           <div class="imr-rank">R2</div>
           <div class="imr-body">
-            <div class="imr-title">Penyisihan Grup (16 Besar)</div>
+            <div class="imr-title">Fase Grup (16 Besar)</div>
             <div class="imr-desc">Race to 2</div>
           </div>
         </div>
@@ -835,16 +896,50 @@
 (function(){
   "use strict";
 
-  const STORAGE_KEY = "rainbow_sl_bracket_v5_doubles";
+  const STORAGE_KEY = "rainbow_sl_v6_groups_2026";
 
-  // 16 TEAM (32 PEMAIN / GANDA) — Rounds dengan target Race Off per babak
+  /* ===== 16 TEAM RESMI, dikelompokkan 4 per grup sesuai jadwal ===== */
+  const OFFICIAL_TEAMS = [
+    { name:'TIM GOPLA', p1:'Rico', p2:'Jhon' },
+    { name:'TIM SERIGALA TERAKHIR', p1:'Bernando', p2:'Raja' },
+    { name:'BANTAI KAMI BANG', p1:'Benny', p2:'Gerry' },
+    { name:'BK Hub.', p1:'Darma SE', p2:'Andi Cobra' },
+
+    { name:'ARGENTINA KALAH', p1:'Muhamad Leo', p2:'Johandri' },
+    { name:'SQ1', p1:'Dwi', p2:'Bert' },
+    { name:'OMPONG', p1:'Jhoni', p2:'Johan' },
+    { name:'QQ', p1:'Dimas', p2:'Sent' },
+
+    { name:'TEAM XYZ', p1:'Pak Ali', p2:'Silvana' },
+    { name:'B FURY TEAM', p1:'Thomas C', p2:'Menfu' },
+    { name:'AL-MUSADDID', p1:'Yudi', p2:'Wahyudin' },
+    { name:'PROBLEMBOYS', p1:'Herman', p2:'Doni' },
+
+    { name:'TIM PETRUS', p1:'Louis', p2:'Jaya' },
+    { name:'TIM ESCOBAR', p1:'Aldi', p2:'Rido' },
+    { name:'TIM ASISTEN KOKI', p1:'Rizky', p2:'Pasangan' },
+    { name:'TIM KAPAL DESTROYER', p1:'Heru', p2:'Agus' },
+  ];
+  const GROUP_DATES = ['26 JULI 2026','27 JULI 2026','28 JULI 2026','29 JULI 2026'];
+  const GROUP_RACE_TO = 2;
+  // Jadwal round-robin 4 tim (indeks lokal 0-3 dalam grup) — 6 match per grup
+  const ROUND_ROBIN_PAIRS = [[0,1],[2,3],[0,2],[1,3],[0,3],[1,2]];
+  // Seeding silang untuk 8 Besar: Juara Grup vs Runner-up grup lain (hindari duel sesama grup terlalu awal)
+  const QF_SEED = [
+    { group:0, rank:0 }, { group:1, rank:1 }, // QF1: Juara G1 vs Runner-up G2
+    { group:2, rank:0 }, { group:3, rank:1 }, // QF2: Juara G3 vs Runner-up G4
+    { group:1, rank:0 }, { group:0, rank:1 }, // QF3: Juara G2 vs Runner-up G1
+    { group:3, rank:0 }, { group:2, rank:1 }, // QF4: Juara G4 vs Runner-up G3
+  ];
+
+  // Babak sistem gugur setelah fase grup (8 Besar -> 4 Besar -> Final)
   const ROUND_DEFS = [
-    { key:'r16',  label:'Babak 16 Besar',    sub:'8 Pertandingan · Fase Grup',    matches:8, raceTo:2, icon:'fa-users' },
     { key:'qf',   label:'8 Besar',            sub:'4 Pertandingan · Sistem Gugur', matches:4, raceTo:3, icon:'fa-chart-simple' },
     { key:'sf',   label:'4 Besar',            sub:'2 Pertandingan · Sistem Gugur', matches:2, raceTo:4, icon:'fa-fire' },
     { key:'final',label:'Final (Grand Final)',sub:'1 Pertandingan · Sistem Gugur', matches:1, raceTo:5, icon:'fa-flag-checkered' },
   ];
-  const STAGE_SHORT_LABELS = ['16 Besar','8 Besar','4 Besar','Final'];
+  const STAGE_SHORT_LABELS = ['Fase Grup','8 Besar','4 Besar','Final'];
+  const STAGE_ICONS = ['fa-users', ...ROUND_DEFS.map(d => d.icon)];
 
   const SPONSOR_NAMES = [
     "KO BOBY","KO ANDRE","KO BERNANDO","KO ROBERT","NINE PARFUM",
@@ -867,9 +962,12 @@
   function pad(n){ return n < 10 ? '0'+n : ''+n; }
 
   function buildDefaultTeams(){
-    const teams = [];
-    for(let i=1;i<=16;i++) teams.push({ name:'TEAM ' + pad(i), p1:'', p2:'' });
-    return teams;
+    return OFFICIAL_TEAMS.map(t => ({ ...t }));
+  }
+  function buildDefaultGroups(){
+    return Array.from({length:4}, () => ({
+      matches: ROUND_ROBIN_PAIRS.map(() => ({ s1:null, s2:null }))
+    }));
   }
   function buildDefaultRounds(){
     return ROUND_DEFS.map(def => ({
@@ -885,6 +983,7 @@
   function buildDefaultState(){
     return {
       teams: buildDefaultTeams(),
+      groups: buildDefaultGroups(),
       rounds: buildDefaultRounds(),
       sponsors: buildDefaultSponsors(),
       committee: buildDefaultCommittee()
@@ -898,6 +997,9 @@
       const parsed = JSON.parse(raw);
       if(!parsed || !Array.isArray(parsed.teams) || parsed.teams.length !== 16 || !Array.isArray(parsed.rounds) || parsed.rounds.length !== ROUND_DEFS.length){
         return buildDefaultState();
+      }
+      if(!Array.isArray(parsed.groups) || parsed.groups.length !== 4 || parsed.groups.some(gr => !gr || !Array.isArray(gr.matches) || gr.matches.length !== ROUND_ROBIN_PAIRS.length)){
+        parsed.groups = buildDefaultGroups();
       }
       if(!Array.isArray(parsed.sponsors) || parsed.sponsors.length !== SPONSOR_NAMES.length){
         parsed.sponsors = buildDefaultSponsors();
@@ -914,7 +1016,47 @@
 
   let state = loadState();
 
-  /* ===== BRACKET RESOLUTION LOGIC ===== */
+  /* ===== GROUP STAGE LOGIC ===== */
+  function getGroupTeams(g){
+    return [0,1,2,3].map(i => state.teams[g*4+i]);
+  }
+  function getGroupMatchWinner(g, i){
+    const match = state.groups[g].matches[i];
+    if(match.s1 === null || match.s2 === null || match.s1 === '' || match.s2 === '') return null;
+    const s1 = Number(match.s1), s2 = Number(match.s2);
+    if(Math.max(s1,s2) < GROUP_RACE_TO) return null;
+    if(s1 === s2) return null;
+    return s1 > s2 ? 0 : 1;
+  }
+  function isGroupComplete(g){
+    for(let i=0; i<ROUND_ROBIN_PAIRS.length; i++){
+      if(getGroupMatchWinner(g, i) === null) return false;
+    }
+    return true;
+  }
+  function isAllGroupsComplete(){
+    for(let g=0; g<4; g++){ if(!isGroupComplete(g)) return false; }
+    return true;
+  }
+  function computeGroupStandings(g){
+    const teams = getGroupTeams(g);
+    const stats = teams.map((t, li) => ({ localIdx:li, name:t.name, p1:t.p1, p2:t.p2, win:0, lose:0, ff:0, fa:0 }));
+    ROUND_ROBIN_PAIRS.forEach((pair, i) => {
+      const match = state.groups[g].matches[i];
+      if(match.s1 === null || match.s2 === null || match.s1 === '' || match.s2 === '') return;
+      const s1 = Number(match.s1), s2 = Number(match.s2);
+      const a = pair[0], b = pair[1];
+      stats[a].ff += s1; stats[a].fa += s2;
+      stats[b].ff += s2; stats[b].fa += s1;
+      if(s1 > s2){ stats[a].win++; stats[b].lose++; }
+      else if(s2 > s1){ stats[b].win++; stats[a].lose++; }
+    });
+    stats.forEach(s => { s.points = s.win * 2; s.diff = s.ff - s.fa; s.played = s.win + s.lose; });
+    stats.sort((x,y) => (y.points - x.points) || (y.diff - x.diff) || (y.ff - x.ff));
+    return stats;
+  }
+
+  /* ===== BRACKET (ELIMINATION) RESOLUTION LOGIC ===== */
   function getMatchWinnerSlot(r, m){
     const match = state.rounds[r].matches[m];
     if(match.s1 === null || match.s2 === null || match.s1 === '' || match.s2 === '') return null;
@@ -926,9 +1068,16 @@
   }
   function getTeamForSlot(r, m, slot){
     if(r === 0){
-      const idx = m*2 + slot;
-      const t = state.teams[idx];
-      return { ready:true, name:t.name, p1:t.p1, p2:t.p2 };
+      // Diambil dari juara / runner-up fase grup
+      const seedIdx = m*2 + slot;
+      const seed = QF_SEED[seedIdx];
+      if(!isGroupComplete(seed.group)){
+        const ord = seed.rank === 0 ? 'Juara' : 'Runner-up';
+        return { ready:false, name: `${ord} Grup ${seed.group+1}`, p1:'', p2:'' };
+      }
+      const standings = computeGroupStandings(seed.group);
+      const team = standings[seed.rank];
+      return { ready:true, name: team.name, p1: team.p1, p2: team.p2 };
     }
     const prevRound = r - 1;
     const prevMatchIdx = m*2 + slot;
@@ -950,6 +1099,11 @@
       cascadeReset(r+1, nextMatchIdx);
     }
   }
+  function resetAllElimRounds(){
+    state.rounds.forEach(round => {
+      round.matches.forEach(match => { match.s1 = null; match.s2 = null; });
+    });
+  }
   function getChampionTeam(){
     const finalRound = ROUND_DEFS.length - 1;
     const winnerSlot = getMatchWinnerSlot(finalRound, 0);
@@ -963,11 +1117,13 @@
     return true;
   }
   function getCurrentStage(){
-    if(getChampionTeam() !== null) return ROUND_DEFS.length;
+    // 0 = fase grup aktif; 1..ROUND_DEFS.length = babak gugur aktif; ROUND_DEFS.length+1 = juara
+    if(!isAllGroupsComplete()) return 0;
+    if(getChampionTeam() !== null) return 1 + ROUND_DEFS.length;
     for(let r=0; r<ROUND_DEFS.length; r++){
-      if(!isRoundComplete(r)) return r;
+      if(!isRoundComplete(r)) return 1 + r;
     }
-    return ROUND_DEFS.length;
+    return 1 + ROUND_DEFS.length;
   }
   function playersLine(team){
     if(!team) return '';
@@ -989,15 +1145,16 @@
     const stage = getCurrentStage();
     const track = document.getElementById('stageTrack');
     const label = document.getElementById('trackerStageLabel');
+    const totalStages = 1 + ROUND_DEFS.length;
 
-    label.textContent = (stage >= ROUND_DEFS.length) ? 'Juara Ditemukan!' : ROUND_DEFS[stage].label;
+    label.textContent = (stage >= totalStages) ? 'Juara Ditemukan!' : STAGE_SHORT_LABELS[stage];
 
     track.innerHTML = '';
-    ROUND_DEFS.forEach((def, i) => {
+    for(let i=0; i<totalStages; i++){
       let cls = 'stage-step';
       if(i < stage) cls += ' completed';
       else if(i === stage) cls += ' active';
-      const icon = i < stage ? 'fa-check' : def.icon;
+      const icon = i < stage ? 'fa-check' : STAGE_ICONS[i];
       const step = document.createElement('div');
       step.className = cls;
       step.innerHTML = `
@@ -1006,9 +1163,9 @@
         <div class="stage-label">${STAGE_SHORT_LABELS[i]}</div>
       `;
       track.appendChild(step);
-    });
+    }
     let champCls = 'stage-step';
-    if(stage >= ROUND_DEFS.length) champCls += ' completed';
+    if(stage >= totalStages) champCls += ' completed';
     const champStep = document.createElement('div');
     champStep.className = champCls;
     champStep.innerHTML = `
@@ -1019,7 +1176,68 @@
     track.appendChild(champStep);
   }
 
-  /* ===== RENDER: SCORES PAGE ===== */
+  /* ===== RENDER: GROUPS SECTION (JADWAL & HASIL) ===== */
+  function renderGroupsSection(){
+    const wrap = document.getElementById('groupsScrollWrap');
+    wrap.innerHTML = '';
+    for(let g=0; g<4; g++){
+      const standings = computeGroupStandings(g);
+      const col = document.createElement('div');
+      col.className = 'group-col';
+      col.innerHTML = `
+        <div class="group-col-head">
+          <div class="gch-date">${GROUP_DATES[g]}</div>
+          <div class="gch-title">GRUP ${g+1}</div>
+        </div>
+        <div class="standings-wrap">
+          <table class="standings-table">
+            <thead><tr><th>#</th><th>Tim</th><th>M</th><th>W</th><th>L</th><th>SF</th><th>Pts</th></tr></thead>
+            <tbody>
+              ${standings.map((s, idx) => `
+                <tr class="${idx < 2 ? 'qualified' : ''}">
+                  <td class="mono">${idx+1}</td>
+                  <td class="stbl-name" title="${escapeHtml(s.name)}">${escapeHtml(s.name)}</td>
+                  <td class="mono">${s.played}</td>
+                  <td class="mono">${s.win}</td>
+                  <td class="mono">${s.lose}</td>
+                  <td class="mono">${s.diff > 0 ? '+' : ''}${s.diff}</td>
+                  <td class="mono pts">${s.points}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+        <div class="gmatch-list" data-group="${g}"></div>
+      `;
+      wrap.appendChild(col);
+      const list = col.querySelector('.gmatch-list');
+      ROUND_ROBIN_PAIRS.forEach((pair, i) => {
+        list.appendChild(renderGroupMatchRow(g, i, pair));
+      });
+    }
+  }
+
+  function renderGroupMatchRow(g, i, pair){
+    const teamA = state.teams[g*4 + pair[0]];
+    const teamB = state.teams[g*4 + pair[1]];
+    const match = state.groups[g].matches[i];
+    const winnerSlot = getGroupMatchWinner(g, i);
+    const completed = winnerSlot !== null;
+    const s1 = match.s1 === null ? '' : match.s1;
+    const s2 = match.s2 === null ? '' : match.s2;
+
+    const row = document.createElement('div');
+    row.className = 'gmatch-row' + (completed ? ' completed' : '');
+    row.innerHTML = `
+      <div class="gmatch-team ${completed && winnerSlot===0 ? 'winner' : ''}" title="${escapeHtml(teamA.name)}">${escapeHtml(teamA.name)}</div>
+      <div class="gmatch-score-box ${completed ? 'completed' : ''}">${completed ? (s1 + ' - ' + s2) : 'VS'}</div>
+      <div class="gmatch-team right ${completed && winnerSlot===1 ? 'winner' : ''}" title="${escapeHtml(teamB.name)}">${escapeHtml(teamB.name)}</div>
+    `;
+    row.addEventListener('click', () => openScoreModal({ type:'group', g, i }));
+    return row;
+  }
+
+  /* ===== RENDER: SCORES PAGE (elimination rounds only) ===== */
   function renderScoresPage(){
     const container = document.getElementById('scoresContainer');
     container.innerHTML = '';
@@ -1078,9 +1296,9 @@
     `;
 
     if(playable){
-      card.addEventListener('click', () => openScoreModal(r, m));
+      card.addEventListener('click', () => openScoreModal({ type:'elim', r, m }));
     } else {
-      card.addEventListener('click', () => showToast('Peserta belum ditentukan — selesaikan babak sebelumnya dahulu'));
+      card.addEventListener('click', () => showToast('Peserta belum ditentukan — selesaikan fase grup / babak sebelumnya dahulu'));
     }
     return card;
   }
@@ -1090,12 +1308,14 @@
     const list = document.getElementById('participantsList');
     list.innerHTML = '';
     state.teams.forEach((team, idx) => {
+      const groupNo = Math.floor(idx/4) + 1;
       const card = document.createElement('div');
       card.className = 'team-card';
       card.innerHTML = `
         <div class="team-card-head">
           <span class="team-num mono">${pad(idx+1)}</span>
-          <input type="text" class="team-name-input" data-idx="${idx}" data-field="name" value="${escapeHtml(team.name)}" maxlength="24" placeholder="TEAM ${pad(idx+1)}">
+          <input type="text" class="team-name-input" data-idx="${idx}" data-field="name" value="${escapeHtml(team.name)}" maxlength="30" placeholder="TEAM ${pad(idx+1)}">
+          <span class="team-group-tag">GRUP ${groupNo}</span>
         </div>
         <div class="players-row">
           <div class="player-input-wrap">
@@ -1278,6 +1498,7 @@
   }
 
   function renderEverything(){
+    renderGroupsSection();
     renderScoresPage();
     renderParticipantsPage();
     renderChampionPage();
@@ -1289,8 +1510,8 @@
     bindDynamicEvents();
   }
 
-  /* ===== SCORE MODAL ===== */
-  let activeRound = null, activeMatch = null;
+  /* ===== SCORE MODAL (dipakai untuk fase grup & babak gugur) ===== */
+  let activeCtx = null;
   const scoreModal = document.getElementById('scoreModal');
   const scModalRound = document.getElementById('scModalRound');
   const scModalMatchLabel = document.getElementById('scModalMatchLabel');
@@ -1301,14 +1522,28 @@
   const scInput2 = document.getElementById('scInput2');
   const scRaceHint = document.getElementById('scRaceHint');
 
-  function openScoreModal(r, m){
-    const teamA = getTeamForSlot(r, m, 0);
-    const teamB = getTeamForSlot(r, m, 1);
-    const match = state.rounds[r].matches[m];
-    const raceTo = ROUND_DEFS[r].raceTo;
+  function openScoreModal(ctx){
+    activeCtx = ctx;
+    let teamA, teamB, match, raceTo, roundLabel, roundIcon;
 
-    activeRound = r; activeMatch = m;
-    scModalRound.innerHTML = `<i class="fa-solid ${ROUND_DEFS[r].icon}"></i>${ROUND_DEFS[r].label.toUpperCase()}`;
+    if(ctx.type === 'group'){
+      const pair = ROUND_ROBIN_PAIRS[ctx.i];
+      teamA = state.teams[ctx.g*4 + pair[0]];
+      teamB = state.teams[ctx.g*4 + pair[1]];
+      match = state.groups[ctx.g].matches[ctx.i];
+      raceTo = GROUP_RACE_TO;
+      roundLabel = `GRUP ${ctx.g+1} &bull; ${GROUP_DATES[ctx.g]} &bull; MATCH ${ctx.i+1}`;
+      roundIcon = 'fa-users';
+    } else {
+      teamA = getTeamForSlot(ctx.r, ctx.m, 0);
+      teamB = getTeamForSlot(ctx.r, ctx.m, 1);
+      match = state.rounds[ctx.r].matches[ctx.m];
+      raceTo = ROUND_DEFS[ctx.r].raceTo;
+      roundLabel = ROUND_DEFS[ctx.r].label.toUpperCase();
+      roundIcon = ROUND_DEFS[ctx.r].icon;
+    }
+
+    scModalRound.innerHTML = `<i class="fa-solid ${roundIcon}"></i>${roundLabel}`;
     scModalMatchLabel.textContent = `${teamA.name} vs ${teamB.name}`;
     const pA = playersLine(teamA), pB = playersLine(teamB);
     scModalPlayers.textContent = (pA || pB) ? `${pA || '—'}  vs  ${pB || '—'}` : '';
@@ -1324,14 +1559,14 @@
   }
   function closeScoreModal(){
     scoreModal.classList.remove('open');
-    activeRound = null; activeMatch = null;
+    activeCtx = null;
   }
   document.getElementById('scCancel').addEventListener('click', closeScoreModal);
   scoreModal.addEventListener('click', (e) => { if(e.target === scoreModal) closeScoreModal(); });
 
   document.getElementById('scSave').addEventListener('click', () => {
-    if(activeRound === null) return;
-    const raceTo = ROUND_DEFS[activeRound].raceTo;
+    if(activeCtx === null) return;
+    const raceTo = activeCtx.type === 'group' ? GROUP_RACE_TO : ROUND_DEFS[activeCtx.r].raceTo;
     const v1 = scInput1.value.trim();
     const v2 = scInput2.value.trim();
     if(v1 === '' || v2 === ''){ showToast('Isi kedua skor terlebih dahulu'); return; }
@@ -1342,9 +1577,18 @@
     if(Math.max(n1,n2) !== raceTo || n1 === n2){
       showToast(`Skor belum valid — salah satu tim harus mencapai ${raceTo} untuk menang`); return;
     }
-    const match = state.rounds[activeRound].matches[activeMatch];
-    match.s1 = n1; match.s2 = n2;
-    cascadeReset(activeRound, activeMatch);
+
+    if(activeCtx.type === 'group'){
+      const match = state.groups[activeCtx.g].matches[activeCtx.i];
+      match.s1 = n1; match.s2 = n2;
+      // Klasemen bisa berubah — reset babak gugur agar tidak ada data yang tidak konsisten
+      resetAllElimRounds();
+    } else {
+      const match = state.rounds[activeCtx.r].matches[activeCtx.m];
+      match.s1 = n1; match.s2 = n2;
+      cascadeReset(activeCtx.r, activeCtx.m);
+    }
+
     saveState();
     renderEverything();
     closeScoreModal();
