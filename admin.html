@@ -89,14 +89,10 @@ function esc(s){ return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','
 
 function enterDashboard(){
   document.getElementById('bootScreen').classList.add('hidden');
-  const login = document.getElementById('loginScreen');
-  login.classList.add('hidden');
-  login.classList.remove('flex');
   document.getElementById('dashboard').classList.remove('hidden');
   buildTabs();
   loadTab('settings');
 }
-
 /* ---------- LOGOUT ---------- */
 document.getElementById('logoutBtn').addEventListener('click', async () => {
   await sb.auth.signOut();
