@@ -136,6 +136,17 @@
   }
   .hero-banner-caption .sub{ font-size:10px; letter-spacing:2px; font-weight:700; color:var(--gold); text-transform:uppercase; }
   .hero-banner-caption .main{ font-size:13.5px; font-weight:600; color:var(--white-text); margin-top:4px; letter-spacing:0.2px; }
+  .banner-nav{
+    position:absolute; top:50%; transform:translateY(-50%); width:34px; height:34px; border-radius:50%;
+    background:rgba(11,25,44,0.55); border:1px solid rgba(255,255,255,0.25); color:#fff;
+    display:flex; align-items:center; justify-content:center; cursor:pointer; z-index:3; font-size:13px;
+  }
+  .banner-nav.prev{ left:10px; }
+  .banner-nav.next{ right:10px; }
+  .banner-nav.hidden{ display:none; }
+  .banner-dots{ position:absolute; left:0; right:0; bottom:80px; display:flex; justify-content:center; gap:6px; z-index:3; }
+  .banner-dot{ width:6px; height:6px; border-radius:50%; background:rgba(255,255,255,0.45); cursor:pointer; transition:all .2s ease; }
+  .banner-dot.active{ background:var(--gold); width:16px; border-radius:3px; }
 
   .chips{ display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin-bottom:22px; }
   .chip{
@@ -327,6 +338,11 @@
     background:var(--surface-soft); border:1px solid var(--card-border); border-radius:8px; padding:7px 3px; color:var(--text-muted);
   }
   .gmatch-score-box.completed{ background:var(--gold-dim); border-color:var(--gold-line); color:var(--gold); }
+  .gmatch-meta{ display:flex; gap:6px; justify-content:space-between; padding:0 12px 10px; margin-top:-4px; }
+  .gmatch-meta .gm-tag{ font-size:9px; font-weight:700; color:var(--text-muted); background:var(--surface-soft); border:1px solid var(--card-border); padding:3px 7px; border-radius:999px; display:flex; align-items:center; gap:4px; }
+  .gmatch-meta .gm-tag i{ font-size:8px; }
+  .gmatch-meta .gm-tag.status-live{ color:#dc2626; background:#fee2e2; border-color:#fecaca; }
+  .gmatch-meta .gm-tag.status-finished{ color:var(--blue); background:var(--blue-dim); border-color:var(--blue-line); }
   .elim-section-title{
     display:flex; align-items:center; gap:8px; font-size:11.5px; font-weight:700; letter-spacing:1.6px; text-transform:uppercase;
     color:var(--white-text); margin:28px 0 14px;
@@ -408,6 +424,14 @@
   .avatar .avatar-icon{ font-size:19px; opacity:0.6; color:var(--icon); }
   .people-card .pname{ font-size:12.5px; font-weight:700; color:var(--text-dark); line-height:1.3; }
   .people-card .prole{ font-size:10.5px; color:var(--text-muted); font-weight:600; }
+
+  /* ===== GALLERY PAGE ===== */
+  .gallery-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  @media(min-width:560px){ .gallery-grid{ grid-template-columns:1fr 1fr 1fr; } }
+  .gallery-card{ background:var(--card); border:1px solid var(--card-border); border-radius:var(--radius-md); overflow:hidden; box-shadow:var(--card-shadow); cursor:zoom-in; }
+  .gallery-card img{ width:100%; aspect-ratio:1/1; object-fit:cover; display:block; }
+  .gallery-card .gc-cap{ padding:8px 10px 2px; font-size:10.5px; color:var(--text-body); font-weight:600; }
+  .gallery-card .gc-date{ font-size:9px; color:var(--text-muted); font-weight:700; text-transform:uppercase; letter-spacing:0.5px; padding:0 10px 8px; }
 
   .btn{ display:flex; align-items:center; justify-content:center; gap:8px; padding:13px 16px; border-radius:var(--radius-md); border:none; font-weight:700; font-size:13.5px; cursor:pointer; font-family:'Inter', sans-serif; }
   .btn:active{ transform:scale(0.98); }
@@ -543,6 +567,9 @@
     <div class="hero-banner">
       <div class="hero-banner-frame">
         <img id="heroBannerImg" src="https://i.imgur.com/zmKX20U.png" alt="Banner Turnamen Rainbow SL">
+        <button class="banner-nav prev hidden" id="bannerPrev"><i class="fa-solid fa-chevron-left"></i></button>
+        <button class="banner-nav next hidden" id="bannerNext"><i class="fa-solid fa-chevron-right"></i></button>
+        <div class="banner-dots" id="bannerDots"></div>
         <div class="hero-banner-caption">
           <div class="sub" id="heroBannerCapSub"></div>
           <div class="main" id="heroBannerCapMain"></div>
@@ -733,6 +760,14 @@
     <div class="people-grid" id="committeeGrid"></div>
   </section>
 
+  <!-- ===== PAGE: GALLERY ===== -->
+  <section class="page" id="page-gallery">
+    <div class="page-title">Galeri Foto</div>
+    <div class="page-sub">Dokumentasi turnamen Rainbow SL — ketuk foto untuk memperbesar</div>
+    <div class="section-rule"></div>
+    <div class="gallery-grid" id="galleryGrid"></div>
+  </section>
+
   <!-- ===== BOTTOM NAVIGATION ===== -->
   <nav class="bottom-nav">
     <button class="nav-btn active" data-page="home"><span class="ni"><i class="fa-solid fa-house"></i></span><span class="nt">Beranda</span></button>
@@ -754,6 +789,7 @@
     <div class="drawer-item" data-modal="raceoffModal"><span class="di"><i class="fa-solid fa-bolt"></i></span><span class="dl">Race Off</span></div>
     <div class="drawer-item" data-goto="sponsors"><span class="di"><i class="fa-solid fa-handshake"></i></span><span class="dl">Sponsor</span></div>
     <div class="drawer-item" data-goto="committee"><span class="di"><i class="fa-solid fa-user-tie"></i></span><span class="dl">Pengurus / Penanggung Jawab</span></div>
+    <div class="drawer-item" data-goto="gallery"><span class="di"><i class="fa-solid fa-images"></i></span><span class="dl">Galeri Foto</span></div>
   </div>
 
   <!-- LIGHTBOX for bracket image -->
@@ -881,10 +917,68 @@
   const GROUP_DEFAULT_RACE = 2;
   const FALLBACK_BANNER = { image_url:'https://i.imgur.com/zmKX20U.png', caption_sub:'', caption_main:'' };
 
+  /* ===== PUSH NOTIFICATION (skor pertandingan selesai) ===== */
+  let prevMatchesSnapshot = null;
+  function requestNotifyPermission(){
+    if('Notification' in window && Notification.permission === 'default'){
+      Notification.requestPermission().catch(() => {});
+    }
+  }
+  function buildMatchSnapshotMap(){
+    const map = {};
+    state.groups.forEach(g => {
+      const groupRaceTo = g.race_to || GROUP_DEFAULT_RACE;
+      groupMatchesFor(g.id).forEach(m => {
+        const raceTo = m.race_to || groupRaceTo;
+        map[m.id] = {
+          completed: isGroupMatchComplete(m, raceTo),
+          winner: groupMatchWinnerSlot(m, raceTo),
+          s1:m.score1, s2:m.score2,
+          teamA: teamDisplayName(m.team1_id), teamB: teamDisplayName(m.team2_id)
+        };
+      });
+    });
+    ELIM_ORDER.forEach(key => {
+      (state.elimMatches[key] || []).forEach(m => {
+        const raceTo = m.race_to || ELIM_DEFS[key].defaultRace;
+        map[m.id] = {
+          completed: isElimMatchComplete(m, raceTo),
+          winner: elimMatchWinnerSlot(m, raceTo),
+          s1:m.score1, s2:m.score2,
+          teamA: teamDisplayName(m.team1_id, m.team1_label), teamB: teamDisplayName(m.team2_id, m.team2_label)
+        };
+      });
+    });
+    return map;
+  }
+  function notifyMatchResult(entry){
+    if(!('Notification' in window) || Notification.permission !== 'granted') return;
+    const winnerName = entry.winner === 0 ? entry.teamA : entry.teamB;
+    const s1 = Number(entry.s1), s2 = Number(entry.s2);
+    try{
+      new Notification('Hasil Pertandingan Rainbow SL', {
+        body: `${winnerName} menang ${Math.max(s1,s2)}-${Math.min(s1,s2)} (${entry.teamA} vs ${entry.teamB})`,
+        icon: 'https://i.imgur.com/zmKX20U.png'
+      });
+    }catch(e){ console.warn('Notifikasi gagal ditampilkan', e); }
+  }
+  function checkMatchNotifications(){
+    const newSnap = buildMatchSnapshotMap();
+    if(prevMatchesSnapshot){
+      Object.keys(newSnap).forEach(id => {
+        const prev = prevMatchesSnapshot[id];
+        const cur = newSnap[id];
+        if(cur.completed && (!prev || !prev.completed)) notifyMatchResult(cur);
+      });
+    }
+    prevMatchesSnapshot = newSnap;
+  }
+
   /* ===== STATE (diisi dari Supabase) ===== */
   let state = {
     settings: {}, banners: [], sponsors: [], committee: [],
-    groups: [], teams: [], groupMatches: [], elimMatches: { qf:[], sf:[], final:[] }
+    groups: [], teams: [], groupMatches: [], elimMatches: { qf:[], sf:[], final:[] },
+    gallery: []
   };
 
   function pad(n){ return n < 10 ? '0'+n : ''+n; }
@@ -909,7 +1003,7 @@
 
   /* ===== FETCH DARI SUPABASE ===== */
   async function fetchAll(){
-    const [settingsRes, bannersRes, sponsorsRes, committeeRes, groupsRes, teamsRes, gmRes, qfRes, sfRes, finalRes] = await Promise.all([
+    const [settingsRes, bannersRes, sponsorsRes, committeeRes, groupsRes, teamsRes, gmRes, qfRes, sfRes, finalRes, galleryRes] = await Promise.all([
       sb.from('site_settings').select('*'),
       sb.from('banners').select('*').eq('active', true).order('sort_order'),
       sb.from('sponsors').select('*').order('sort_order'),
@@ -920,9 +1014,10 @@
       sb.from('matches').select('*').eq('stage','qf').order('match_order'),
       sb.from('matches').select('*').eq('stage','sf').order('match_order'),
       sb.from('matches').select('*').eq('stage','final').order('match_order'),
+      sb.from('gallery').select('*').order('event_date', { ascending:false }).order('sort_order'),
     ]);
 
-    const errs = [settingsRes, bannersRes, sponsorsRes, committeeRes, groupsRes, teamsRes, gmRes, qfRes, sfRes, finalRes]
+    const errs = [settingsRes, bannersRes, sponsorsRes, committeeRes, groupsRes, teamsRes, gmRes, qfRes, sfRes, finalRes, galleryRes]
       .map(r => r.error).filter(Boolean);
     if(errs.length){
       console.error('Supabase fetch error:', errs);
@@ -938,6 +1033,7 @@
     state.teams = teamsRes.data || [];
     state.groupMatches = gmRes.data || [];
     state.elimMatches = { qf: qfRes.data || [], sf: sfRes.data || [], final: finalRes.data || [] };
+    state.gallery = galleryRes.data || [];
   }
 
   /* ===== HELPER TIM ===== */
@@ -974,8 +1070,8 @@
   function isGroupComplete(group){
     const matches = groupMatchesFor(group.id);
     if(matches.length === 0) return false;
-    const raceTo = group.race_to || GROUP_DEFAULT_RACE;
-    return matches.every(m => isGroupMatchComplete(m, raceTo));
+    const groupRaceTo = group.race_to || GROUP_DEFAULT_RACE;
+    return matches.every(m => isGroupMatchComplete(m, m.race_to || groupRaceTo));
   }
   function isAllGroupsComplete(){
     if(state.groups.length === 0) return false;
@@ -984,10 +1080,11 @@
   function computeGroupStandings(group){
     const teams = state.teams.filter(t => t.group_id === group.id);
     const matches = groupMatchesFor(group.id);
-    const raceTo = group.race_to || GROUP_DEFAULT_RACE;
+    const groupRaceTo = group.race_to || GROUP_DEFAULT_RACE;
     const stats = teams.map(t => ({ id:t.id, name:t.name, p1:t.player1, p2:t.player2, win:0, lose:0, ff:0, fa:0 }));
     matches.forEach(m => {
-      if(m.score1 === null || m.score2 === null) return;
+      const raceTo = m.race_to || groupRaceTo;
+      if(!isGroupMatchComplete(m, raceTo)) return;
       const s1 = Number(m.score1), s2 = Number(m.score2);
       const a = stats.find(s => s.id === m.team1_id);
       const b = stats.find(s => s.id === m.team2_id);
@@ -1039,21 +1136,40 @@
     return 1 + ELIM_ORDER.length;
   }
 
-  /* ===== RENDER: HERO BANNER (rotasi jika lebih dari 1) ===== */
-  let bannerTimer = null, bannerIdx = 0;
+  /* ===== RENDER: HERO BANNER (slider manual + autoplay jika lebih dari 1) ===== */
+  let bannerTimer = null, bannerIdx = 0, bannerList = [];
+  const BANNER_AUTOPLAY_MS = 4500;
+
   function setupHeroBanner(){
     clearInterval(bannerTimer);
-    const banners = state.banners.length ? state.banners : [FALLBACK_BANNER];
+    bannerList = state.banners.length ? state.banners : [FALLBACK_BANNER];
     bannerIdx = 0;
-    paintBanner(banners[0]);
-    if(banners.length > 1){
-      bannerTimer = setInterval(() => {
-        bannerIdx = (bannerIdx + 1) % banners.length;
-        paintBanner(banners[bannerIdx]);
-      }, 6000);
-    }
+    paintBanner(bannerIdx);
+    renderBannerDots();
+
+    const prevBtn = document.getElementById('bannerPrev');
+    const nextBtn = document.getElementById('bannerNext');
+    const dotsWrap = document.getElementById('bannerDots');
+    const multi = bannerList.length > 1;
+    prevBtn.classList.toggle('hidden', !multi);
+    nextBtn.classList.toggle('hidden', !multi);
+    dotsWrap.style.display = multi ? 'flex' : 'none';
+
+    if(multi) startBannerAutoplay();
   }
-  function paintBanner(b){
+  function startBannerAutoplay(){
+    clearInterval(bannerTimer);
+    if(bannerList.length <= 1) return;
+    bannerTimer = setInterval(() => goToBanner(bannerIdx + 1), BANNER_AUTOPLAY_MS);
+  }
+  function goToBanner(newIdx){
+    bannerIdx = (newIdx + bannerList.length) % bannerList.length;
+    paintBanner(bannerIdx);
+    renderBannerDots();
+    if(bannerList.length > 1) startBannerAutoplay();
+  }
+  function paintBanner(idx){
+    const b = bannerList[idx] || FALLBACK_BANNER;
     const img = document.getElementById('heroBannerImg');
     const capSub = document.getElementById('heroBannerCapSub');
     const capMain = document.getElementById('heroBannerCapMain');
@@ -1065,6 +1181,27 @@
       img.style.opacity = '1';
     }, 220);
   }
+  function renderBannerDots(){
+    const dotsWrap = document.getElementById('bannerDots');
+    dotsWrap.innerHTML = bannerList.map((_, i) => `<span class="banner-dot ${i===bannerIdx?'active':''}" data-idx="${i}"></span>`).join('');
+    dotsWrap.querySelectorAll('.banner-dot').forEach(dot => {
+      dot.addEventListener('click', () => goToBanner(Number(dot.getAttribute('data-idx'))));
+    });
+  }
+  document.getElementById('bannerPrev').addEventListener('click', () => goToBanner(bannerIdx - 1));
+  document.getElementById('bannerNext').addEventListener('click', () => goToBanner(bannerIdx + 1));
+
+  (function enableBannerSwipe(){
+    const frame = document.querySelector('.hero-banner-frame');
+    let touchStartX = 0;
+    frame.addEventListener('touchstart', (e) => { touchStartX = e.changedTouches[0].screenX; }, { passive:true });
+    frame.addEventListener('touchend', (e) => {
+      if(bannerList.length <= 1) return;
+      const dx = e.changedTouches[0].screenX - touchStartX;
+      if(Math.abs(dx) < 40) return;
+      if(dx < 0) goToBanner(bannerIdx + 1); else goToBanner(bannerIdx - 1);
+    }, { passive:true });
+  })();
 
   /* ===== RENDER: HOME (judul, chip, sponsor, tracker, juara) ===== */
   function renderHeroTitle(){
@@ -1157,7 +1294,7 @@
             <thead><tr><th>#</th><th>Tim</th><th>M</th><th>W</th><th>L</th><th>SF</th><th>Pts</th></tr></thead>
             <tbody>
               ${standings.map((s, idx) => `
-                <tr class="${idx < 2 ? 'qualified' : ''}">
+                <tr class="${idx < (g.qualify_count || 2) ? 'qualified' : ''}">
                   <td class="mono">${idx+1}</td>
                   <td class="stbl-name" title="${escapeHtml(s.name)}">${escapeHtml(s.name)}</td>
                   <td class="mono">${s.played}</td>
@@ -1177,7 +1314,7 @@
       if(matches.length === 0){
         list.innerHTML = `<p class="empty-note">Belum ada jadwal match.</p>`;
       }
-      matches.forEach(m => list.appendChild(renderGroupMatchRow(g, m, raceTo)));
+      matches.forEach(m => list.appendChild(renderGroupMatchRow(g, m, m.race_to || raceTo)));
     });
   }
 
@@ -1186,6 +1323,10 @@
     const nameB = teamDisplayName(m.team2_id);
     const winnerSlot = groupMatchWinnerSlot(m, raceTo);
     const completed = winnerSlot !== null;
+    const status = m.status || 'Scheduled';
+    const statusCls = status === 'Live' ? 'status-live' : (status === 'Finished' ? 'status-finished' : '');
+
+    const wrap = document.createElement('div');
 
     const row = document.createElement('div');
     row.className = 'gmatch-row' + (completed ? ' completed' : '');
@@ -1199,9 +1340,22 @@
       label:`${escapeHtml((group.name || 'GRUP').toUpperCase())} &bull; ${escapeHtml(formatDate(group.match_date))}`,
       teamAName:nameA, teamAPlayers:teamDisplayPlayers(m.team1_id),
       teamBName:nameB, teamBPlayers:teamDisplayPlayers(m.team2_id),
-      score1:m.score1, score2:m.score2, raceTo
+      score1:m.score1, score2:m.score2, raceTo,
+      matchTime:m.match_time, tableNumber:m.table_number, status
     }));
-    return row;
+    wrap.appendChild(row);
+
+    if(m.match_time || m.table_number || status){
+      const meta = document.createElement('div');
+      meta.className = 'gmatch-meta';
+      meta.innerHTML = `
+        <span class="gm-tag">${m.match_time ? `<i class="fa-solid fa-clock"></i>${escapeHtml(m.match_time.slice(0,5))}` : ''}</span>
+        <span class="gm-tag">${m.table_number ? `<i class="fa-solid fa-table-cells-large"></i>Meja ${escapeHtml(m.table_number)}` : ''}</span>
+        <span class="gm-tag ${statusCls}"><i class="fa-solid fa-circle-dot"></i>${escapeHtml(status)}</span>
+      `;
+      wrap.appendChild(meta);
+    }
+    return wrap;
   }
 
   /* ===== RENDER: BABAK GUGUR ===== */
@@ -1267,7 +1421,8 @@
     card.addEventListener('click', () => openMatchDetail({
       icon:def.icon, label:def.label.toUpperCase(),
       teamAName:nameA, teamAPlayers:pA, teamBName:nameB, teamBPlayers:pB,
-      score1:m.score1, score2:m.score2, raceTo
+      score1:m.score1, score2:m.score2, raceTo,
+      matchTime:m.match_time, tableNumber:m.table_number, status:m.status
     }));
     return card;
   }
@@ -1323,6 +1478,23 @@
       </div>
     `).join('') || `<p class="empty-note" style="grid-column:1/-1;">Belum ada data panitia.</p>`;
   }
+  function renderGalleryPage(){
+    const grid = document.getElementById('galleryGrid');
+    if(state.gallery.length === 0){
+      grid.innerHTML = `<p class="empty-note" style="grid-column:1/-1;">Belum ada foto dokumentasi.</p>`;
+      return;
+    }
+    grid.innerHTML = state.gallery.map(g => `
+      <div class="gallery-card" data-url="${escapeHtml(g.image_url)}">
+        <img src="${escapeHtml(g.image_url)}" alt="${escapeHtml(g.caption || 'Galeri')}">
+        ${g.caption ? `<div class="gc-cap">${escapeHtml(g.caption)}</div>` : ''}
+        ${g.event_date ? `<div class="gc-date">${escapeHtml(formatDate(g.event_date))}</div>` : ''}
+      </div>
+    `).join('');
+    grid.querySelectorAll('.gallery-card').forEach(card => {
+      card.addEventListener('click', () => openLightboxWithUrl(card.getAttribute('data-url')));
+    });
+  }
 
   /* ===== MATCH DETAIL MODAL (read-only) ===== */
   const matchModal = document.getElementById('matchModal');
@@ -1330,7 +1502,13 @@
     document.getElementById('mmRound').innerHTML = `<i class="fa-solid ${d.icon}"></i>${d.label}`;
     document.getElementById('mmMatchLabel').textContent = `${d.teamAName} vs ${d.teamBName}`;
     const pA = d.teamAPlayers, pB = d.teamBPlayers;
-    document.getElementById('mmPlayers').textContent = (pA || pB) ? `${pA || '—'}  vs  ${pB || '—'}` : '';
+    let playersText = (pA || pB) ? `${pA || '—'}  vs  ${pB || '—'}` : '';
+    const metaParts = [];
+    if(d.matchTime) metaParts.push('Jam ' + d.matchTime.slice(0,5));
+    if(d.tableNumber) metaParts.push('Meja ' + d.tableNumber);
+    if(d.status) metaParts.push(d.status);
+    if(metaParts.length) playersText = (playersText ? playersText + ' · ' : '') + metaParts.join(' · ');
+    document.getElementById('mmPlayers').textContent = playersText;
     document.getElementById('mmLabel1').textContent = d.teamAName;
     document.getElementById('mmLabel2').textContent = d.teamBName;
     document.getElementById('mmScore1').textContent = d.score1 !== null && d.score1 !== undefined ? d.score1 : '-';
@@ -1365,6 +1543,7 @@
     renderParticipantsPage();
     renderSponsorsPage();
     renderCommitteePage();
+    renderGalleryPage();
     renderChampionPage();
     renderHomeStatus();
     renderTracker();
@@ -1380,9 +1559,16 @@
     toastTimer = setTimeout(() => toast.classList.remove('show'), 2400);
   }
 
-  /* ===== LIGHTBOX (bracket image zoom) ===== */
+  /* ===== LIGHTBOX (bracket image zoom + galeri foto) ===== */
   const lightbox = document.getElementById('lightbox');
-  document.getElementById('bracketImgWrap').addEventListener('click', () => lightbox.classList.add('open'));
+  const lightboxImg = lightbox.querySelector('img');
+  function openLightboxWithUrl(url){
+    lightboxImg.src = url;
+    lightbox.classList.add('open');
+  }
+  document.getElementById('bracketImgWrap').addEventListener('click', () => {
+    openLightboxWithUrl(document.querySelector('#bracketImgWrap img').src);
+  });
   document.getElementById('lightboxClose').addEventListener('click', () => lightbox.classList.remove('open'));
   lightbox.addEventListener('click', (e) => { if(e.target === lightbox) lightbox.classList.remove('open'); });
 
@@ -1433,16 +1619,17 @@
   document.getElementById('drawerClose').addEventListener('click', closeDrawer);
   drawerOverlay.addEventListener('click', closeDrawer);
 
-  /* ===== REALTIME: auto refresh saat admin mengubah data ===== */
+/* ===== REALTIME: auto refresh saat admin mengubah data ===== */
   let refetchTimer = null;
   function scheduleRefetch(){
     clearTimeout(refetchTimer);
     refetchTimer = setTimeout(async () => {
       await fetchAll();
+      checkMatchNotifications();
       renderEverything();
     }, 400);
   }
-  const REALTIME_TABLES = ['matches','teams','groups','sponsors','committees','banners','site_settings'];
+  const REALTIME_TABLES = ['matches','teams','groups','sponsors','committees','banners','site_settings','gallery'];
   const channel = sb.channel('public-live-updates');
   REALTIME_TABLES.forEach(table => {
     channel.on('postgres_changes', { event:'*', schema:'public', table }, scheduleRefetch);
@@ -1452,7 +1639,9 @@
   /* ===== INIT ===== */
   (async function init(){
     document.getElementById('trackerStageLabel').textContent = 'Memuat data turnamen...';
+    requestNotifyPermission();
     await fetchAll();
+    prevMatchesSnapshot = buildMatchSnapshotMap();
     renderEverything();
   })();
 
