@@ -354,7 +354,10 @@
     background:transparent;
   }
   @media(min-width:768px){
-    .billiard-video{ width:256px; height:256px; }
+    .billiard-video{ width:320px; height:320px; }
+  }
+  @media(min-width:1200px){
+    .billiard-video{ width:380px; height:380px; }
   }
 
   .elim-section-title{
@@ -670,7 +673,7 @@
     <div class="page-title">Jadwal dan Hasil Pertandingan</div>
 
     <div class="billiard-video-wrap">
-      <video class="billiard-video" autoplay loop muted playsinline>
+      <video class="billiard-video" id="scoresVideo" loop muted playsinline preload="none" fetchpriority="low">
         <source src="Billiard.mp4" type="video/mp4">
       </video>
     </div>
@@ -694,6 +697,12 @@
       <div class="trophy-name-big" id="championName">—</div>
       <div class="trophy-players" id="championPlayers"></div>
       <div class="trophy-empty" id="championEmptyNote">Selesaikan fase grup dan seluruh babak gugur hingga Grand Final untuk menentukan juara.</div>
+    </div>
+
+    <div class="billiard-video-wrap">
+      <video class="billiard-video" id="championVideo" loop muted playsinline preload="none" fetchpriority="low">
+        <source src="Missed Cue Billiard.mp4" type="video/mp4">
+      </video>
     </div>
   </section>
 
@@ -1607,6 +1616,19 @@
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.getAttribute('data-page') === pageName));
     window.scrollTo({ top:0, behavior:'instant' });
     closeDrawer();
+    handlePageVideos(pageName);
+  }
+
+  function handlePageVideos(pageName){
+    const scoresVideo = document.getElementById('scoresVideo');
+    const championVideo = document.getElementById('championVideo');
+    [scoresVideo, championVideo].forEach(v => { if(v && !v.paused) v.pause(); });
+    if(pageName === 'scores' && scoresVideo){
+      scoresVideo.play().catch(() => {});
+    }
+    if(pageName === 'champion' && championVideo){
+      championVideo.play().catch(() => {});
+    }
   }
   document.querySelectorAll('.nav-btn').forEach(btn => {
     btn.addEventListener('click', () => goToPage(btn.getAttribute('data-page')));
