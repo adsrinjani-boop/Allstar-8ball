@@ -107,6 +107,7 @@ const TABS = [
   { key:'groups',     label:'Grup & Tim', icon:'fa-users' },
   { key:'matches',    label:'Jadwal Grup',icon:'fa-clipboard-list' },
   { key:'bracket',    label:'Babak Gugur',icon:'fa-trophy' },
+  { key:'gallery',    label:'Galeri Foto',icon:'fa-images' },
 ];
 function buildTabs(){
   const nav = document.querySelector('nav');
@@ -130,7 +131,8 @@ function setActiveTab(key){
 function loadTab(key){
   setActiveTab(key);
   const map = { settings:renderSettingsTab, banners:renderBannersTab, sponsors:renderSponsorsTab,
-    committees:renderCommitteesTab, groups:renderGroupsTab, matches:renderMatchesTab, bracket:renderBracketTab };
+    committees:renderCommitteesTab, groups:renderGroupsTab, matches:renderMatchesTab, bracket:renderBracketTab,
+    gallery:renderGalleryTab };
   map[key]();
 }
 
@@ -398,6 +400,8 @@ async function renderGroupsTab(){
         <input class="g-name px-3 py-2 rounded-lg border border-slate-200 text-sm font-bold w-32" value="${esc(g.name)}">
         <input class="g-date px-3 py-2 rounded-lg border border-slate-200 text-sm" type="date" value="${g.match_date ?? ''}">
         <input class="g-race px-3 py-2 rounded-lg border border-slate-200 text-sm w-24" type="number" min="1" value="${g.race_to ?? 2}" title="Race to">
+        <span class="text-[11px] text-slate-400 font-semibold">Lolos:</span>
+        <input class="g-qualify px-3 py-2 rounded-lg border border-slate-200 text-sm w-20" type="number" min="1" value="${g.qualify_count ?? 2}" title="Jumlah Tim Lolos">
         <button class="g-save bg-blue-600 text-white text-xs font-bold px-3 py-2 rounded-lg"><i class="fa-solid fa-check"></i> Simpan Grup</button>
         <button class="g-del bg-red-50 text-red-500 text-xs font-bold px-3 py-2 rounded-lg ml-auto"><i class="fa-solid fa-trash"></i> Hapus Grup</button>
       </div>
@@ -416,11 +420,12 @@ async function renderGroupsTab(){
     `;
     wrap.appendChild(section);
 
-    section.querySelector('.g-save').addEventListener('click', async () => {
+   section.querySelector('.g-save').addEventListener('click', async () => {
       await q(sb.from('groups').update({
         name: section.querySelector('.g-name').value,
         match_date: section.querySelector('.g-date').value || null,
-        race_to: Number(section.querySelector('.g-race').value) || 2
+        race_to: Number(section.querySelector('.g-race').value) || 2,
+        qualify_count: Number(section.querySelector('.g-qualify').value) || 2
       }).eq('id', g.id), 'Grup disimpan');
     });
     section.querySelector('.g-del').addEventListener('click', async () => {
@@ -500,6 +505,7 @@ async function renderMatchesTab(){
 }
 function matchRowHtml(m, teamOptions){
   const teamOpts = (sel) => teamOptions.map(t => `<option value="${t.id}" ${sel===t.id?'selected':''}>${esc(t.name)}</option>`).join('');
+  const statusOpts = ['Scheduled','Live','Finished'].map(s => `<option value="${s}" ${(m.status||'Scheduled')===s?'selected':''}>${s}</option>`).join('');
   return `
     <div class="flex flex-wrap gap-2 items-center bg-slate-50 rounded-lg p-2" data-id="${m.id}">
       <select class="m-team1 px-2 py-1.5 rounded-lg border border-slate-200 text-sm flex-1 min-w-[110px]">
@@ -511,6 +517,9 @@ function matchRowHtml(m, teamOptions){
       <select class="m-team2 px-2 py-1.5 rounded-lg border border-slate-200 text-sm flex-1 min-w-[110px]">
         <option value="">— pilih tim —</option>${teamOpts(m.team2_id)}
       </select>
+      <input class="m-time px-2 py-1.5 rounded-lg border border-slate-200 text-sm w-28" type="time" value="${m.match_time ?? ''}" title="Jam Mulai">
+      <input class="m-table px-2 py-1.5 rounded-lg border border-slate-200 text-sm w-24" type="text" placeholder="No. Meja" value="${esc(m.table_number ?? '')}">
+      <select class="m-status px-2 py-1.5 rounded-lg border border-slate-200 text-sm w-28">${statusOpts}</select>
       <button class="m-save bg-blue-600 text-white text-xs font-bold px-3 py-1.5 rounded-lg"><i class="fa-solid fa-check"></i></button>
       <button class="m-del bg-red-50 text-red-500 text-xs font-bold px-3 py-1.5 rounded-lg"><i class="fa-solid fa-trash"></i></button>
     </div>
@@ -527,6 +536,9 @@ function bindMatchRowEvents(section){
         team2_id: row.querySelector('.m-team2').value || null,
         score1: s1 === '' ? null : Number(s1),
         score2: s2 === '' ? null : Number(s2),
+        match_time: row.querySelector('.m-time').value || null,
+        table_number: row.querySelector('.m-table').value || null,
+        status: row.querySelector('.m-status').value || 'Scheduled',
         updated_at: new Date().toISOString()
       }).eq('id', id), 'Hasil disimpan');
     });
@@ -584,6 +596,9 @@ async function renderBracketTab(){
           race_to: Number(row.querySelector('.e-race').value) || def.defaultRace,
           score1: s1 === '' ? null : Number(s1),
           score2: s2 === '' ? null : Number(s2),
+          match_time: row.querySelector('.e-time').value || null,
+          table_number: row.querySelector('.e-table').value || null,
+          status: row.querySelector('.e-status').value || 'Scheduled',
           updated_at: new Date().toISOString()
         }).eq('id', id), 'Match disimpan');
       });
@@ -598,6 +613,7 @@ async function renderBracketTab(){
 function elimRowHtml(m, teamOptions){
   const teamOpts = (sel) => `<option value="">— pilih tim (kosongkan jika pakai label) —</option>` +
     teamOptions.map(t => `<option value="${t.id}" ${sel===t.id?'selected':''}>${esc(t.name)}</option>`).join('');
+  const statusOpts = ['Scheduled','Live','Finished'].map(s => `<option value="${s}" ${(m.status||'Scheduled')===s?'selected':''}>${s}</option>`).join('');
   return `
     <div class="border border-slate-200 rounded-lg p-3 space-y-2" data-id="${m.id}">
       <div class="flex flex-wrap gap-2 items-center">
@@ -610,6 +626,11 @@ function elimRowHtml(m, teamOptions){
         <input class="e-label2 px-2 py-1.5 rounded-lg border border-slate-200 text-sm flex-1 min-w-[110px]" placeholder="atau label, mis. 'Runner-up Grup 2'" value="${esc(m.team2_label)}">
         <input class="e-score2 w-14 px-2 py-1.5 rounded-lg border border-slate-200 text-sm text-center" type="number" min="0" value="${m.score2 ?? ''}">
       </div>
+      <div class="flex flex-wrap gap-2 items-center">
+        <input class="e-time px-2 py-1.5 rounded-lg border border-slate-200 text-sm w-28" type="time" value="${m.match_time ?? ''}" title="Jam Mulai">
+        <input class="e-table px-2 py-1.5 rounded-lg border border-slate-200 text-sm w-24" type="text" placeholder="No. Meja" value="${esc(m.table_number ?? '')}">
+        <select class="e-status px-2 py-1.5 rounded-lg border border-slate-200 text-sm w-28">${statusOpts}</select>
+      </div>
       <div class="flex flex-wrap gap-2 items-center justify-between pt-1">
         <label class="text-xs text-slate-500 flex items-center gap-1.5">Race to
           <input class="e-race w-16 px-2 py-1 rounded-lg border border-slate-200 text-sm text-center" type="number" min="1" value="${m.race_to}">
@@ -621,6 +642,67 @@ function elimRowHtml(m, teamOptions){
       </div>
     </div>
   `;
+}
+/* =====================================================================
+   TAB 8: GALERI FOTO
+===================================================================== */
+async function renderGalleryTab(){
+  const main = document.getElementById('mainContent');
+  const rows = await q(sb.from('gallery').select('*').order('event_date', { ascending:false }).order('sort_order')) || [];
+  main.innerHTML = `
+    <div class="card p-5 md:p-6 shadow">
+      <h2 class="font-bold text-lg mb-1">Galeri Foto</h2>
+      <p class="text-sm text-slate-500 mb-5">Unggah foto dokumentasi turnamen per hari.</p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3" id="galleryList">
+        ${rows.map(g => galleryRowHtml(g)).join('') || '<p class="text-sm text-slate-400">Belum ada foto.</p>'}
+      </div>
+      <button id="addGalleryBtn" class="mt-4 border-2 border-dashed border-slate-200 hover:border-blue-400 text-slate-500 hover:text-blue-600 font-bold text-sm px-5 py-2.5 rounded-lg w-full">
+        <i class="fa-solid fa-plus mr-2"></i>Tambah Foto
+      </button>
+    </div>
+  `;
+  bindGalleryEvents();
+  document.getElementById('addGalleryBtn').addEventListener('click', async () => {
+    await q(sb.from('gallery').insert({ image_url:'', caption:'', event_date:null, sort_order:(rows.length+1) }), 'Foto ditambahkan');
+    renderGalleryTab();
+  });
+}
+function galleryRowHtml(g){
+  return `
+    <div class="border border-slate-200 rounded-xl p-3 flex flex-col gap-2" data-id="${g.id}">
+      <div class="w-full h-32 rounded-lg bg-slate-100 overflow-hidden cursor-pointer gal-img" title="Klik untuk unggah foto">
+        ${g.image_url ? `<img src="${esc(g.image_url)}" class="w-full h-full object-cover">` : `<div class="w-full h-full flex items-center justify-center text-slate-300"><i class="fa-solid fa-image text-xl"></i></div>`}
+      </div>
+      <input class="gal-caption px-3 py-2 rounded-lg border border-slate-200 text-sm" placeholder="Keterangan foto" value="${esc(g.caption)}">
+      <div class="flex flex-wrap gap-2 items-center">
+        <input class="gal-date px-3 py-2 rounded-lg border border-slate-200 text-sm" type="date" value="${g.event_date ?? ''}">
+        <input class="gal-order px-3 py-2 rounded-lg border border-slate-200 text-sm w-20" type="number" placeholder="Urutan" value="${g.sort_order ?? 0}">
+        <button class="gal-save bg-blue-600 text-white text-xs font-bold px-3 py-2 rounded-lg ml-auto"><i class="fa-solid fa-check"></i></button>
+        <button class="gal-del bg-red-50 text-red-500 text-xs font-bold px-3 py-2 rounded-lg"><i class="fa-solid fa-trash"></i></button>
+      </div>
+    </div>
+  `;
+}
+function bindGalleryEvents(){
+  document.querySelectorAll('#galleryList > div').forEach(row => {
+    const id = row.getAttribute('data-id');
+    row.querySelector('.gal-img').addEventListener('click', async () => {
+      const url = await pickImage();
+      if(url){ await q(sb.from('gallery').update({ image_url:url }).eq('id', id), 'Foto disimpan'); renderGalleryTab(); }
+    });
+    row.querySelector('.gal-save').addEventListener('click', async () => {
+      await q(sb.from('gallery').update({
+        caption: row.querySelector('.gal-caption').value,
+        event_date: row.querySelector('.gal-date').value || null,
+        sort_order: Number(row.querySelector('.gal-order').value) || 0
+      }).eq('id', id), 'Foto disimpan');
+    });
+    row.querySelector('.gal-del').addEventListener('click', async () => {
+      if(!confirm('Hapus foto ini?')) return;
+      await q(sb.from('gallery').delete().eq('id', id), 'Foto dihapus');
+      renderGalleryTab();
+    });
+  });
 }
 </script>
 </body>
