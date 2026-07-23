@@ -183,15 +183,45 @@ async function renderSettingsTab(){
         ${rows.map(r => `
           <div>
             <label class="text-xs font-semibold text-slate-500 uppercase">${esc(r.key)}</label>
-            <input data-key="${esc(r.key)}" value="${esc(r.value)}" class="w-full mt-1 px-3 py-2.5 rounded-lg border border-slate-200 focus:border-blue-500 outline-none text-sm">
+            <div class="flex gap-2 mt-1">
+              <input data-key="${esc(r.key)}" value="${esc(r.value)}" class="flex-1 px-3 py-2.5 rounded-lg border border-slate-200 focus:border-blue-500 outline-none text-sm">
+              ${/photo|image/i.test(r.key) ? `<button class="setting-upload-btn shrink-0 bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-bold px-3 rounded-lg" data-key="${esc(r.key)}"><i class="fa-solid fa-upload"></i></button>` : ''}
+            </div>
           </div>
         `).join('')}
       </div>
       <button id="saveSettingsBtn" class="mt-5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm px-5 py-2.5 rounded-lg">
         <i class="fa-solid fa-floppy-disk mr-2"></i>Simpan Semua Teks
       </button>
+      <div class="mt-5 border-t border-slate-100 pt-4">
+        <p class="text-xs text-slate-400 mb-2">
+          Tambah kunci baru jika belum ada di daftar atas, contoh: <code>hero_title_main</code>, <code>hero_title_accent</code>, <code>mvp_name</code>, <code>mvp_photo_url</code>, <code>mvp_team_name</code>, <code>mvp_note</code>.
+        </p>
+        <div class="flex flex-wrap gap-2">
+          <input id="newSettingKey" placeholder="Nama kunci, mis. mvp_name" class="flex-1 min-w-[160px] px-3 py-2 rounded-lg border border-slate-200 text-sm">
+          <input id="newSettingValue" placeholder="Isi teks / URL" class="flex-1 min-w-[160px] px-3 py-2 rounded-lg border border-slate-200 text-sm">
+          <button id="addSettingBtn" class="bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold px-4 py-2 rounded-lg"><i class="fa-solid fa-plus mr-1"></i>Tambah</button>
+        </div>
+      </div>
     </div>
   `;
+  document.querySelectorAll('.setting-upload-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const key = btn.getAttribute('data-key');
+      const url = await pickImage();
+      if(url){
+        document.querySelector(`#settingsList input[data-key="${key}"]`).value = url;
+        await q(sb.from('site_settings').update({ value:url }).eq('key', key), 'Foto disimpan');
+      }
+    });
+  });
+  document.getElementById('addSettingBtn').addEventListener('click', async () => {
+    const key = document.getElementById('newSettingKey').value.trim();
+    const value = document.getElementById('newSettingValue').value.trim();
+    if(!key){ showToast('Isi nama kunci terlebih dahulu'); return; }
+    await q(sb.from('site_settings').upsert({ key, value }, { onConflict:'key' }), 'Kunci baru ditambahkan');
+    renderSettingsTab();
+  });
   document.getElementById('saveSettingsBtn').addEventListener('click', async () => {
     const inputs = document.querySelectorAll('#settingsList input[data-key]');
     for(const inp of inputs){
@@ -412,6 +442,9 @@ async function renderGroupsTab(){
       <div class="space-y-2 team-list">
         ${gTeams.map(t => `
           <div class="flex flex-wrap gap-2 items-center bg-slate-50 rounded-lg p-2" data-id="${t.id}">
+            <div class="t-img w-10 h-10 rounded-full bg-slate-100 overflow-hidden shrink-0 cursor-pointer" title="Klik untuk unggah foto tim/pemain">
+              ${t.photo_url ? `<img src="${esc(t.photo_url)}" class="w-full h-full object-cover">` : `<div class="w-full h-full flex items-center justify-center text-slate-300"><i class="fa-solid fa-user text-xs"></i></div>`}
+            </div>
             <input class="t-name px-2 py-1.5 rounded-lg border border-slate-200 text-sm flex-1 min-w-[120px]" placeholder="Nama tim" value="${esc(t.name)}">
             <input class="t-p1 px-2 py-1.5 rounded-lg border border-slate-200 text-sm flex-1 min-w-[100px]" placeholder="Pemain 1" value="${esc(t.player1)}">
             <input class="t-p2 px-2 py-1.5 rounded-lg border border-slate-200 text-sm flex-1 min-w-[100px]" placeholder="Pemain 2" value="${esc(t.player2)}">
@@ -443,6 +476,10 @@ async function renderGroupsTab(){
     });
     section.querySelectorAll('.team-list > div').forEach(row => {
       const tid = row.getAttribute('data-id');
+      row.querySelector('.t-img').addEventListener('click', async () => {
+        const url = await pickImage();
+        if(url){ await q(sb.from('teams').update({ photo_url:url }).eq('id', tid), 'Foto tim disimpan'); renderGroupsTab(); }
+      });
       row.querySelector('.t-save').addEventListener('click', async () => {
         await q(sb.from('teams').update({
           name: row.querySelector('.t-name').value,
