@@ -381,9 +381,12 @@ async function renderGroupsTab(){
   main.innerHTML = `
     <div class="card p-5 md:p-6 shadow mb-4">
       <div class="flex items-center justify-between mb-4">
-        <h2 class="font-bold text-lg">Grup &amp; Tim</h2>
-        <button id="addGroupBtn" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-4 py-2 rounded-lg"><i class="fa-solid fa-plus mr-1"></i>Grup Baru</button>
-      </div>
+  <h2 class="font-bold text-lg">Grup &amp; Tim</h2>
+  <div class="flex gap-2">
+    <button id="cleanEmptyBtn" class="bg-red-50 hover:bg-red-100 text-red-500 text-xs font-bold px-4 py-2 rounded-lg"><i class="fa-solid fa-broom mr-1"></i>Hapus Tim Kosong</button>
+    <button id="addGroupBtn" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-4 py-2 rounded-lg"><i class="fa-solid fa-plus mr-1"></i>Grup Baru</button>
+  </div>
+</div>
       <div class="space-y-6" id="groupsWrap"></div>
     </div>
   `;
@@ -457,6 +460,13 @@ async function renderGroupsTab(){
     await q(sb.from('groups').insert({ name:`GRUP ${groups.length+1}`, race_to:2, sort_order:(groups.length+1) }), 'Grup ditambahkan');
     renderGroupsTab();
   });
+document.getElementById('cleanEmptyBtn').addEventListener('click', async () => {
+  const emptyTeams = teams.filter(t => (!t.player1 || !t.player1.trim()) && (!t.player2 || !t.player2.trim()));
+  if(emptyTeams.length === 0){ showToast('Tidak ada tim kosong'); return; }
+  if(!confirm(`Hapus ${emptyTeams.length} tim yang belum diisi pemainnya?`)) return;
+  await q(sb.from('teams').delete().in('id', emptyTeams.map(t => t.id)), `${emptyTeams.length} tim kosong dihapus`);
+  renderGroupsTab();
+});
 }
 
 /* =====================================================================
