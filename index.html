@@ -1222,7 +1222,7 @@
   }
   function renderHomeSponsors(){
     const strip = document.getElementById('homeSponsorStrip');
-    strip.innerHTML = state.sponsors.slice(0, 9).map(sp => `
+    strip.innerHTML = state.sponsors.map(sp => `
       <div class="sponsor-badge">
         <div class="sb-icon">${sp.photo_url ? `<img src="${escapeHtml(sp.photo_url)}" alt="${escapeHtml(sp.name)}">` : `<i class="fa-solid fa-image"></i>`}</div>
         <div class="sb-name">${escapeHtml(sp.name || 'Sponsor')}</div>
