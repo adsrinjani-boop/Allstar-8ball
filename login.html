@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login Admin — Rainbow SL 2026</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700;9..144,800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+  body{ font-family:'Inter', -apple-system, sans-serif; }
+  .serif{ font-family:'Fraunces', serif; }
+  .bg-navy{
+    background: linear-gradient(160deg, #0b192c 0%, #1e293b 65%, #0b192c 100%);
+  }
+  .card{ background:#fff; border-radius:20px; }
+  input{ font-family:inherit; }
+  .ball8{
+    width:40px; height:40px; min-width:40px; border-radius:50%;
+    background: radial-gradient(circle at 32% 28%, #3a3a3a 0%, #111214 55%, #050506 100%);
+    position:relative;
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.1), 0 0 18px 3px rgba(37,99,235,0.35);
+  }
+  .ball8::before{
+    content:''; position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+    width:19px; height:19px; border-radius:50%;
+    background: radial-gradient(circle at 35% 30%, #ffffff, #eceef1 55%, #d8dade 100%);
+  }
+  .ball8::after{
+    content:'8'; position:absolute; left:50%; top:50%; transform:translate(-50%,-56%);
+    font-weight:700; font-size:11px; color:#0d0e11;
+  }
+</style>
+</head>
+<body class="min-h-screen bg-navy text-slate-800">
+
+<!-- =========== KONFIGURASI — GANTI SESUAI PROYEK SUPABASE ANDA =========== -->
+<script>
+  const SUPABASE_URL = "https://mwcfbinobdiotnyoknii.supabase.co";
+  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im13Y2ZiaW5vYmRpb3RueW9rbmlpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3MTg1MzgsImV4cCI6MjEwMDI5NDUzOH0.J86beVUL7fYj_MzCxnmnVW4EU4OghLIwXPGZfNi2aCQ";
+</script>
+<!-- ======================================================================= -->
+
+<!-- Layar transisi saat mengecek apakah sudah ada sesi login aktif -->
+<div id="bootScreen" class="min-h-screen flex items-center justify-center text-white/40 text-sm">
+  <i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Memeriksa sesi...
+</div>
+
+<!-- Form Login -->
+<div id="loginScreen" class="min-h-screen hidden items-center justify-center p-6">
+  <div class="w-full max-w-sm">
+    <div class="text-center mb-6">
+      <div class="ball8 mx-auto mb-4"></div>
+      <h1 class="serif text-white text-xl font-bold tracking-wide">RAINBOW <span class="text-yellow-500">SL 2026</span></h1>
+      <p class="text-white/50 text-xs mt-1 uppercase tracking-widest">Admin Panel</p>
+    </div>
+
+    <div class="card shadow-2xl w-full p-8">
+      <div class="text-center mb-6">
+        <div class="w-14 h-14 rounded-full bg-blue-600 text-white flex items-center justify-center mx-auto mb-3 text-xl">
+          <i class="fa-solid fa-lock"></i>
+        </div>
+        <h2 class="text-lg font-bold">Masuk ke Admin Panel</h2>
+        <p class="text-sm text-slate-500">Silakan login untuk melanjutkan</p>
+      </div>
+
+      <!-- Field Input Email / Username -->
+      <div class="mb-4 text-left">
+        <label class="text-xs font-semibold text-slate-500 uppercase tracking-wide block mb-1">Email / User</label>
+        <div class="relative">
+          <i class="fa-solid fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+          <input id="emailInput" type="email" placeholder="admin@rainbowsl.local" autocomplete="username"
+            class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 outline-none text-sm">
+        </div>
+      </div>
+
+      <!-- Field Input Kata Sandi -->
+      <div class="mb-5 text-left">
+        <label class="text-xs font-semibold text-slate-500 uppercase tracking-wide block mb-1">Kata Sandi</label>
+        <div class="relative">
+          <i class="fa-solid fa-key absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+          <input id="passwordInput" type="password" placeholder="••••••••" autocomplete="current-password"
+            class="w-full pl-10 pr-11 py-3 rounded-xl border border-slate-200 focus:border-blue-500 outline-none text-sm">
+          <button type="button" id="togglePasswordBtn" tabindex="-1"
+            class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-sm px-1">
+            <i class="fa-solid fa-eye"></i>
+          </button>
+        </div>
+      </div>
+
+      <button id="loginBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition-colors">
+        <span id="loginBtnLabel"><i class="fa-solid fa-right-to-bracket mr-2"></i>Masuk</span>
+      </button>
+      <p id="loginError" class="text-red-500 text-xs mt-3 text-center hidden"></p>
+    </div>
+
+    <p class="text-center text-white/30 text-xs mt-6">Turnamen Bilyard Rainbow SL 2026 &middot; Panel Internal</p>
+  </div>
+</div>
+
+<script>
+"use strict";
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+function showBoot(){
+  document.getElementById('bootScreen').classList.remove('hidden');
+  const login = document.getElementById('loginScreen');
+  login.classList.add('hidden');
+  login.classList.remove('flex');
+}
+function showLoginForm(){
+  document.getElementById('bootScreen').classList.add('hidden');
+  const login = document.getElementById('loginScreen');
+  login.classList.remove('hidden');
+  login.classList.add('flex');
+}
+
+/* Jika admin SUDAH login sebelumnya dan membuka login.html, langsung lempar ke admin.html */
+(async function checkExistingSession(){
+  const { data: { session } } = await sb.auth.getSession();
+  if(session){
+    window.location.href = 'admin.html';
+    return;
+  }
+  showLoginForm();
+  document.getElementById('emailInput').focus();
+})();
+
+/* Toggle tampil/sembunyi kata sandi */
+document.getElementById('togglePasswordBtn').addEventListener('click', () => {
+  const pw = document.getElementById('passwordInput');
+  const icon = document.querySelector('#togglePasswordBtn i');
+  const isHidden = pw.type === 'password';
+  pw.type = isHidden ? 'text' : 'password';
+  icon.classList.toggle('fa-eye', !isHidden);
+  icon.classList.toggle('fa-eye-slash', isHidden);
+});
+
+/* ---------- LOGIN ---------- */
+document.getElementById('loginBtn').addEventListener('click', doLogin);
+document.getElementById('emailInput').addEventListener('keydown', e => { if(e.key === 'Enter') doLogin(); });
+document.getElementById('passwordInput').addEventListener('keydown', e => { if(e.key === 'Enter') doLogin(); });
+
+async function doLogin(){
+  const email = document.getElementById('emailInput').value.trim();
+  const password = document.getElementById('passwordInput').value.trim();
+  const errEl = document.getElementById('loginError');
+  const btn = document.getElementById('loginBtn');
+  const btnLabel = document.getElementById('loginBtnLabel');
+
+  errEl.classList.add('hidden');
+
+  if(!email || !password){
+    errEl.textContent = 'Harap isi email/user dan kata sandi.';
+    errEl.classList.remove('hidden');
+    return;
+  }
+
+  btn.disabled = true;
+  btnLabel.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin mr-2"></i>Memproses...';
+
+  const { data, error } = await sb.auth.signInWithPassword({
+    email: email,
+    password: password
+  });
+
+  if(error){
+    btn.disabled = false;
+    btnLabel.innerHTML = '<i class="fa-solid fa-right-to-bracket mr-2"></i>Masuk';
+    errEl.textContent = 'Email atau Kata Sandi salah.';
+    errEl.classList.remove('hidden');
+    return;
+  }
+
+  // Sesi otomatis tersimpan oleh Supabase (localStorage) — langsung lempar ke admin.html
+  btnLabel.innerHTML = '<i class="fa-solid fa-check mr-2"></i>Berhasil, mengarahkan...';
+  window.location.href = 'admin.html';
+}
+</script>
+</body>
+</html>
