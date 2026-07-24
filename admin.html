@@ -5,6 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin Panel — Rainbow SL 2026</title>
   <link rel="icon" type="image/png" href="https://i.imgur.com/Kj8pjKW.png">
+  <script>
+    (function(){
+      try{
+        var savedTheme = localStorage.getItem('theme');
+        if(savedTheme === 'light'){
+          document.documentElement.classList.add('light-mode');
+        }
+      }catch(e){}
+    })();
+  </script>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -106,6 +116,39 @@
     background:#000 !important; border:3px solid #FFD700 !important;
     border-radius:8px !important; font-weight:800;
   }
+
+  /* ===== THEME TOGGLE BUTTON ===== */
+  .theme-toggle-btn{
+    width:36px; height:36px; border-radius:8px;
+    background:#39ff8f; border:2.5px solid #000;
+    display:flex; align-items:center; justify-content:center; cursor:pointer;
+    color:#000; font-size:14px;
+    box-shadow:2.5px 2.5px 0px 0px rgba(0,0,0,1);
+    transition:all .1s ease;
+  }
+  .theme-toggle-btn:active{ transform:translate(2.5px,2.5px); box-shadow:none; }
+  .theme-toggle-btn .ti-sun{ display:none; }
+  .theme-toggle-btn .ti-moon{ display:inline-flex; }
+  html.light-mode .theme-toggle-btn{ background:#0b192c; color:#FFD700; }
+  html.light-mode .theme-toggle-btn .ti-sun{ display:inline-flex; }
+  html.light-mode .theme-toggle-btn .ti-moon{ display:none; }
+
+  /* ===== LIGHT MODE OVERRIDES (Neobrutalism terang) ===== */
+  html.light-mode body{ background:#f4f4f0 !important; color:#000; }
+  html.light-mode header{ background:#fff !important; border-bottom:4px solid #000 !important; }
+  html.light-mode header .text-white{ color:#000 !important; }
+  html.light-mode header .text-white\/50{ color:rgba(0,0,0,0.55) !important; }
+  html.light-mode header .text-white\/70{ color:rgba(0,0,0,0.7) !important; }
+  html.light-mode #sidebarNav{ background:#fff !important; border-right:4px solid #000 !important; }
+  html.light-mode .tab-btn{ color:rgba(0,0,0,0.6) !important; }
+  html.light-mode .tab-btn:hover{ color:#000 !important; background:rgba(0,0,0,0.06) !important; }
+  html.light-mode .tab-btn[class*="bg-white/10"]{
+    background:#FFD700 !important; color:#000 !important; border:2.5px solid #000 !important;
+    box-shadow:3px 3px 0px 0px rgba(0,0,0,1) !important;
+  }
+  html.light-mode #sidebarToggleBtn{ background:#f4f4f0 !important; color:#000 !important; border:2.5px solid #000 !important; }
+  html.light-mode #sidebarOverlay{ background:rgba(0,0,0,0.4) !important; }
+  html.light-mode .text-white\/40{ color:rgba(0,0,0,0.4) !important; }
 </style>
 </head>
 <body class="min-h-screen text-slate-800">
@@ -134,9 +177,15 @@
         <div class="text-white/50 text-xs">Rainbow SL 2026</div>
       </div>
     </div>
-    <button id="logoutBtn" class="text-white/70 hover:text-white text-sm flex items-center gap-2">
-      <i class="fa-solid fa-right-from-bracket"></i> Keluar
-    </button>
+    <div class="flex items-center gap-3">
+      <button class="theme-toggle-btn" id="themeToggleBtn" title="Ganti Mode Terang/Gelap">
+        <i class="fa-solid fa-sun ti-sun"></i>
+        <i class="fa-solid fa-moon ti-moon"></i>
+      </button>
+      <button id="logoutBtn" class="text-white/70 hover:text-white text-sm flex items-center gap-2">
+        <i class="fa-solid fa-right-from-bracket"></i> Keluar
+      </button>
+    </div>
   </header>
 
   <div class="flex items-start relative">
@@ -198,6 +247,19 @@ function enterDashboard(){
 document.getElementById('logoutBtn').addEventListener('click', async () => {
   await sb.auth.signOut();
   window.location.href = 'login.html';
+});
+
+/* ---------- THEME TOGGLE (Dark/Light Mode) ---------- */
+function applyTheme(theme){
+  document.documentElement.classList.toggle('light-mode', theme === 'light');
+}
+function getCurrentTheme(){
+  return document.documentElement.classList.contains('light-mode') ? 'light' : 'dark';
+}
+document.getElementById('themeToggleBtn').addEventListener('click', () => {
+  const next = getCurrentTheme() === 'light' ? 'dark' : 'light';
+  applyTheme(next);
+  try{ localStorage.setItem('theme', next); }catch(e){}
 });
 /* ---------- TABS ---------- */
 const TABS = [
