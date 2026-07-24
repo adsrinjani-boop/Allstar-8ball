@@ -17,10 +17,26 @@
   </script>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700;9..144,800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <style>
-  body{ font-family:'Inter', -apple-system, sans-serif; background:#0b192c; color:#000; }
+  body{
+    font-family:'Inter', -apple-system, sans-serif; color:#000;
+    background:
+      radial-gradient(900px 500px at 10% -5%, rgba(255,215,0,0.08), transparent 55%),
+      radial-gradient(700px 450px at 100% 10%, rgba(57,255,143,0.06), transparent 50%),
+      #0b192c;
+    min-height:100vh;
+  }
   input,select{ font-family:inherit; }
+  h2.font-bold, h3.font-bold{ font-family:'Fraunces', serif; letter-spacing:0.2px; }
+  h2.font-bold{ position:relative; padding-left:14px; }
+  h2.font-bold::before{
+    content:''; position:absolute; left:0; top:4px; bottom:4px; width:5px;
+    background:#FFD700; border:2px solid #000; border-radius:3px;
+  }
 
   /* ===== SCROLLBAR NEOBRUTALISM ===== */
   ::-webkit-scrollbar{ height:8px; width:8px; }
@@ -32,6 +48,11 @@
     background:#fff; border-radius:10px;
     border:3px solid #000 !important;
     box-shadow:6px 6px 0px 0px rgba(0,0,0,1) !important;
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .card:hover{
+    transform:translate(-2px,-2px);
+    box-shadow:8px 8px 0px 0px rgba(0,0,0,1) !important;
   }
 
   /* ===== HEADER ATAS ===== */
@@ -39,12 +60,14 @@
 
   /* ===== SIDEBAR ===== */
   #sidebarNav{ background:#000 !important; border-right:4px solid #FFD700 !important; }
-  .tab-btn{ border-radius:8px !important; margin-bottom:4px; border-left:none !important; transition:all .1s ease; }
-  .tab-btn:hover{ background:rgba(255,215,0,0.18) !important; }
+  .tab-btn{ border-radius:8px !important; margin-bottom:4px; border-left:none !important; transition:all .15s ease; }
+  .tab-btn:hover{ background:rgba(255,215,0,0.18) !important; transform:translateX(3px); }
   .tab-btn[class*="bg-white/10"]{
     background:#FFD700 !important; color:#000 !important;
-    border:2.5px solid #FFD700 !important; box-shadow:3px 3px 0px 0px rgba(255,255,255,0.25);
+    border:2.5px solid #000 !important; box-shadow:3px 3px 0px 0px rgba(0,0,0,1);
+    transform:rotate(-1deg) translateX(2px);
   }
+  .tab-btn[class*="bg-white/10"] i{ color:#000 !important; }
   #sidebarToggleBtn[class*="bg-white/10"]{
     background:#FFD700 !important; color:#000 !important; border:2.5px solid #000 !important;
   }
@@ -60,6 +83,11 @@
     outline:none !important; border-color:#000 !important;
     box-shadow:2px 2px 0px 0px rgba(0,0,0,1) !important;
   }
+  button:focus-visible, a:focus-visible, [tabindex]:focus-visible{
+    outline:3px solid #FFD700 !important;
+    outline-offset:2px;
+    border-radius:6px;
+  }
 
   /* ===== BACKGROUND ABU-ABU -> LAVENDER SOFT (samakan dgn index.html) ===== */
   .bg-slate-50{ background:#f4f2ff !important; border:2px solid #000 !important; }
@@ -70,9 +98,9 @@
     background:#FFD700 !important; color:#000 !important;
     border:2.5px solid #000 !important;
     box-shadow:3px 3px 0px 0px rgba(0,0,0,1) !important;
-    transition:all .1s ease !important;
+    transition:all .15s ease !important;
   }
-  .bg-blue-600:hover{ background:#ffe14d !important; }
+  .bg-blue-600:hover{ background:#ffe14d !important; transform:translate(-2px,-2px); box-shadow:5px 5px 0px 0px rgba(0,0,0,1) !important; }
   .bg-blue-600:active{ transform:translate(3px,3px); box-shadow:none !important; }
 
   /* ===== TOMBOL HAPUS (merah -> pink neon) ===== */
@@ -80,10 +108,10 @@
     background:#fff !important; color:#000 !important;
     border:2.5px solid #000 !important;
     box-shadow:3px 3px 0px 0px rgba(0,0,0,1) !important;
-    transition:all .1s ease !important;
+    transition:all .15s ease !important;
   }
   .text-red-500{ color:#ff3d81 !important; }
-  .bg-red-50:hover{ background:#ff3d81 !important; color:#000 !important; }
+  .bg-red-50:hover{ background:#ff3d81 !important; color:#000 !important; transform:translate(-2px,-2px); box-shadow:5px 5px 0px 0px rgba(0,0,0,1) !important; }
   .bg-red-50:active{ transform:translate(3px,3px); box-shadow:none !important; }
 
   /* ===== TOMBOL GELAP (Tambah Kunci, dsb) ===== */
@@ -91,30 +119,48 @@
     background:#000 !important; color:#fff !important;
     border:2.5px solid #000 !important;
     box-shadow:3px 3px 0px 0px rgba(255,215,0,1) !important;
-    transition:all .1s ease !important;
+    transition:all .15s ease !important;
   }
-  .bg-slate-800:hover, .bg-slate-900:hover{ background:#1a1a1a !important; }
+  .bg-slate-800:hover, .bg-slate-900:hover{ background:#1a1a1a !important; transform:translate(-2px,-2px); box-shadow:5px 5px 0px 0px rgba(255,215,0,1) !important; }
   .bg-slate-800:active, .bg-slate-900:active{ transform:translate(3px,3px); box-shadow:none !important; }
-
   /* ===== TOMBOL "TAMBAH" BER-DASHED BORDER ===== */
   .border-dashed{
     border:3px dashed #000 !important; background:#fff !important;
-    border-radius:8px !important; transition:all .1s ease;
+    border-radius:8px !important; transition:all .15s ease;
   }
-  .border-dashed:hover{ background:#fff8d6 !important; }
+  .border-dashed:hover{
+    background:#fff8d6 !important;
+    transform:translate(-2px,-2px);
+    box-shadow:4px 4px 0px 0px rgba(0,0,0,1);
+    border-style:solid !important;
+  }
   [class*="hover:text-blue-600"]:hover{ color:#000 !important; }
   [class*="hover:border-blue-400"]:hover{ border-color:#000 !important; }
 
   /* ===== FOTO/AVATAR THUMBNAIL ===== */
   .w-14.h-14, .w-10.h-10, .w-9.h-9{ border:2.5px solid #000 !important; }
-
+  .cursor-pointer.rounded-lg, .cursor-pointer.rounded-full, .cursor-pointer.rounded-xl{
+    box-shadow:2.5px 2.5px 0px 0px rgba(0,0,0,1);
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .cursor-pointer.rounded-lg:hover, .cursor-pointer.rounded-full:hover, .cursor-pointer.rounded-xl:hover{
+    transform:translate(-2px,-2px);
+    box-shadow:4.5px 4.5px 0px 0px rgba(0,0,0,1);
+  }
   /* ===== CHECKBOX ===== */
   input[type="checkbox"]{ accent-color:#FFD700; width:16px; height:16px; }
 
-  /* ===== TOAST ===== */
+ /* ===== TOAST ===== */
   #toast{
     background:#000 !important; border:3px solid #FFD700 !important;
     border-radius:8px !important; font-weight:800;
+    box-shadow:5px 5px 0px 0px rgba(255,215,0,0.4) !important;
+  }
+  #toast.opacity-100{ animation:toastPop .3s ease; }
+  @keyframes toastPop{
+    0%{ transform:translateX(-50%) scale(0.85) translateY(10px); }
+    60%{ transform:translateX(-50%) scale(1.03) translateY(-2px); }
+    100%{ transform:translateX(-50%) scale(1) translateY(0); }
   }
 
   /* ===== THEME TOGGLE BUTTON ===== */
