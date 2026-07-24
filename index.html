@@ -258,9 +258,11 @@
 
   /* --- Tracker card --- */
   .tracker-card{
-    margin-top:18px; background:var(--card); border:1px solid var(--card-border);
-    border-radius:var(--radius-lg); padding:18px 16px 16px; box-shadow:var(--card-shadow);
+    margin-top:18px; background:var(--card); border:3px solid var(--card-border);
+    border-radius:var(--radius-lg); padding:18px 16px 16px; box-shadow:6px 6px 0px 0px rgba(0,0,0,1);
+    transition:transform .15s ease, box-shadow .15s ease;
   }
+  .tracker-card:hover{ transform:translate(-2px,-2px); box-shadow:8px 8px 0px 0px rgba(0,0,0,1); }
   .tracker-head{ display:flex; align-items:center; gap:8px; font-size:10.5px; font-weight:700; letter-spacing:1.8px; color:var(--text-muted); text-transform:uppercase; margin-bottom:6px; }
   .tracker-head i{ color:var(--blue); font-size:11px; }
   .tracker-value{ font-family:'Fraunces', serif; font-size:19px; font-weight:700; color:var(--blue); margin-bottom:16px; }
@@ -270,12 +272,13 @@
   .stage-step:first-child .stage-line{ display:none; }
   .stage-step.completed .stage-line, .stage-step.active .stage-line{ background:var(--blue); }
   .stage-dot{
-    width:30px; height:30px; border-radius:50%; background:var(--surface-soft);
-    border:2px solid var(--card-border); display:flex; align-items:center; justify-content:center;
+    width:32px; height:32px; border-radius:50%; background:var(--surface-soft);
+    border:2.5px solid var(--card-border); display:flex; align-items:center; justify-content:center;
     font-size:11px; color:var(--text-muted); position:relative; z-index:1;
+    box-shadow:2px 2px 0px 0px rgba(0,0,0,1);
   }
-  .stage-step.completed .stage-dot{ background:var(--blue); border-color:var(--blue); color:#fff; }
-  .stage-step.active .stage-dot{ border-color:var(--gold); color:var(--gold); box-shadow:0 0 0 4px var(--gold-dim); }
+  .stage-step.completed .stage-dot{ background:var(--blue); border-color:#000; color:#fff; }
+  .stage-step.active .stage-dot{ background:var(--gold); border-color:#000; color:#000; box-shadow:2px 2px 0px 0px rgba(0,0,0,1); }
   .stage-label{ font-size:9px; font-weight:700; color:var(--text-muted); text-align:center; margin-top:7px; letter-spacing:0.3px; line-height:1.25; }
   .stage-step.active .stage-label{ color:var(--gold); }
   .stage-step.completed .stage-label{ color:var(--blue); }
@@ -283,13 +286,16 @@
   /* --- Champion status card --- */
   .status-banner{
     margin-top:14px; background:var(--card);
-    border:1px solid var(--gold-line);
+    border:3px solid var(--gold-line);
     border-radius:var(--radius-lg); padding:16px 18px; display:flex; align-items:center; gap:14px;
-    box-shadow:var(--card-shadow);
+    box-shadow:6px 6px 0px 0px rgba(0,0,0,1);
+    transition:transform .15s ease, box-shadow .15s ease;
   }
+  .status-banner:hover{ transform:translate(-2px,-2px); box-shadow:8px 8px 0px 0px rgba(0,0,0,1); }
   .status-banner .si{
     width:46px; height:46px; min-width:46px; border-radius:12px; display:flex; align-items:center; justify-content:center;
-    background:var(--gold-dim); border:1px solid var(--gold-line); color:var(--gold); font-size:19px;
+    background:var(--gold-dim); border:2.5px solid #000; color:var(--gold); font-size:19px;
+    box-shadow:2.5px 2.5px 0px 0px rgba(0,0,0,1);
   }
   .status-banner .st{ font-size:10.5px; color:var(--text-muted); font-weight:700; letter-spacing:1.5px; text-transform:uppercase; }
   .status-banner .sv{ font-family:'Fraunces', serif; font-size:17px; font-weight:700; color:var(--text-dark); margin-top:3px; }
@@ -733,6 +739,31 @@
   html.light-mode .theme-toggle-btn{ background:#0b192c; color:#FFD700; }
   html.light-mode .theme-toggle-btn .ti-sun{ display:inline-flex; }
   html.light-mode .theme-toggle-btn .ti-moon{ display:none; }
+
+  /* ===== FLOATING MUSIC TOGGLE ===== */
+  .music-toggle-btn{
+    position:fixed; left:14px; bottom:calc(var(--nav-h) + 14px); z-index:130;
+    width:48px; height:48px; border-radius:50%;
+    background:#39ff8f; border:3px solid #000;
+    display:flex; align-items:center; justify-content:center; cursor:pointer;
+    color:#000; font-size:18px;
+    box-shadow:4px 4px 0px 0px rgba(0,0,0,1);
+    transition:all .15s ease;
+  }
+  .music-toggle-btn:hover{ transform:translate(-2px,-2px); box-shadow:6px 6px 0px 0px rgba(0,0,0,1); }
+  .music-toggle-btn:active{ transform:translate(3px,3px); box-shadow:none; }
+  .music-toggle-btn .mi-playing{ display:inline-flex; }
+  .music-toggle-btn .mi-muted{ display:none; }
+  .music-toggle-btn.is-muted{ background:#fff; }
+  .music-toggle-btn.is-muted .mi-playing{ display:none; }
+  .music-toggle-btn.is-muted .mi-muted{ display:inline-flex; }
+  .music-toggle-btn .mi-dot{
+    position:absolute; top:-2px; right:-2px; width:11px; height:11px; border-radius:50%;
+    background:#22c55e; border:2px solid #000;
+    box-shadow:0 0 0 0 rgba(34,197,94,0.6); animation:livePulse 1.8s infinite;
+  }
+  .music-toggle-btn.is-muted .mi-dot{ display:none; }
+  html.light-mode .music-toggle-btn.is-muted{ background:#0b192c; color:#39ff8f; }
 
   /* ===== LIGHT MODE OVERRIDES (Neobrutalism terang) ===== */
   html.light-mode{
@@ -1210,6 +1241,13 @@
       </div>
     </div>
   </div>
+
+  <audio id="bgMusic" src="music-kita.mp3" loop preload="none"></audio>
+  <button class="music-toggle-btn" id="musicToggleBtn" title="Putar/Jeda Musik" aria-label="Putar atau jeda musik latar">
+    <i class="fa-solid fa-music mi-playing"></i>
+    <i class="fa-solid fa-volume-xmark mi-muted"></i>
+    <span class="mi-dot"></span>
+  </button>
 
   <div class="toast" id="toast">Tersimpan</div>
 
@@ -2106,6 +2144,54 @@
   document.getElementById('burgerBtn').addEventListener('click', openDrawer);
   document.getElementById('drawerClose').addEventListener('click', closeDrawer);
   drawerOverlay.addEventListener('click', closeDrawer);
+
+  /* ===== BACKGROUND MUSIC ===== */
+  const bgMusic = document.getElementById('bgMusic');
+  const musicBtn = document.getElementById('musicToggleBtn');
+  let musicHasStarted = false;
+
+  function getMusicMutedPref(){
+    try{ return localStorage.getItem('bgMusicMuted') === 'true'; }catch(e){ return false; }
+  }
+  function setMusicMutedPref(muted){
+    try{ localStorage.setItem('bgMusicMuted', muted ? 'true' : 'false'); }catch(e){}
+  }
+  function updateMusicBtnUI(muted){
+    musicBtn.classList.toggle('is-muted', muted);
+  }
+
+  function tryStartMusicOnce(){
+    if(musicHasStarted) return;
+    musicHasStarted = true;
+    if(getMusicMutedPref()){
+      updateMusicBtnUI(true);
+      return;
+    }
+    bgMusic.volume = 0.5;
+    bgMusic.play().then(() => {
+      updateMusicBtnUI(false);
+    }).catch(() => {
+      updateMusicBtnUI(true);
+    });
+  }
+  ['click','touchstart','keydown'].forEach(evt => {
+    document.addEventListener(evt, tryStartMusicOnce, { once:true, passive:true });
+  });
+
+  musicBtn.addEventListener('click', () => {
+    if(bgMusic.paused){
+      bgMusic.volume = 0.5;
+      bgMusic.play().then(() => {
+        updateMusicBtnUI(false);
+        setMusicMutedPref(false);
+      }).catch(() => {});
+    } else {
+      bgMusic.pause();
+      updateMusicBtnUI(true);
+      setMusicMutedPref(true);
+    }
+  });
+  updateMusicBtnUI(getMusicMutedPref());
 
   /* ===== THEME TOGGLE (Dark/Light Mode) ===== */
   function applyTheme(theme){
