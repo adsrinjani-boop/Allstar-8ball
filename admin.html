@@ -9,11 +9,103 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <style>
-  body{ font-family:'Inter', -apple-system, sans-serif; background:#0b192c; }
-  .card{ background:#fff; border-radius:16px; }
+  body{ font-family:'Inter', -apple-system, sans-serif; background:#0b192c; color:#000; }
   input,select{ font-family:inherit; }
-  ::-webkit-scrollbar{ height:6px; width:6px; }
-  ::-webkit-scrollbar-thumb{ background:rgba(37,99,235,0.4); border-radius:10px; }
+
+  /* ===== SCROLLBAR NEOBRUTALISM ===== */
+  ::-webkit-scrollbar{ height:8px; width:8px; }
+  ::-webkit-scrollbar-thumb{ background:#FFD700; border:2px solid #000; border-radius:0; }
+  ::-webkit-scrollbar-track{ background:#0b192c; }
+
+  /* ===== CARD UTAMA ===== */
+  .card{
+    background:#fff; border-radius:10px;
+    border:3px solid #000 !important;
+    box-shadow:6px 6px 0px 0px rgba(0,0,0,1) !important;
+  }
+
+  /* ===== HEADER ATAS ===== */
+  header{ background:#000 !important; border-bottom:4px solid #FFD700 !important; }
+
+  /* ===== SIDEBAR ===== */
+  #sidebarNav{ background:#000 !important; border-right:4px solid #FFD700 !important; }
+  .tab-btn{ border-radius:8px !important; margin-bottom:4px; border-left:none !important; transition:all .1s ease; }
+  .tab-btn:hover{ background:rgba(255,215,0,0.18) !important; }
+  .tab-btn[class*="bg-white/10"]{
+    background:#FFD700 !important; color:#000 !important;
+    border:2.5px solid #FFD700 !important; box-shadow:3px 3px 0px 0px rgba(255,255,255,0.25);
+  }
+  #sidebarToggleBtn[class*="bg-white/10"]{
+    background:#FFD700 !important; color:#000 !important; border:2.5px solid #000 !important;
+  }
+
+  /* ===== BORDER & RADIUS GLOBAL ===== */
+  .border-slate-200{ border:2.5px solid #000 !important; }
+  .rounded-lg, .rounded-xl, .rounded-2xl{ border-radius:8px !important; }
+  .rounded-full{ border-radius:50% !important; }
+  .shadow{ box-shadow:6px 6px 0px 0px rgba(0,0,0,1) !important; }
+
+  input.border-slate-200, select.border-slate-200{ border-radius:6px !important; }
+  input:focus, select:focus{
+    outline:none !important; border-color:#000 !important;
+    box-shadow:2px 2px 0px 0px rgba(0,0,0,1) !important;
+  }
+
+  /* ===== BACKGROUND ABU-ABU -> LAVENDER SOFT (samakan dgn index.html) ===== */
+  .bg-slate-50{ background:#f4f2ff !important; border:2px solid #000 !important; }
+  .bg-slate-100{ background:#f4f2ff !important; }
+
+  /* ===== TOMBOL UTAMA (biru -> kuning emas) ===== */
+  .bg-blue-600{
+    background:#FFD700 !important; color:#000 !important;
+    border:2.5px solid #000 !important;
+    box-shadow:3px 3px 0px 0px rgba(0,0,0,1) !important;
+    transition:all .1s ease !important;
+  }
+  .bg-blue-600:hover{ background:#ffe14d !important; }
+  .bg-blue-600:active{ transform:translate(3px,3px); box-shadow:none !important; }
+
+  /* ===== TOMBOL HAPUS (merah -> pink neon) ===== */
+  .bg-red-50{
+    background:#fff !important; color:#000 !important;
+    border:2.5px solid #000 !important;
+    box-shadow:3px 3px 0px 0px rgba(0,0,0,1) !important;
+    transition:all .1s ease !important;
+  }
+  .text-red-500{ color:#ff3d81 !important; }
+  .bg-red-50:hover{ background:#ff3d81 !important; color:#000 !important; }
+  .bg-red-50:active{ transform:translate(3px,3px); box-shadow:none !important; }
+
+  /* ===== TOMBOL GELAP (Tambah Kunci, dsb) ===== */
+  .bg-slate-800, .bg-slate-900{
+    background:#000 !important; color:#fff !important;
+    border:2.5px solid #000 !important;
+    box-shadow:3px 3px 0px 0px rgba(255,215,0,1) !important;
+    transition:all .1s ease !important;
+  }
+  .bg-slate-800:hover, .bg-slate-900:hover{ background:#1a1a1a !important; }
+  .bg-slate-800:active, .bg-slate-900:active{ transform:translate(3px,3px); box-shadow:none !important; }
+
+  /* ===== TOMBOL "TAMBAH" BER-DASHED BORDER ===== */
+  .border-dashed{
+    border:3px dashed #000 !important; background:#fff !important;
+    border-radius:8px !important; transition:all .1s ease;
+  }
+  .border-dashed:hover{ background:#fff8d6 !important; }
+  [class*="hover:text-blue-600"]:hover{ color:#000 !important; }
+  [class*="hover:border-blue-400"]:hover{ border-color:#000 !important; }
+
+  /* ===== FOTO/AVATAR THUMBNAIL ===== */
+  .w-14.h-14, .w-10.h-10, .w-9.h-9{ border:2.5px solid #000 !important; }
+
+  /* ===== CHECKBOX ===== */
+  input[type="checkbox"]{ accent-color:#FFD700; width:16px; height:16px; }
+
+  /* ===== TOAST ===== */
+  #toast{
+    background:#000 !important; border:3px solid #FFD700 !important;
+    border-radius:8px !important; font-weight:800;
+  }
 </style>
 </head>
 <body class="min-h-screen text-slate-800">
