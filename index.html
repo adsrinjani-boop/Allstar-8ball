@@ -5,6 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
 <title>TURNAMEN BILYARD RAINBOW SL 2026</title>
   <link rel="icon" type="image/png" href="https://i.imgur.com/Kj8pjKW.png">
+  <script>
+    (function(){
+      try{
+        var savedTheme = localStorage.getItem('theme');
+        if(savedTheme === 'light'){
+          document.documentElement.classList.add('light-mode');
+        }
+      }catch(e){}
+    })();
+  </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,800&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
@@ -665,6 +675,47 @@
   .drawer-item:active{ transform:scale(0.98); }
   .drawer-item .di{ font-size:16px; color:var(--gold); width:20px; text-align:center; }
   .drawer-item .dl{ font-size:13.5px; font-weight:700; color:var(--white-text); }
+
+  /* ===== THEME TOGGLE BUTTON ===== */
+  .topbar-side.topbar-side-right{ display:flex; align-items:center; gap:8px; justify-content:flex-end; width:auto; min-width:auto; }
+  .theme-toggle-btn{
+    width:40px; height:40px; border-radius:8px;
+    background:#39ff8f; border:2.5px solid #000;
+    display:flex; align-items:center; justify-content:center; cursor:pointer;
+    color:#000; font-size:16px;
+    box-shadow:2.5px 2.5px 0px 0px rgba(0,0,0,1);
+    transition:all .1s ease;
+  }
+  .theme-toggle-btn:active{ transform:translate(2.5px,2.5px); box-shadow:none; }
+  .theme-toggle-btn .ti-sun{ display:none; }
+  .theme-toggle-btn .ti-moon{ display:inline-flex; }
+  html.light-mode .theme-toggle-btn{ background:#0b192c; color:#FFD700; }
+  html.light-mode .theme-toggle-btn .ti-sun{ display:inline-flex; }
+  html.light-mode .theme-toggle-btn .ti-moon{ display:none; }
+
+  /* ===== LIGHT MODE OVERRIDES (Neobrutalism terang) ===== */
+  html.light-mode{
+    --white-text:#0a0a0a;
+    --white-text-mid: rgba(10,10,10,0.72);
+    --white-text-muted: rgba(10,10,10,0.5);
+    --bg-navy-1:#f4f4f0;
+    --bg-navy-2:#eceae2;
+  }
+  html.light-mode body{
+    background-image:none !important;
+    background-color:#f4f4f0 !important;
+  }
+  html.light-mode .hero-banner-caption{
+    background:linear-gradient(0deg, rgba(244,244,240,0.96) 8%, rgba(244,244,240,0.6) 55%, transparent 100%);
+  }
+  html.light-mode .hero-banner-caption .main{ color:#0a0a0a; }
+  html.light-mode .modal-overlay{ background:rgba(10,10,10,0.55); }
+  html.light-mode .lightbox{ background:rgba(244,244,240,0.97); }
+  html.light-mode .drawer{ background:#fff; border-left:4px solid #000; }
+  html.light-mode .drawer-item{ background:#f4f4f0; border:2px solid #000; }
+  html.light-mode .drawer-item .dl{ color:#0a0a0a; }
+  html.light-mode .toast{ background:#fff; color:#000; border:3px solid #000; }
+  html.light-mode .banner-dot{ background:rgba(10,10,10,0.3); }
 </style>
 </head>
 <body>
@@ -682,11 +733,14 @@
       <img src="https://i.imgur.com/rztNfqD.png" alt="Rainbow SL 2026" class="topbar-logo">
       <span class="live-dot" title="Live"></span>
     </div>
-    <div class="topbar-side" style="justify-content:flex-end;">
+    <div class="topbar-side topbar-side-right" style="justify-content:flex-end;">
+      <button class="theme-toggle-btn" id="themeToggleBtn" title="Ganti Mode Terang/Gelap">
+        <i class="fa-solid fa-sun ti-sun"></i>
+        <i class="fa-solid fa-moon ti-moon"></i>
+      </button>
       <div class="burger-btn" id="burgerBtn"><i class="fa-solid fa-bars"></i></div>
     </div>
   </div>
-
   <!-- ===== PAGE: HOME ===== -->
   <section class="page active" id="page-home">
     <div class="hero">
@@ -2005,6 +2059,19 @@
   document.getElementById('burgerBtn').addEventListener('click', openDrawer);
   document.getElementById('drawerClose').addEventListener('click', closeDrawer);
   drawerOverlay.addEventListener('click', closeDrawer);
+
+  /* ===== THEME TOGGLE (Dark/Light Mode) ===== */
+  function applyTheme(theme){
+    document.documentElement.classList.toggle('light-mode', theme === 'light');
+  }
+  function getCurrentTheme(){
+    return document.documentElement.classList.contains('light-mode') ? 'light' : 'dark';
+  }
+  document.getElementById('themeToggleBtn').addEventListener('click', () => {
+    const next = getCurrentTheme() === 'light' ? 'dark' : 'light';
+    applyTheme(next);
+    try{ localStorage.setItem('theme', next); }catch(e){}
+  });
 
 /* ===== REALTIME: auto refresh saat admin mengubah data ===== */
   let refetchTimer = null;
