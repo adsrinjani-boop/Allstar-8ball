@@ -692,8 +692,11 @@ async function renderGroupsTab(){
       }).eq('id', g.id), 'Grup disimpan');
     });
     section.querySelector('.g-del').addEventListener('click', async () => {
-      if(!confirm(`Hapus ${g.name}? Semua tim di dalamnya juga akan dilepas dari grup.`)) return;
-      await q(sb.from('groups').delete().eq('id', g.id), 'Grup dihapus');
+      if(!confirm(`Hapus ${g.name}? Semua tim di dalamnya (${gTeams.length} tim) akan ikut terhapus permanen.`)) return;
+      if(gTeams.length > 0){
+        await q(sb.from('teams').delete().in('id', gTeams.map(t => t.id)));
+      }
+      await q(sb.from('groups').delete().eq('id', g.id), 'Grup beserta tim di dalamnya dihapus');
       renderGroupsTab();
     });
     section.querySelector('.add-team-btn').addEventListener('click', async () => {
@@ -720,6 +723,46 @@ async function renderGroupsTab(){
       });
     });
   });
+
+  const orphanTeams = teams.filter(t => !groups.some(g => g.id === t.group_id));
+  if(orphanTeams.length > 0){
+    const orphanSection = document.createElement('div');
+    orphanSection.className = 'border-2 border-red-300 bg-red-50 rounded-xl p-4';
+    orphanSection.innerHTML = `
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="font-bold text-red-600"><i class="fa-solid fa-triangle-exclamation mr-1"></i>Tim Tanpa Grup / Duplikat (${orphanTeams.length})</h3>
+        <button id="delAllOrphanBtn" class="bg-red-500 hover:bg-red-600 text-white text-xs font-bold px-3 py-2 rounded-lg"><i class="fa-solid fa-trash mr-1"></i>Hapus Semua</button>
+      </div>
+      <p class="text-xs text-red-500 mb-3">Tim di bawah ini tidak terhubung ke grup manapun yang masih ada — biasanya sisa dari grup lama yang sudah dihapus. Aman dihapus kalau memang tidak dipakai lagi.</p>
+      <div class="space-y-2 orphan-list">
+        ${orphanTeams.map(t => `
+          <div class="flex flex-wrap gap-2 items-center bg-white rounded-lg p-2 border border-red-200" data-id="${t.id}">
+            <div class="w-10 h-10 rounded-full bg-slate-100 overflow-hidden shrink-0">
+              ${t.photo_url ? `<img src="${esc(t.photo_url)}" class="w-full h-full object-cover">` : `<div class="w-full h-full flex items-center justify-center text-slate-300"><i class="fa-solid fa-user text-xs"></i></div>`}
+            </div>
+            <div class="flex-1 min-w-[120px] text-sm font-semibold">${esc(t.name)}</div>
+            <div class="text-xs text-slate-400 flex-1 min-w-[140px]">${esc(t.player1)} &amp; ${esc(t.player2)}</div>
+            <button class="orphan-del bg-red-500 hover:bg-red-600 text-white text-xs font-bold px-3 py-1.5 rounded-lg"><i class="fa-solid fa-trash"></i></button>
+          </div>
+        `).join('')}
+      </div>
+    `;
+    wrap.appendChild(orphanSection);
+    orphanSection.querySelectorAll('.orphan-list > div').forEach(row => {
+      const tid = row.getAttribute('data-id');
+      row.querySelector('.orphan-del').addEventListener('click', async () => {
+        if(!confirm('Hapus tim duplikat ini?')) return;
+        await q(sb.from('teams').delete().eq('id', tid), 'Tim duplikat dihapus');
+        renderGroupsTab();
+      });
+    });
+    orphanSection.querySelector('#delAllOrphanBtn').addEventListener('click', async () => {
+      if(!confirm(`Hapus semua ${orphanTeams.length} tim tanpa grup ini?`)) return;
+      await q(sb.from('teams').delete().in('id', orphanTeams.map(t => t.id)), `${orphanTeams.length} tim duplikat dihapus`);
+      renderGroupsTab();
+    });
+  }
+
   document.getElementById('addGroupBtn').addEventListener('click', async () => {
     await q(sb.from('groups').insert({ name:`GRUP ${groups.length+1}`, race_to:2, sort_order:(groups.length+1) }), 'Grup ditambahkan');
     renderGroupsTab();
