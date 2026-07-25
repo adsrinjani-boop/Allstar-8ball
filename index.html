@@ -934,6 +934,92 @@
   .music-toggle-btn.is-muted .mi-dot{ display:none; }
   html.light-mode .music-toggle-btn.is-muted{ background:#0b192c; color:#39ff8f; }
 
+  /* ===== FAQ CHATBOT WIDGET ===== */
+  .chatbot-fab{
+    position:fixed; right:14px; bottom:calc(var(--nav-h) + 14px); z-index:130;
+    width:52px; height:52px; border-radius:50%;
+    background:#FFD700; border:3px solid #000;
+    display:flex; align-items:center; justify-content:center; cursor:pointer;
+    color:#000; box-shadow:3px 3px 0px 0px rgba(0,0,0,1);
+    transition:all .15s ease;
+  }
+  .chatbot-fab:hover{ transform:translate(-2px,-2px); box-shadow:5px 5px 0px 0px rgba(0,0,0,1); }
+  .chatbot-fab:active{ transform:translate(2px,2px); box-shadow:none; }
+  .chatbot-fab svg{ width:24px; height:24px; stroke:#000; stroke-width:2.2; fill:none; stroke-linecap:round; stroke-linejoin:round; }
+  .chatbot-fab .cb-close-icon{ display:none; }
+  .chatbot-fab.open .cb-chat-icon{ display:none; }
+  .chatbot-fab.open .cb-close-icon{ display:block; }
+
+  .chatbot-window{
+    position:fixed; right:14px; bottom:calc(var(--nav-h) + 78px); z-index:140;
+    width:90%; max-width:350px; max-height:min(70vh, 520px);
+    background:var(--card); border:3px solid #000; border-radius:18px;
+    box-shadow:6px 6px 0px 0px rgba(0,0,0,1);
+    display:none; flex-direction:column; overflow:hidden;
+  }
+  .chatbot-window.open{ display:flex; animation:fadeIn .2s ease; }
+  .chatbot-header{
+    background:#FFD700; border-bottom:3px solid #000; padding:13px 15px;
+    display:flex; align-items:center; justify-content:space-between; gap:8px;
+  }
+  .chatbot-header-title{ font-family:'Fraunces', serif; font-weight:800; font-size:14px; color:#000; }
+  .chatbot-close-btn{
+    width:28px; height:28px; border-radius:8px; background:#fff; border:2.5px solid #000;
+    display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:2px 2px 0px 0px rgba(0,0,0,1);
+    transition:all .15s ease;
+  }
+  .chatbot-close-btn:hover{ transform:translate(-1px,-1px); box-shadow:3px 3px 0px 0px rgba(0,0,0,1); }
+  .chatbot-close-btn:active{ transform:translate(1px,1px); box-shadow:none; }
+  .chatbot-close-btn svg{ width:14px; height:14px; stroke:#000; stroke-width:2.6; fill:none; stroke-linecap:round; stroke-linejoin:round; }
+
+  .chatbot-body{ padding:14px; overflow-y:auto; flex:1; display:flex; flex-direction:column; gap:10px; }
+  .chatbot-bubble{
+    background:var(--surface-soft); border:2.5px solid #000; border-radius:10px;
+    padding:11px 12px; font-size:12.5px; color:var(--text-body); line-height:1.55;
+    box-shadow:2.5px 2.5px 0px 0px rgba(0,0,0,1);
+  }
+  .chatbot-answer-title{ font-family:'Fraunces', serif; font-weight:800; font-size:13.5px; color:var(--text-dark); margin-bottom:8px; }
+  .chatbot-answer-subtitle{ font-size:11px; font-weight:800; letter-spacing:0.5px; text-transform:uppercase; color:var(--blue); margin:10px 0 4px; }
+  .chatbot-answer-text{ font-size:12.5px; line-height:1.6; }
+  .chatbot-answer-list{ margin:0; padding-left:18px; font-size:12px; line-height:1.7; }
+  .chatbot-answer-list li{ margin-bottom:5px; }
+  .chatbot-answer-list li:last-child{ margin-bottom:0; }
+  .chatbot-sponsor-desc{ display:block; font-size:11px; color:var(--text-muted); font-weight:400; margin-top:1px; }
+  .chatbot-sponsor-link{ font-size:11px; font-weight:700; color:var(--blue); text-decoration:none; }
+  .chatbot-sponsor-link:hover{ text-decoration:underline; }
+
+  .chatbot-options{ display:flex; flex-direction:column; gap:8px; }
+  .chatbot-option-btn{
+    display:flex; align-items:center; gap:10px; width:100%; text-align:left;
+    padding:11px 12px; border-radius:10px; border:2.5px solid #000;
+    background:#fff; color:#000; font-weight:700; font-size:12px; cursor:pointer;
+    box-shadow:2.5px 2.5px 0px 0px rgba(0,0,0,1); transition:all .15s ease;
+    font-family:'Inter', sans-serif;
+  }
+  .chatbot-option-btn:hover{ transform:translate(-2px,-2px); box-shadow:4.5px 4.5px 0px 0px rgba(0,0,0,1); background:#fff8d6; }
+  .chatbot-option-btn:active{ transform:translate(2px,2px); box-shadow:none; }
+  .chatbot-option-btn .cb-opt-icon{
+    width:26px; height:26px; min-width:26px; border-radius:7px; background:var(--gold-dim);
+    border:2px solid #000; display:flex; align-items:center; justify-content:center;
+  }
+  .chatbot-option-btn .cb-opt-icon svg{ width:14px; height:14px; stroke:#000; stroke-width:2.3; fill:none; stroke-linecap:round; stroke-linejoin:round; }
+  .chatbot-option-btn .cb-opt-chevron{ margin-left:auto; }
+  .chatbot-option-btn .cb-opt-chevron svg{ width:14px; height:14px; stroke:#000; stroke-width:2.3; fill:none; stroke-linecap:round; stroke-linejoin:round; }
+
+  .chatbot-back-btn{
+    display:flex; align-items:center; justify-content:center; gap:8px; width:100%;
+    padding:11px 12px; border-radius:10px; border:2.5px solid #000;
+    background:#39ff8f; color:#000; font-weight:800; font-size:12px; cursor:pointer;
+    box-shadow:2.5px 2.5px 0px 0px rgba(0,0,0,1); transition:all .15s ease;
+    font-family:'Inter', sans-serif; margin-top:2px;
+  }
+  .chatbot-back-btn:hover{ transform:translate(-2px,-2px); box-shadow:4.5px 4.5px 0px 0px rgba(0,0,0,1); }
+  .chatbot-back-btn:active{ transform:translate(2px,2px); box-shadow:none; }
+  .chatbot-back-btn svg{ width:14px; height:14px; stroke:#000; stroke-width:2.4; fill:none; stroke-linecap:round; stroke-linejoin:round; }
+
+  html.light-mode .chatbot-window{ background:#fff; }
+  html.light-mode .chatbot-bubble{ background:#f4f4f0; }
+
   /* ===== LIGHT MODE OVERRIDES (Neobrutalism terang) ===== */
   html.light-mode{
     --white-text:#0a0a0a;
@@ -1466,6 +1552,22 @@
     <i class="fa-solid fa-volume-xmark mi-muted"></i>
     <span class="mi-dot"></span>
   </button>
+
+  <!-- FAQ CHATBOT WIDGET -->
+  <button class="chatbot-fab" id="chatbotFabBtn" title="Asisten Rainbow SL" aria-label="Buka asisten FAQ turnamen">
+    <svg class="cb-chat-icon" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+    <svg class="cb-close-icon" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+  </button>
+
+  <div class="chatbot-window" id="chatbotWindow">
+    <div class="chatbot-header">
+      <span class="chatbot-header-title">Asisten Rainbow SL</span>
+      <div class="chatbot-close-btn" id="chatbotCloseBtn">
+        <svg viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+      </div>
+    </div>
+    <div class="chatbot-body" id="chatbotMessages"></div>
+  </div>
 
   <div class="toast" id="toast">Tersimpan</div>
 
@@ -2596,6 +2698,122 @@
     }
   });
   updateMusicBtnUI(getMusicMutedPref());
+
+  /* ===== FAQ CHATBOT WIDGET ===== */
+  const CB_ICONS = {
+    rules: `<svg viewBox="0 0 24 24"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v6h6"/><path d="M9 13h6"/><path d="M9 17h6"/></svg>`,
+    participants: `<svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
+    groups: `<svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>`,
+    prize: `<svg viewBox="0 0 24 24"><path d="M8 21h8"/><path d="M12 17v4"/><path d="M7 4h10v5a5 5 0 0 1-10 0V4Z"/><path d="M17 5h3a2 2 0 0 1-2 4h-1"/><path d="M7 5H4a2 2 0 0 0 2 4h1"/></svg>`,
+    sponsors: `<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>`
+  };
+  const CB_CHEVRON = `<svg viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>`;
+  const CB_BACK_ARROW = `<svg viewBox="0 0 24 24"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>`;
+
+  const CB_TOPICS = [
+    { key:'rules', label:'Aturan & Format Pertandingan' },
+    { key:'participants', label:'Daftar Tim & Peserta' },
+    { key:'groups', label:'Pembagian Grup' },
+    { key:'prize', label:'Hadiah Juara' },
+    { key:'sponsors', label:'Sponsor Official & Info Sponsorship' },
+  ];
+
+  function chatbotAnswerRules(){
+    return `
+      <div class="chatbot-answer-title">Aturan &amp; Format Pertandingan</div>
+      <div class="chatbot-answer-text">
+        Turnamen ini terdiri dari dua tahap. <strong>Fase Grup</strong>: ${state.groups.length || 4} grup, masing-masing berisi 4 tim, bertanding sistem round-robin. 2 tim teratas tiap grup lolos ke babak 8 Besar. Selanjutnya babak <strong>8 Besar, 4 Besar, hingga Final</strong> menggunakan sistem gugur (single elimination).<br><br>
+        Ketentuan Race per babak: Fase Grup Race to ${GROUP_DEFAULT_RACE}, 8 Besar Race to ${ELIM_DEFS.qf.defaultRace}, 4 Besar Race to ${ELIM_DEFS.sf.defaultRace}, Final Race to ${ELIM_DEFS.final.defaultRace}.<br><br>
+        Poin penting lain: wajib hadir pukul 09.15 WIB (batas 09.30 WIB, lewat itu didiskualifikasi), shot clock maksimal 60 detik per giliran, dan bola 8 wajib dimasukkan terakhir setelah seluruh bola target habis.
+      </div>
+    `;
+  }
+  function chatbotAnswerParticipants(){
+    if(state.teams.length === 0) return `<div class="chatbot-answer-text">Data peserta belum tersedia saat ini.</div>`;
+    const list = state.teams.map(t => `<li><strong>${escapeHtml(t.name || 'Tim')}</strong> — ${escapeHtml(playersLine(t.player1, t.player2) || 'pemain belum diisi')}</li>`).join('');
+    return `<div class="chatbot-answer-title">Daftar Tim &amp; Peserta (${state.teams.length} Tim)</div><ul class="chatbot-answer-list">${list}</ul>`;
+  }
+  function chatbotAnswerGroups(){
+    if(state.groups.length === 0) return `<div class="chatbot-answer-text">Data pembagian grup belum tersedia saat ini.</div>`;
+    const html = state.groups.map(g => {
+      const gTeams = state.teams.filter(t => t.group_id === g.id);
+      const teamList = gTeams.map(t => `<li>${escapeHtml(t.name || 'Tim')}</li>`).join('') || '<li>Belum ada tim</li>';
+      return `<div class="chatbot-answer-subtitle">${escapeHtml(g.name || 'Grup')}</div><ul class="chatbot-answer-list">${teamList}</ul>`;
+    }).join('');
+    return `<div class="chatbot-answer-title">Pembagian Grup</div>${html}`;
+  }
+  function chatbotAnswerPrize(){
+    return `
+      <div class="chatbot-answer-title">Hadiah Juara</div>
+      <ul class="chatbot-answer-list">
+        <li><strong>Juara 1:</strong> 200.000 LKR + Stick Billiard + Piala + Penghargaan</li>
+        <li><strong>Juara 2:</strong> 150.000 LKR + Stick Billiard + Piala + Penghargaan</li>
+        <li><strong>Juara 3:</strong> 75.000 LKR + Stick Billiard + Piala + Penghargaan</li>
+      </ul>
+    `;
+  }
+  function chatbotAnswerSponsors(){
+    if(state.sponsors.length === 0) return `<div class="chatbot-answer-text">Data sponsor belum tersedia saat ini.</div>`;
+    const list = state.sponsors.map(sp => {
+      const desc = sp.description ? `<span class="chatbot-sponsor-desc">${escapeHtml(sp.description)}</span>` : '';
+      const link = sp.cta_link ? `<br><a class="chatbot-sponsor-link" href="${escapeHtml(sp.cta_link)}" target="_blank" rel="noopener">Kunjungi &rarr;</a>` : '';
+      return `<li><strong>${escapeHtml(sp.name || 'Sponsor')}</strong>${desc}${link}</li>`;
+    }).join('');
+    return `
+      <div class="chatbot-answer-title">Sponsor Official</div>
+      <ul class="chatbot-answer-list">${list}</ul>
+      <div class="chatbot-answer-text" style="margin-top:10px;">Terima kasih kepada seluruh sponsor yang telah mendukung terselenggaranya Turnamen Rainbow SL 2026. Ketuk logo sponsor di halaman Sponsor untuk melihat profil lengkapnya. Bagi pihak yang tertarik menjadi sponsor pada penyelenggaraan berikutnya, silakan hubungi panitia melalui halaman Pengurus / Penanggung Jawab.</div>
+    `;
+  }
+  const CB_ANSWER_FN = {
+    rules: chatbotAnswerRules, participants: chatbotAnswerParticipants,
+    groups: chatbotAnswerGroups, prize: chatbotAnswerPrize, sponsors: chatbotAnswerSponsors
+  };
+
+  function chatbotShowMenu(){
+    const box = document.getElementById('chatbotMessages');
+    box.innerHTML = `
+      <div class="chatbot-bubble">Selamat datang di Turnamen Rainbow SL 2026! Silakan pilih informasi yang ingin Anda ketahui:</div>
+      <div class="chatbot-options">
+        ${CB_TOPICS.map(t => `
+          <button class="chatbot-option-btn" data-topic="${t.key}">
+            <span class="cb-opt-icon">${CB_ICONS[t.key]}</span>
+            <span>${t.label}</span>
+            <span class="cb-opt-chevron">${CB_CHEVRON}</span>
+          </button>
+        `).join('')}
+      </div>
+    `;
+    box.querySelectorAll('.chatbot-option-btn').forEach(btn => {
+      btn.addEventListener('click', () => chatbotShowAnswer(btn.getAttribute('data-topic')));
+    });
+  }
+  function chatbotShowAnswer(topic){
+    const box = document.getElementById('chatbotMessages');
+    const fn = CB_ANSWER_FN[topic];
+    box.innerHTML = `
+      <div class="chatbot-bubble chatbot-answer">${fn ? fn() : ''}</div>
+      <button class="chatbot-back-btn" id="chatbotBackBtn">${CB_BACK_ARROW}<span>Kembali ke Menu Utama</span></button>
+    `;
+    box.scrollTop = 0;
+    document.getElementById('chatbotBackBtn').addEventListener('click', chatbotShowMenu);
+  }
+
+  const chatbotFabBtn = document.getElementById('chatbotFabBtn');
+  const chatbotWindow = document.getElementById('chatbotWindow');
+  function openChatbot(){
+    chatbotWindow.classList.add('open');
+    chatbotFabBtn.classList.add('open');
+    chatbotShowMenu();
+  }
+  function closeChatbot(){
+    chatbotWindow.classList.remove('open');
+    chatbotFabBtn.classList.remove('open');
+  }
+  chatbotFabBtn.addEventListener('click', () => {
+    chatbotWindow.classList.contains('open') ? closeChatbot() : openChatbot();
+  });
+  document.getElementById('chatbotCloseBtn').addEventListener('click', closeChatbot);
 
   /* ===== THEME TOGGLE (Dark/Light Mode) ===== */
   function applyTheme(theme){
