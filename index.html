@@ -475,10 +475,50 @@
   .leaderboard-row.rank-1 .lb-winrate{ background:#FFD700; font-size:15px; }
   .lb-notplayed-title{
     font-size:10px; letter-spacing:1.5px; text-transform:uppercase; color:#000; font-weight:800;
-    margin:18px 0 10px; display:inline-block;
+    margin:18px 0 10px; display:inline-block; align-self:flex-start; width:fit-content;
     background:#fff; border:2.5px solid #000; border-radius:999px; padding:6px 14px;
-    box-shadow:3px 3px 0px 0px rgba(0,0,0,1); transform:rotate(-1deg);
+    box-shadow:3px 3px 0px 0px rgba(0,0,0,1);
   }
+
+  /* ===== RANKING SUB-TABS (Peringkat vs Bagan) ===== */
+  .ranking-subtabs{ display:flex; gap:10px; margin-bottom:18px; }
+  .ranking-subtab-btn{
+    flex:1; display:flex; align-items:center; justify-content:center; gap:7px;
+    padding:12px 10px; border-radius:var(--radius-md); border:3px solid #000;
+    background:#fff; color:#000; font-weight:800; font-size:12.5px; cursor:pointer;
+    box-shadow:4px 4px 0px 0px rgba(0,0,0,1); transition:all .15s ease;
+    font-family:'Inter', sans-serif;
+  }
+  .ranking-subtab-btn:hover{ transform:translate(-2px,-2px); box-shadow:6px 6px 0px 0px rgba(0,0,0,1); }
+  .ranking-subtab-btn:active{ transform:translate(2px,2px); box-shadow:none; }
+  .ranking-subtab-btn.active{ background:#FFD700; }
+  .ranking-subtab-btn svg,
+  .bracket-image-openfull-btn svg{
+    width:16px; height:16px; min-width:16px;
+    stroke:currentColor; stroke-width:2.4; fill:none;
+    stroke-linecap:round; stroke-linejoin:round;
+    vertical-align:-3px;
+  }
+  .ranking-subpage{ display:none; }
+  .ranking-subpage.active{ display:block; }
+
+  /* ===== BAGAN PERTANDINGAN (IMAGE CARD) ===== */
+  .bracket-image-card{
+    width:100%; background:#fff9e0; border:3px solid #000; border-radius:14px;
+    overflow:hidden; box-shadow:5px 5px 0px 0px rgba(0,0,0,1);
+    transition:transform .15s ease, box-shadow .15s ease; margin-bottom:14px;
+  }
+  .bracket-image-card:hover{ transform:translate(-2px,-2px); box-shadow:7px 7px 0px 0px rgba(0,0,0,1); }
+  .bracket-image-card img{ width:100%; display:block; }
+  .bracket-image-openfull-btn{
+    display:flex; align-items:center; justify-content:center; gap:8px; width:100%;
+    padding:13px 16px; border-radius:var(--radius-md); border:3px solid #000;
+    background:#39ff8f; color:#000; font-weight:800; font-size:13.5px; cursor:pointer;
+    box-shadow:4px 4px 0px 0px rgba(0,0,0,1); transition:all .15s ease;
+    font-family:'Inter', sans-serif;
+  }
+  .bracket-image-openfull-btn:hover{ transform:translate(-2px,-2px); box-shadow:6px 6px 0px 0px rgba(0,0,0,1); }
+  .bracket-image-openfull-btn:active{ transform:translate(2px,2px); box-shadow:none; }
 
   .billiard-video-wrap{
     display:flex; justify-content:center; margin:24px 0;
@@ -967,10 +1007,34 @@
 
   <!-- ===== PAGE: LEADERBOARD (PAPAN PERINGKAT) ===== -->
   <section class="page" id="page-bracket">
-    <div class="page-title">Papan Peringkat</div>
+    <div class="page-title">Papan Peringkat & Bagan</div>
     <div class="page-sub">Peringkat 16 tim berdasarkan win rate &amp; statistik keseluruhan turnamen</div>
     <div class="section-rule"></div>
-    <div id="leaderboardWrap"></div>
+
+    <div class="ranking-subtabs">
+     <button class="ranking-subtab-btn active" id="rankingSubtabLeaderboardBtn" data-subtab="leaderboard">
+        <svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>
+        Peringkat
+      </button>
+      <button class="ranking-subtab-btn" id="rankingSubtabBracketBtn" data-subtab="bracketimg">
+        <svg viewBox="0 0 24 24"><path d="M8 21h8"/><path d="M12 17v4"/><path d="M7 4h10v5a5 5 0 0 1-10 0V4Z"/><path d="M17 5h3a2 2 0 0 1-2 4h-1"/><path d="M7 5H4a2 2 0 0 0 2 4h1"/></svg>
+        Bagan
+      </button>
+    </div>
+
+    <div class="ranking-subpage active" id="rankingSubpageLeaderboard">
+      <div id="leaderboardWrap"></div>
+    </div>
+
+    <div class="ranking-subpage" id="rankingSubpageBracketImg">
+      <div class="bracket-image-card" id="bracketImageCard">
+        <img src="https://i.imgur.com/NLIXCOh.png" alt="Bagan Pertandingan Rainbow SL">
+      </div>
+      <button class="bracket-image-openfull-btn" id="bracketImageOpenFullBtn">
+        <svg viewBox="0 0 24 24"><path d="M15 3h6v6"/><path d="M9 21H3v-6"/><path d="M21 3l-7 7"/><path d="M3 21l7-7"/></svg>
+        Buka Gambar Penuh
+      </button>
+    </div>
   </section>
 
   <!-- ===== PAGE: PARTICIPANTS (read-only) ===== -->
@@ -1110,8 +1174,8 @@
           <div class="ri-title"><i class="fa-solid fa-shuffle"></i>Jalur Babak 8 Besar</div>
           <div class="ri-desc">Susunan pertandingan babak 8 besar:</div>
           <ul class="ri-sub">
-            <li><strong>Juara Group:</strong> Group A vs Group D</li>
-            <li><strong>Juara Group:</strong> Group B vs Group C</li>
+            <li><strong>Juara Group:</strong> Group A vs Group C</li>
+            <li><strong>Juara Group:</strong> Group B vs Group D</li>
             <li><strong>Runner Group:</strong> Group A vs Group D</li>
             <li><strong>Runner Group:</strong> Group B vs Group C</li>
           </ul>
@@ -2239,6 +2303,24 @@
     lightbox.classList.add('open');
   }
   document.getElementById('lightboxClose').addEventListener('click', () => lightbox.classList.remove('open'));
+
+  /* ===== RANKING SUB-TABS (Peringkat vs Bagan) ===== */
+  function switchRankingSubtab(subtab){
+    document.querySelectorAll('.ranking-subtab-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.getAttribute('data-subtab') === subtab);
+    });
+    document.getElementById('rankingSubpageLeaderboard').classList.toggle('active', subtab === 'leaderboard');
+    document.getElementById('rankingSubpageBracketImg').classList.toggle('active', subtab === 'bracketimg');
+  }
+  document.querySelectorAll('.ranking-subtab-btn').forEach(btn => {
+    btn.addEventListener('click', () => switchRankingSubtab(btn.getAttribute('data-subtab')));
+  });
+  document.getElementById('bracketImageCard').addEventListener('click', () => {
+    openLightboxWithUrl('https://i.imgur.com/NLIXCOh.png');
+  });
+  document.getElementById('bracketImageOpenFullBtn').addEventListener('click', () => {
+    openLightboxWithUrl('https://i.imgur.com/NLIXCOh.png');
+  });
   lightbox.addEventListener('click', (e) => { if(e.target === lightbox) lightbox.classList.remove('open'); });
 
   /* ===== PAGE NAVIGATION ===== */
