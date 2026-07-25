@@ -582,6 +582,11 @@
     display:flex; align-items:center; justify-content:center; font-size:36px; color:var(--gold);
     background:var(--gold-dim);
     border:1px solid var(--gold-line);
+    overflow:hidden;
+  }
+  .trophy-icon-big img{
+    width:56%; height:56%; object-fit:contain;
+    display:block;
   }
   .trophy-label{ font-size:11.5px; letter-spacing:3.5px; color:var(--text-muted); font-weight:700; margin-bottom:10px; text-transform:uppercase; }
   .trophy-name-big{ font-family:'Fraunces', serif; font-size:28px; font-weight:700; color:var(--text-dark); min-height:36px; }
@@ -1069,7 +1074,7 @@
     <div class="page-sub">Pemenang Grand Final akan tampil di sini</div>
     <div class="section-rule"></div>
     <div class="champion-wrap">
-      <div class="trophy-icon-big"><i class="fa-solid fa-trophy"></i></div>
+      <div class="trophy-icon-big"><img src="trophy.svg" alt="Trofi Juara"></div>
       <div class="trophy-label">Juara Rainbow SL</div>
       <div class="trophy-name-big" id="championName">—</div>
       <div class="trophy-players" id="championPlayers"></div>
@@ -1176,8 +1181,8 @@
           <ul class="ri-sub">
             <li><strong>Juara Group:</strong> Group A vs Group C</li>
             <li><strong>Juara Group:</strong> Group B vs Group D</li>
-            <li><strong>Runner Group:</strong> Group A vs Group C</li>
-            <li><strong>Runner Group:</strong> Group B vs Group d</li>
+            <li><strong>Runner Group:</strong> Group A vs Group D</li>
+            <li><strong>Runner Group:</strong> Group B vs Group C</li>
           </ul>
         </div>
       </div>
