@@ -366,7 +366,10 @@
     width:100%; padding:9px 10px 9px 30px; border-radius:8px; border:1px solid var(--card-border);
     background:var(--surface-soft); font-size:12.5px; color:var(--text-dark); min-height:36px; display:flex; align-items:center;
   }
-  .empty-note{ color:var(--white-text-mid); font-size:12.5px; text-align:center; padding:24px 10px; }
+  .empty-note{
+    color:var(--text-muted); font-size:12.5px; text-align:center; padding:22px 12px;
+    background:var(--surface-soft); border:2.5px dashed #000; border-radius:var(--radius-md);
+  }
 
   /* ===== GROUP STAGE (SKOR / JADWAL & HASIL) ===== */
   .groups-scroll-wrap{
@@ -424,6 +427,59 @@
   .gmatch-meta .gm-tag i{ font-size:8px; }
   .gmatch-meta .gm-tag.status-live{ color:#000; background:#ff3d81; border-color:#000; }
   .gmatch-meta .gm-tag.status-finished{ color:#000; background:#39ff8f; border-color:#000; }
+  /* ===== LEADERBOARD (PAPAN PERINGKAT) ===== */
+  .lb-summary-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:20px; }
+  .lb-summary-grid .tp-stat-box{ transition:transform .15s ease, box-shadow .15s ease; }
+  .lb-summary-grid .tp-stat-box:hover{ transform:translate(-2px,-2px); box-shadow:5px 5px 0px 0px rgba(0,0,0,1); }
+  .lb-summary-grid .tp-stat-box:nth-child(1){ background:#cdeeff; }
+  .lb-summary-grid .tp-stat-box:nth-child(2){ background:#fff4b8; }
+  .lb-summary-grid .tp-stat-box:nth-child(3){ background:#d7ffe8; }
+  .leaderboard-list{ display:flex; flex-direction:column; gap:10px; }
+  .leaderboard-row{
+    display:flex; align-items:center; gap:12px; cursor:pointer;
+    background:var(--card); border:3px solid #000; border-radius:var(--radius-md);
+    padding:11px 13px; box-shadow:4px 4px 0px 0px rgba(0,0,0,1);
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .leaderboard-row:hover{ transform:translate(-2px,-2px); box-shadow:6px 6px 0px 0px rgba(0,0,0,1); }
+  .leaderboard-row:active{ transform:translate(2px,2px); box-shadow:none; }
+  .leaderboard-row.lb-inactive{ opacity:0.55; cursor:default; }
+  .leaderboard-row.lb-inactive:hover{ transform:none; box-shadow:4px 4px 0px 0px rgba(0,0,0,1); }
+  .lb-rank{
+    width:30px; height:30px; min-width:30px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    font-family:'JetBrains Mono',monospace; font-weight:800; font-size:12.5px;
+    background:var(--surface-soft); border:2.5px solid #000; box-shadow:2px 2px 0px 0px rgba(0,0,0,1); color:#000;
+  }
+  .leaderboard-row.rank-1{ background:#fff8d6; border-width:4px; box-shadow:5px 5px 0px 0px rgba(0,0,0,1); transform:rotate(-0.6deg); }
+  .leaderboard-row.rank-1:hover{ transform:rotate(0deg) translate(-2px,-2px); box-shadow:7px 7px 0px 0px rgba(0,0,0,1); }
+  .leaderboard-row.rank-2{ background:#f4f4f6; }
+  .leaderboard-row.rank-3{ background:#fdf1de; }
+  .leaderboard-row.rank-1 .lb-rank{ background:#FFD700; width:36px; height:36px; font-size:15px; }
+  .leaderboard-row.rank-2 .lb-rank{ background:#e5e7eb; }
+  .leaderboard-row.rank-3 .lb-rank{ background:#fde3c0; }
+  .leaderboard-row.rank-1 .lb-name{ font-size:14px; }
+  .lb-avatar{
+    width:38px; height:38px; min-width:38px; border-radius:9px; overflow:hidden;
+    background:var(--surface-soft); border:2.5px solid #000; box-shadow:2px 2px 0px 0px rgba(0,0,0,1);
+    display:flex; align-items:center; justify-content:center; color:var(--icon); font-size:13px;
+  }
+  .lb-avatar img{ width:100%; height:100%; object-fit:cover; }
+  .lb-info{ flex:1; min-width:0; }
+  .lb-name{ font-size:13px; font-weight:800; color:var(--text-dark); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .lb-record{ font-size:10.5px; color:var(--text-muted); margin-top:2px; }
+  .lb-winrate{
+    font-family:'JetBrains Mono',monospace; font-weight:800; font-size:14px; color:#000; white-space:nowrap;
+    background:var(--blue-dim); border:2.5px solid #000; border-radius:8px; padding:6px 10px;
+    box-shadow:2px 2px 0px 0px rgba(0,0,0,1);
+  }
+  .leaderboard-row.rank-1 .lb-winrate{ background:#FFD700; font-size:15px; }
+  .lb-notplayed-title{
+    font-size:10px; letter-spacing:1.5px; text-transform:uppercase; color:#000; font-weight:800;
+    margin:18px 0 10px; display:inline-block;
+    background:#fff; border:2.5px solid #000; border-radius:999px; padding:6px 14px;
+    box-shadow:3px 3px 0px 0px rgba(0,0,0,1); transform:rotate(-1deg);
+  }
+
   .billiard-video-wrap{
     display:flex; justify-content:center; margin:24px 0;
   }
@@ -448,13 +504,18 @@
   .elim-section-title i{ color:var(--gold); }
 
   /* ===== SCORES PAGE (elimination rounds) ===== */
-  .round-block{ margin-bottom:22px; }
-  .round-block-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; flex-wrap:wrap; gap:6px; }
-  .round-block-head h3{ margin:0; font-size:12.5px; letter-spacing:1.6px; text-transform:uppercase; color:var(--white-text); font-weight:700; display:flex; align-items:center; gap:8px; }
-  .round-block-head h3 i{ font-size:12px; color:var(--gold); }
+  .round-block{
+    margin-bottom:16px; background:var(--card); border:3px solid #000; border-radius:var(--radius-lg);
+    padding:16px; box-shadow:6px 6px 0px 0px rgba(0,0,0,1);
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .round-block:hover{ transform:translate(-2px,-2px); box-shadow:8px 8px 0px 0px rgba(0,0,0,1); }
+  .round-block-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; flex-wrap:wrap; gap:6px; padding-bottom:12px; border-bottom:2.5px dashed #000; }
+  .round-block-head h3{ margin:0; font-size:12.5px; letter-spacing:1.6px; text-transform:uppercase; color:var(--text-dark); font-weight:800; display:flex; align-items:center; gap:8px; }
+  .round-block-head h3 i{ font-size:12px; color:var(--gold); -webkit-text-stroke:0.5px #000; }
   .round-block-head .rbh-tags{ display:flex; gap:6px; }
-  .round-block-head .rbh-tag{ font-size:9.5px; color:var(--white-text-mid); font-weight:700; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15); padding:4px 9px; border-radius:999px; }
-  .round-block-head .rbh-tag.race{ color:var(--gold); border-color:var(--gold-line); background:var(--gold-dim); }
+  .round-block-head .rbh-tag{ font-size:9.5px; color:#000; font-weight:800; background:var(--surface-soft); border:2px solid #000; padding:4px 10px; border-radius:999px; box-shadow:2px 2px 0px 0px rgba(0,0,0,1); }
+  .round-block-head .rbh-tag.race{ color:#000; border-color:#000; background:#FFD700; font-weight:800; }
 
   .bracket-match{
     background:var(--card); border:1px solid var(--card-border); border-radius:var(--radius-md);
@@ -867,9 +928,9 @@
 
     <div class="quick-grid">
       <div class="quick-card" data-goto="bracket">
-        <div class="qi"><i class="fa-solid fa-sitemap"></i></div>
-        <div class="qt">Bagan Turnamen</div>
-        <div class="qs">Lihat struktur bracket</div>
+        <div class="qi"><i class="fa-solid fa-ranking-star"></i></div>
+        <div class="qt">Papan Peringkat</div>
+        <div class="qs">Ranking &amp; statistik tim</div>
       </div>
       <div class="quick-card" data-goto="scores">
         <div class="qi"><i class="fa-solid fa-clipboard-list"></i></div>
@@ -904,15 +965,12 @@
     </div>
   </section>
 
-  <!-- ===== PAGE: BAGAN (IMAGE) ===== -->
+  <!-- ===== PAGE: LEADERBOARD (PAPAN PERINGKAT) ===== -->
   <section class="page" id="page-bracket">
-    <div class="page-title">Bagan Turnamen</div>
-    <div class="page-sub">Struktur bracket 16 team (32 pemain / ganda) — fase grup, lanjut sistem gugur</div>
+    <div class="page-title">Papan Peringkat</div>
+    <div class="page-sub">Peringkat 16 tim berdasarkan win rate &amp; statistik keseluruhan turnamen</div>
     <div class="section-rule"></div>
-    <div class="bracket-image-wrap" id="bracketImgWrap">
-      <img src="https://i.imgur.com/9dstLbM.png" alt="Bagan Turnamen Billiard Rainbow SL">
-    </div>
-    <div class="zoom-hint"><i class="fa-solid fa-magnifying-glass-plus"></i>Ketuk gambar untuk memperbesar (pinch-to-zoom didukung)</div>
+    <div id="leaderboardWrap"></div>
   </section>
 
   <!-- ===== PAGE: PARTICIPANTS (read-only) ===== -->
@@ -1095,7 +1153,7 @@
   <!-- ===== BOTTOM NAVIGATION ===== -->
   <nav class="bottom-nav">
     <button class="nav-btn active" data-page="home"><span class="ni"><i class="fa-solid fa-house"></i></span><span class="nt">Beranda</span></button>
-    <button class="nav-btn" data-page="bracket"><span class="ni"><i class="fa-solid fa-sitemap"></i></span><span class="nt">Bagan</span></button>
+    <button class="nav-btn" data-page="bracket"><span class="ni"><i class="fa-solid fa-ranking-star"></i></span><span class="nt">Peringkat</span></button>
     <button class="nav-btn" data-page="scores"><span class="ni"><i class="fa-solid fa-clipboard-list"></i></span><span class="nt">Skor</span></button>
     <button class="nav-btn" data-page="participants"><span class="ni"><i class="fa-solid fa-users-gear"></i></span><span class="nt">Peserta</span></button>
     <button class="nav-btn" data-page="champion"><span class="ni"><i class="fa-solid fa-trophy"></i></span><span class="nt">Juara</span></button>
@@ -1753,6 +1811,89 @@
     }
   }
 
+  /* ===== LEADERBOARD (PAPAN PERINGKAT) ===== */
+  function getTournamentStats(){
+    let matchesPlayed = 0, totalRacks = 0;
+    state.groups.forEach(g => {
+      const groupRaceTo = g.race_to || GROUP_DEFAULT_RACE;
+      groupMatchesFor(g.id).forEach(m => {
+        const raceTo = m.race_to || groupRaceTo;
+        if(isGroupMatchComplete(m, raceTo)){
+          matchesPlayed++; totalRacks += Number(m.score1) + Number(m.score2);
+        }
+      });
+    });
+    ELIM_ORDER.forEach(key => {
+      const def = ELIM_DEFS[key];
+      (state.elimMatches[key] || []).forEach(m => {
+        const raceTo = m.race_to || def.defaultRace;
+        if(isElimMatchComplete(m, raceTo)){
+          matchesPlayed++; totalRacks += Number(m.score1) + Number(m.score2);
+        }
+      });
+    });
+    return {
+      matchesPlayed, totalRacks,
+      avgRacks: matchesPlayed > 0 ? (totalRacks / matchesPlayed).toFixed(1) : '0'
+    };
+  }
+
+  function renderLeaderboardPage(){
+    const wrap = document.getElementById('leaderboardWrap');
+    if(!wrap) return;
+    const tstats = getTournamentStats();
+    const summaryHtml = `
+      <div class="lb-summary-grid">
+        <div class="tp-stat-box"><div class="tsb-value">${tstats.matchesPlayed}</div><div class="tsb-label">Match Dimainkan</div></div>
+        <div class="tp-stat-box"><div class="tsb-value">${tstats.totalRacks}</div><div class="tsb-label">Total Rack</div></div>
+        <div class="tp-stat-box"><div class="tsb-value">${tstats.avgRacks}</div><div class="tsb-label">Rata² Rack/Match</div></div>
+      </div>
+    `;
+    if(state.teams.length === 0){
+      wrap.innerHTML = summaryHtml + `<p class="empty-note">Belum ada data tim.</p>`;
+      return;
+    }
+    const ranked = state.teams
+      .map(t => ({ team:t, stats:getTeamStats(t.id) }))
+      .filter(x => x.stats.played > 0)
+      .sort((a,b) => b.stats.winRate - a.stats.winRate
+        || b.stats.wins - a.stats.wins
+        || (b.stats.racksFor - b.stats.racksAgainst) - (a.stats.racksFor - a.stats.racksAgainst));
+    const notPlayed = state.teams.filter(t => getTeamStats(t.id).played === 0);
+
+    let rowsHtml = ranked.map((x, idx) => {
+      const rank = idx + 1;
+      const rankCls = rank === 1 ? 'rank-1' : rank === 2 ? 'rank-2' : rank === 3 ? 'rank-3' : '';
+      return `
+        <div class="leaderboard-row ${rankCls}" data-team-id="${x.team.id}">
+          <div class="lb-rank">${rank}</div>
+          <div class="lb-avatar">${x.team.photo_url ? `<img src="${escapeHtml(x.team.photo_url)}" alt="${escapeHtml(x.team.name)}">` : `<i class="fa-solid fa-users"></i>`}</div>
+          <div class="lb-info">
+            <div class="lb-name">${escapeHtml(x.team.name || 'Tim')}</div>
+            <div class="lb-record">${x.stats.wins}W - ${x.stats.losses}L &bull; ${x.stats.racksFor}-${x.stats.racksAgainst} rack</div>
+          </div>
+          <div class="lb-winrate">${x.stats.winRate}%</div>
+        </div>
+      `;
+    }).join('');
+
+    if(notPlayed.length > 0){
+      rowsHtml += `<div class="lb-notplayed-title">Belum Bertanding</div>` + notPlayed.map(t => `
+        <div class="leaderboard-row lb-inactive">
+          <div class="lb-rank">-</div>
+          <div class="lb-avatar">${t.photo_url ? `<img src="${escapeHtml(t.photo_url)}" alt="${escapeHtml(t.name)}">` : `<i class="fa-solid fa-users"></i>`}</div>
+          <div class="lb-info"><div class="lb-name">${escapeHtml(t.name || 'Tim')}</div><div class="lb-record">Belum ada pertandingan selesai</div></div>
+          <div class="lb-winrate">—</div>
+        </div>
+      `).join('');
+    }
+
+    wrap.innerHTML = summaryHtml + `<div class="leaderboard-list">${rowsHtml}</div>`;
+    wrap.querySelectorAll('.leaderboard-row[data-team-id]').forEach(row => {
+      row.addEventListener('click', () => openTeamProfile(row.getAttribute('data-team-id')));
+    });
+  }
+
   /* ===== RENDER: FASE GRUP (JADWAL & HASIL) ===== */
   function renderGroupsSection(){
     const wrap = document.getElementById('groupsScrollWrap');
@@ -2069,6 +2210,7 @@
     setupHeroBanner();
     renderHomeSponsors();
     renderGroupsSection();
+    renderLeaderboardPage();
     renderScoresPage();
     renderParticipantsPage();
     renderSponsorsPage();
@@ -2096,9 +2238,6 @@
     lightboxImg.src = url;
     lightbox.classList.add('open');
   }
-  document.getElementById('bracketImgWrap').addEventListener('click', () => {
-    openLightboxWithUrl(document.querySelector('#bracketImgWrap img').src);
-  });
   document.getElementById('lightboxClose').addEventListener('click', () => lightbox.classList.remove('open'));
   lightbox.addEventListener('click', (e) => { if(e.target === lightbox) lightbox.classList.remove('open'); });
 
