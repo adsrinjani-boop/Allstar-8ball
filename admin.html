@@ -535,13 +535,19 @@ async function renderSponsorsTab(){
       <p class="text-sm text-slate-500 mb-5">Kelola logo dan nama sponsor.</p>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-3" id="sponsorList">
         ${rows.map(s => `
-          <div class="border border-slate-200 rounded-xl p-3 flex gap-3 items-center" data-id="${s.id}">
-            <div class="w-14 h-14 rounded-lg bg-slate-100 overflow-hidden shrink-0 cursor-pointer sp-img">
-              ${s.photo_url ? `<img src="${esc(s.photo_url)}" class="w-full h-full object-cover">` : `<div class="w-full h-full flex items-center justify-center text-slate-300"><i class="fa-solid fa-image"></i></div>`}
+          <div class="border border-slate-200 rounded-xl p-3 space-y-2" data-id="${s.id}">
+            <div class="flex gap-3 items-center">
+              <div class="w-14 h-14 rounded-lg bg-slate-100 overflow-hidden shrink-0 cursor-pointer sp-img">
+                ${s.photo_url ? `<img src="${esc(s.photo_url)}" class="w-full h-full object-cover">` : `<div class="w-full h-full flex items-center justify-center text-slate-300"><i class="fa-solid fa-image"></i></div>`}
+              </div>
+              <input class="sp-name flex-1 px-3 py-2 rounded-lg border border-slate-200 text-sm font-bold" placeholder="Nama sponsor" value="${esc(s.name)}">
             </div>
-            <input class="sp-name flex-1 px-3 py-2 rounded-lg border border-slate-200 text-sm" value="${esc(s.name)}">
-            <button class="sp-save bg-blue-600 text-white text-xs font-bold px-3 py-2 rounded-lg"><i class="fa-solid fa-check"></i></button>
-            <button class="sp-del bg-red-50 text-red-500 text-xs font-bold px-3 py-2 rounded-lg"><i class="fa-solid fa-trash"></i></button>
+            <textarea class="sp-desc w-full px-3 py-2 rounded-lg border border-slate-200 text-sm" rows="2" placeholder="Deskripsi / catatan sponsor">${esc(s.description)}</textarea>
+            <input class="sp-cta w-full px-3 py-2 rounded-lg border border-slate-200 text-sm" placeholder="Link CTA (Website / Instagram / WhatsApp)" value="${esc(s.cta_link)}">
+            <div class="flex gap-2 justify-end">
+              <button class="sp-save bg-blue-600 text-white text-xs font-bold px-3 py-2 rounded-lg"><i class="fa-solid fa-check"></i> Simpan</button>
+              <button class="sp-del bg-red-50 text-red-500 text-xs font-bold px-3 py-2 rounded-lg"><i class="fa-solid fa-trash"></i></button>
+            </div>
           </div>
         `).join('') || '<p class="text-sm text-slate-400">Belum ada sponsor.</p>'}
       </div>
@@ -557,7 +563,11 @@ async function renderSponsorsTab(){
       if(url){ await q(sb.from('sponsors').update({ photo_url:url }).eq('id', id), 'Logo disimpan'); renderSponsorsTab(); }
     });
     row.querySelector('.sp-save').addEventListener('click', async () => {
-      await q(sb.from('sponsors').update({ name: row.querySelector('.sp-name').value }).eq('id', id), 'Sponsor disimpan');
+      await q(sb.from('sponsors').update({
+        name: row.querySelector('.sp-name').value,
+        description: row.querySelector('.sp-desc').value,
+        cta_link: row.querySelector('.sp-cta').value
+      }).eq('id', id), 'Sponsor disimpan');
     });
     row.querySelector('.sp-del').addEventListener('click', async () => {
       if(!confirm('Hapus sponsor ini?')) return;
