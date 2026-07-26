@@ -59,11 +59,22 @@
   *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
   html,body{ margin:0; padding:0; }
 html{ overflow-x:hidden; }
+/* ===== FIX: TOUCH RESPONSIVENESS ===== */
+button, a, [onclick],
+.nav-btn, .quick-card, .sponsor-card-pro,
+.leaderboard-row, .team-card, .gallery-card,
+.banner-dot, .drawer-item, .chip, .modal-close,
+.scp-cta, .stage-step, .banner-prev, .banner-next {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+}
 body{ overflow-x:hidden; max-width:100vw; }
   html{ position:relative; min-height:100%; }
   html::before{
-    content:'';
-    position:fixed; inset:0; z-index:-1;
+  content:''; position:fixed; inset:0; pointer-events:none; z-index:-1;
     background-image: url('https://i.ibb.co/M5cSjXnc/dober-ball-1661144-1920.webp');
     background-size: cover;
     background-position: center;
@@ -3089,3 +3100,4 @@ input:focus{
 })();
 </script>
 </body>
+</html>
