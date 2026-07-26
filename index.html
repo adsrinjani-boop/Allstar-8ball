@@ -18,7 +18,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,800&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   :root{
@@ -59,16 +58,23 @@
   }
   *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
   html,body{ margin:0; padding:0; }
+html{ overflow-x:hidden; }
+body{ overflow-x:hidden; max-width:100vw; }
+  html{ position:relative; min-height:100%; }
+  html::before{
+    content:'';
+    position:fixed; inset:0; z-index:-1;
+    background-image: url('https://i.ibb.co/M5cSjXnc/dober-ball-1661144-1920.webp');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
   body{
     font-family:'Inter', -apple-system, sans-serif;
     color:var(--text-body);
     min-height:100vh;
     -webkit-font-smoothing:antialiased;
-    background-image: url('https://i.ibb.co/M5cSjXnc/dober-ball-1661144-1920.webp');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
+    background-color:var(--bg-navy-1);
     padding-bottom: calc(var(--nav-h) + 20px);
   }
   .mono{ font-family:'JetBrains Mono', monospace; }
@@ -138,18 +144,20 @@
   }
 
   .burger-btn{
-    width:40px; height:40px; border-radius:8px;
+    width:46px; height:46px; border-radius:8px;
     background:#FFD700; border:2.5px solid #000;
     display:flex; align-items:center; justify-content:center; cursor:pointer;
-    color:#000; font-size:16px;
+    color:#000; font-size:18px;
     box-shadow:2.5px 2.5px 0px 0px rgba(0,0,0,1);
     transition:all .1s ease;
+    position:relative; z-index:5;
   }
+  .burger-btn .lucide-ico{ pointer-events:none; }
   .burger-btn:hover{ transform:translate(-2px,-2px); box-shadow:4.5px 4.5px 0px 0px rgba(0,0,0,1); }
   .burger-btn:active{ transform:translate(2.5px,2.5px); box-shadow:none; }
 
   /* ===== PAGE WRAP ===== */
-  .page{ display:none; max-width:900px; margin:0 auto; padding:18px 16px 10px; animation:fadeIn .25s ease; }
+  .page{ display:none; max-width:900px; margin:0 auto; padding:18px 16px 10px 16px; animation:fadeIn .25s ease; overflow-x:clip; }
   .page.active{ display:block; }
   @keyframes fadeIn{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
 
@@ -211,27 +219,61 @@
   .hsh-title{ display:flex; align-items:center; gap:8px; font-size:10.5px; font-weight:700; letter-spacing:1.8px; color:var(--white-text-mid); text-transform:uppercase; }
   .hsh-title i{ color:var(--gold); font-size:11px; }
   .hsh-link{ font-size:10.5px; font-weight:700; letter-spacing:0.3px; color:var(--gold); cursor:pointer; }
-  .sponsor-strip{ display:grid; grid-template-columns:repeat(2,1fr); gap:9px; }
-  @media(min-width:480px){ .sponsor-strip{ grid-template-columns:repeat(3,1fr); } }
-  .sponsor-badge{
-    display:flex; align-items:center; gap:9px; cursor:pointer;
-    background:var(--card); border:3px solid var(--card-border); border-radius:14px; padding:9px 10px;
-    box-shadow:4px 4px 0px 0px rgba(0,0,0,1);
+  .sponsor-strip{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+@media(min-width:480px){ .sponsor-strip{ grid-template-columns:repeat(3,minmax(0,1fr)); } }
+@media(min-width:768px){ .sponsor-strip{ grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; } }
+
+  /* ===== KARTU SPONSOR PROFESIONAL (Neobrutalism Modern) ===== */
+  .sponsor-grid-pro{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+@media(min-width:640px){ .sponsor-grid-pro{ grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; } }
+@media(min-width:960px){ .sponsor-grid-pro{ grid-template-columns:repeat(4,minmax(0,1fr)); gap:16px; } }
+@media(min-width:1300px){ .sponsor-grid-pro{ grid-template-columns:repeat(5,minmax(0,1fr)); } }
+
+  .sponsor-card-pro{
+    display:flex; align-items:center; gap:11px; cursor:pointer; position:relative;
+    background:var(--card); border:3px solid #000; border-radius:16px;
+    padding:11px 13px; box-shadow:4px 4px 0px 0px rgba(0,0,0,1);
     transition:transform .15s ease, box-shadow .15s ease;
   }
-  .sponsor-badge:nth-child(odd){ transform:rotate(-1.5deg); }
-  .sponsor-badge:nth-child(even){ transform:rotate(1.5deg); }
-  .sponsor-badge:hover{ transform:rotate(0deg) translate(-2px,-2px); box-shadow:6px 6px 0px 0px rgba(0,0,0,1); }
-  .sponsor-badge .sb-icon{
-    width:34px; height:34px; min-width:34px; border-radius:10px; overflow:hidden;
-    background:var(--gold-dim); border:2.5px solid var(--card-border);
+  .sponsor-card-pro:hover{ transform:translate(-3px,-3px); box-shadow:6px 6px 0px 0px rgba(0,0,0,1); }
+  .sponsor-card-pro:active{ transform:translate(2px,2px); box-shadow:2px 2px 0px 0px rgba(0,0,0,1); }
+
+  .sponsor-card-pro .scp-logo{
+    width:52px; height:52px; min-width:52px; border-radius:13px; overflow:hidden;
+    background:var(--surface-soft); border:2.5px solid #000;
     box-shadow:2px 2px 0px 0px rgba(0,0,0,1);
-    display:flex; align-items:center; justify-content:center; color:var(--icon); font-size:12px;
+    display:flex; align-items:center; justify-content:center;
   }
-  .sponsor-badge:nth-child(3n+2) .sb-icon{ background:#cdeeff; }
-  .sponsor-badge:nth-child(3n+3) .sb-icon{ background:#d7ffe8; }
-  .sponsor-badge .sb-icon img{ width:100%; height:100%; object-fit:cover; }
-  .sponsor-badge .sb-name{ font-size:10.6px; font-weight:700; color:var(--text-dark); line-height:1.25; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .sponsor-card-pro .scp-logo img{ width:100%; height:100%; object-fit:contain; }
+  .sponsor-card-pro .scp-logo svg{ width:20px; height:20px; stroke:var(--icon); stroke-width:2; fill:none; stroke-linecap:round; stroke-linejoin:round; }
+
+  .sponsor-card-pro .scp-info{ flex:1; min-width:0; }
+  .sponsor-card-pro .scp-name{
+    font-weight:900; text-transform:uppercase; font-size:12.5px; color:var(--text-dark);
+    letter-spacing:0.2px; line-height:1.25; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  }
+  .sponsor-card-pro .scp-label{
+    font-size:9.5px; font-weight:800; color:var(--blue); text-transform:uppercase;
+    letter-spacing:0.7px; margin-top:3px;
+  }
+
+  .sponsor-card-pro .scp-cta{
+    width:28px; height:28px; min-width:28px; border-radius:50%; border:2.5px solid #000;
+    background:#FFD700; display:flex; align-items:center; justify-content:center;
+    box-shadow:2px 2px 0px 0px rgba(0,0,0,1);
+  }
+  .sponsor-card-pro .scp-cta svg{ width:13px; height:13px; stroke:#000; stroke-width:2.6; fill:none; stroke-linecap:round; stroke-linejoin:round; }
+
+  @media(min-width:640px){
+    .sponsor-card-pro{ padding:14px 16px; gap:14px; }
+    .sponsor-card-pro .scp-logo{ width:60px; height:60px; min-width:60px; border-radius:14px; }
+    .sponsor-card-pro .scp-name{ font-size:13.5px; }
+    .sponsor-card-pro .scp-label{ font-size:10px; }
+  }
+  @media(min-width:1300px){
+    .sponsor-card-pro{ padding:16px 18px; }
+    .sponsor-card-pro .scp-logo{ width:66px; height:66px; min-width:66px; }
+  }
 
   .quick-grid{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:6px; }
   .quick-card{
@@ -663,6 +705,14 @@
   .ri-sub li{ font-size:12px; color:var(--text-body); margin-bottom:5px; line-height:1.5; }
   .ri-sub li:last-child{ margin-bottom:0; }
 
+ /* Halaman Sponsor mendapat ruang lebih lega di layar besar agar kartu tidak terlalu sesak */
+  @media(min-width:960px){
+    #page-sponsors{ max-width:1000px; }
+  }
+  @media(min-width:1300px){
+    #page-sponsors{ max-width:1180px; }
+  }
+
   /* ===== SPONSOR / COMMITTEE CARDS (read-only) ===== */
   .people-grid{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
   @media(min-width:560px){ .people-grid{ grid-template-columns:1fr 1fr 1fr; } }
@@ -830,7 +880,7 @@
   .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
 
   /* ===== BOTTOM NAV ===== */
-  .bottom-nav{
+ .bottom-nav{
     position:fixed; left:0; right:0; bottom:0; z-index:120;
     height:var(--nav-h);
     background:#fff;
@@ -838,6 +888,8 @@
     display:flex; align-items:stretch; justify-content:space-around;
     padding:6px 6px env(safe-area-inset-bottom);
     gap:6px;
+    pointer-events:auto;
+    isolation:isolate;
   }
   .nav-btn{
     flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;
@@ -845,11 +897,17 @@
     font-family:'Inter', sans-serif; padding:6px 2px; margin:2px;
     box-shadow:3px 3px 0px 0px rgba(0,0,0,1);
     transition:all .1s ease;
+    pointer-events:auto;
+    touch-action:manipulation;
+    position:relative;
+    z-index:1;
   }
   .nav-btn .ni{ font-size:17px; line-height:1; }
   .nav-btn .nt{ font-size:9.5px; font-weight:800; letter-spacing:0.3px; }
   .nav-btn.active{ background:#FFD700; color:#000; }
-  .nav-btn:hover{ transform:translate(-2px,-2px); box-shadow:5px 5px 0px 0px rgba(0,0,0,1); }
+  @media (hover:hover) and (pointer:fine){
+    .nav-btn:hover{ transform:translate(-2px,-2px); box-shadow:5px 5px 0px 0px rgba(0,0,0,1); }
+  }
   .nav-btn:active{ transform:translate(3px,3px); box-shadow:none; }
 
   /* ===== BURGER DRAWER ===== */
@@ -1028,8 +1086,8 @@
     --bg-navy-1:#f4f4f0;
     --bg-navy-2:#eceae2;
   }
+  html.light-mode::before{ display:none; }
   html.light-mode body{
-    background-image:none !important;
     background-color:#f4f4f0 !important;
   }
   html.light-mode .hero-banner-caption{
@@ -1043,7 +1101,122 @@
   html.light-mode .drawer-item .dl{ color:#0a0a0a; }
   html.light-mode .toast{ background:#fff; color:#000; border:3px solid #000; }
   html.light-mode .banner-dot{ background:rgba(10,10,10,0.3); }
+
+
+/* ============ UI/UX POLISH OVERRIDES (Neobrutalism refinement) ============ */
+:root{
+  --nb-shadow: 4px 4px 0 0 #000;
+  --nb-shadow-lg: 6px 6px 0 0 #000;
+  --nb-shadow-sm: 3px 3px 0 0 #000;
+  --nb-shadow-inset: inset 0 0 0 2px #000;
+  --nb-ease: cubic-bezier(.2,.8,.25,1);
+}
+html{ text-rendering:optimizeLegibility; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
+body{ letter-spacing:-0.005em; }
+
+/* Lucide icon defaults — replaces FA <i> sizing */
+  /* Lucide mengganti total elemen <i data-lucide> menjadi <svg>,
+     jadi styling harus langsung menyasar .lucide-ico (bukan .lucide-ico > svg) */
+  i[data-lucide], .lucide-ico{
+    display:inline-flex; align-items:center; justify-content:center;
+    vertical-align:-3px;
+    width:1em; height:1em;
+    stroke-width:2.4;
+    stroke:currentColor;
+    fill:none;
+  }
+  button .lucide-ico,
+  .chip .lucide-ico,
+  .nav-btn .lucide-ico{ stroke-width:2.6; }
+
+/* Slightly bolder, snappier neobrutalism press behavior for interactive elements */
+button, .btn, .nav-btn, .chip, .theme-toggle-btn, .burger-btn,
+.ranking-subtab-btn, .bracket-image-openfull-btn{
+  transition:
+    transform 120ms var(--nb-ease),
+    box-shadow 120ms var(--nb-ease),
+    background-color 160ms var(--nb-ease),
+    color 160ms var(--nb-ease),
+    border-color 160ms var(--nb-ease) !important;
+  will-change: transform, box-shadow;
+}
+@media (hover:hover) and (pointer:fine){
+  button:not(:disabled):hover, .btn:not(:disabled):hover,
+  .ranking-subtab-btn:not(.active):hover, .bracket-image-openfull-btn:hover{
+    transform: translate(-1px,-1px);
+  }
+}
+button:not(:disabled):active, .btn:not(:disabled):active,
+.ranking-subtab-btn:active, .bracket-image-openfull-btn:active{
+  transform: translate(2px,2px);
+  box-shadow: 1px 1px 0 0 #000 !important;
+}
+
+/* Focus ring for accessibility (keeps neobrutal look) */
+button:focus-visible, a:focus-visible, input:focus-visible, .chip:focus-visible{
+  outline: 3px solid var(--gold);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Subtle card lift micro-interaction where allowed */
+.card, .match-card, .group-card, .participant-card, .bracket-image-card,
+.tracker-card, .champion-card, .info-card, .rank-item{
+  transition: transform 180ms var(--nb-ease), box-shadow 180ms var(--nb-ease);
+}
+.match-card:hover, .participant-card:hover, .group-card:hover, .rank-item:hover{
+  transform: translate(-1px,-1px);
+  box-shadow: var(--nb-shadow-lg);
+}
+
+/* Chip refinement */
+.chip{
+  gap:8px;
+  font-weight:700;
+  letter-spacing:0.01em;
+}
+.chip i[data-lucide]{ margin-right:2px; }
+
+/* Section titles — a touch more presence */
+h1, h2, h3, .hero-title, .section-title{
+  letter-spacing:-0.02em;
+}
+
+/* Inputs: crisper focus */
+input[type="text"], input[type="search"], input, select, textarea{
+  transition: box-shadow 140ms var(--nb-ease), border-color 140ms var(--nb-ease);
+}
+input:focus{
+  box-shadow: 4px 4px 0 0 #000 !important;
+  border-color:#000 !important;
+}
+
+/* Nav bar polish */
+.nav-btn.active, .nav-btn[aria-current="page"]{
+  transform: translateY(-1px);
+}
+
+/* Empty-state note */
+.empty-note{
+  font-weight:600;
+  opacity:0.85;
+}
+
+/* Loading pulse for skeletons if any */
+@keyframes nb-pulse { 0%,100%{ opacity:1 } 50%{ opacity:.6 } }
+.skeleton, [data-skeleton]{ animation: nb-pulse 1.2s ease-in-out infinite; }
+
+/* Scrollbar — a bit more contrast */
+::-webkit-scrollbar-thumb{ background: rgba(0,0,0,0.35) !important; border-radius:8px; }
+.light-mode ::-webkit-scrollbar-thumb{ background: rgba(0,0,0,0.5) !important; }
+
+/* Reduce motion respect */
+@media (prefers-reduced-motion: reduce){
+  *{ transition:none !important; animation:none !important; }
+}
+
 </style>
+<script src="https://unpkg.com/lucide@latest" defer></script>
 </head>
 <body>
 
@@ -1062,10 +1235,10 @@
     </div>
     <div class="topbar-side topbar-side-right" style="justify-content:flex-end;">
       <button class="theme-toggle-btn" id="themeToggleBtn" title="Ganti Mode Terang/Gelap">
-        <i class="fa-solid fa-sun ti-sun"></i>
-        <i class="fa-solid fa-moon ti-moon"></i>
+        <i data-lucide="sun" class="lucide-ico ti-sun"></i>
+        <i data-lucide="moon" class="lucide-ico ti-moon"></i>
       </button>
-      <div class="burger-btn" id="burgerBtn"><i class="fa-solid fa-bars"></i></div>
+      <div class="burger-btn" id="burgerBtn"><i data-lucide="menu" class="lucide-ico"></i></div>
     </div>
   </div>
   <!-- ===== PAGE: HOME ===== -->
@@ -1077,8 +1250,8 @@
     <div class="hero-banner">
       <div class="hero-banner-frame">
         <img id="heroBannerImg" src="https://i.imgur.com/zmKX20U.png" alt="Banner Turnamen Rainbow SL">
-        <button class="banner-nav prev hidden" id="bannerPrev"><i class="fa-solid fa-chevron-left"></i></button>
-        <button class="banner-nav next hidden" id="bannerNext"><i class="fa-solid fa-chevron-right"></i></button>
+        <button class="banner-nav prev hidden" id="bannerPrev"><i data-lucide="chevron-left" class="lucide-ico"></i></button>
+        <button class="banner-nav next hidden" id="bannerNext"><i data-lucide="chevron-right" class="lucide-ico"></i></button>
         <div class="banner-dots" id="bannerDots"></div>
         <div class="hero-banner-caption">
           <div class="sub" id="heroBannerCapSub"></div>
@@ -1088,16 +1261,16 @@
     </div>
 
     <div class="chips">
-      <span class="chip"><i class="fa-solid fa-circle-dot"></i>8 Ball</span>
-      <span class="chip"><i class="fa-solid fa-user-group"></i><span id="chipTeamCount">— Team</span></span>
-      <span class="chip"><i class="fa-solid fa-users"></i>Ganda</span>
-      <span class="chip"><i class="fa-solid fa-table-cells"></i><span id="chipGroupCount">— Grup</span></span>
-      <span class="chip gold"><i class="fa-solid fa-bolt"></i>Race Off</span>
+      <span class="chip"><i data-lucide="circle-dot" class="lucide-ico"></i>8 Ball</span>
+      <span class="chip"><i data-lucide="users" class="lucide-ico"></i><span id="chipTeamCount">— Team</span></span>
+      <span class="chip"><i data-lucide="users" class="lucide-ico"></i>Ganda</span>
+      <span class="chip"><i data-lucide="grid-3x3" class="lucide-ico"></i><span id="chipGroupCount">— Grup</span></span>
+      <span class="chip gold"><i data-lucide="zap" class="lucide-ico"></i>Race Off</span>
     </div>
 
     <div class="home-sponsors">
       <div class="home-sponsors-head">
-        <span class="hsh-title"><i class="fa-solid fa-handshake"></i>Sponsor Official</span>
+        <span class="hsh-title"><i data-lucide="handshake" class="lucide-ico"></i>Sponsor Official</span>
         <span class="hsh-link" data-goto="sponsors">Lihat Semua</span>
       </div>
       <div class="sponsor-strip" id="homeSponsorStrip"></div>
@@ -1105,35 +1278,35 @@
 
     <div class="quick-grid">
       <div class="quick-card" data-goto="bracket">
-        <div class="qi"><i class="fa-solid fa-ranking-star"></i></div>
+        <div class="qi"><i data-lucide="list-ordered" class="lucide-ico"></i></div>
         <div class="qt">Papan Peringkat</div>
         <div class="qs">Ranking &amp; statistik tim</div>
       </div>
       <div class="quick-card" data-goto="scores">
-        <div class="qi"><i class="fa-solid fa-clipboard-list"></i></div>
+        <div class="qi"><i data-lucide="clipboard-list" class="lucide-ico"></i></div>
         <div class="qt">Jadwal &amp; Skor</div>
         <div class="qs">Grup, klasemen &amp; hasil</div>
       </div>
       <div class="quick-card" data-goto="participants">
-        <div class="qi"><i class="fa-solid fa-users-gear"></i></div>
+        <div class="qi"><i data-lucide="users" class="lucide-ico"></i></div>
         <div class="qt">Daftar Peserta</div>
         <div class="qs">16 tim &amp; pemain</div>
       </div>
       <div class="quick-card" data-goto="champion">
-        <div class="qi"><i class="fa-solid fa-trophy"></i></div>
+        <div class="qi"><i data-lucide="trophy" class="lucide-ico"></i></div>
         <div class="qt">Juara</div>
         <div class="qs">Lihat pemenang akhir</div>
       </div>
     </div>
 
     <div class="tracker-card">
-      <div class="tracker-head"><i class="fa-solid fa-wave-square"></i>Status Turnamen Live</div>
+      <div class="tracker-head"><i data-lucide="activity" class="lucide-ico"></i>Status Turnamen Live</div>
       <div class="tracker-value" id="trackerStageLabel">Memuat...</div>
       <div class="stage-track" id="stageTrack"></div>
     </div>
 
     <div class="status-banner">
-      <div class="si"><i class="fa-solid fa-crown"></i></div>
+      <div class="si"><i data-lucide="crown" class="lucide-ico"></i></div>
       <div>
         <div class="st">Status Juara Saat Ini</div>
         <div class="sv" id="homeChampionStatus">Belum ditentukan</div>
@@ -1205,7 +1378,7 @@
     </div>
     <div class="groups-scroll-wrap" id="groupsScrollWrap"></div>
 
-    <div class="elim-section-title"><i class="fa-solid fa-trophy"></i>Babak Selanjutnya (Sistem Gugur)</div>
+    <div class="elim-section-title"><i data-lucide="trophy" class="lucide-ico"></i>Babak Selanjutnya (Sistem Gugur)</div>
     <div id="scoresContainer"></div>
     <p class="empty-note hidden" id="scoresNoResults">Pemain atau pertandingan tidak ditemukan</p>
   </section>
@@ -1236,7 +1409,7 @@
     </div>
 
     <div class="mvp-card" id="mvpCard">
-      <div class="mvp-photo" id="mvpPhoto"><i class="fa-solid fa-star"></i></div>
+      <div class="mvp-photo" id="mvpPhoto"><i data-lucide="star" class="lucide-ico"></i></div>
       <div class="mvp-label">MVP Turnamen</div>
       <div class="mvp-name" id="mvpName">—</div>
       <div class="mvp-team" id="mvpTeam"></div>
@@ -1259,21 +1432,21 @@
       <div class="rule-item">
         <div class="ri-num">01</div>
         <div class="ri-body">
-          <div class="ri-title"><i class="fa-solid fa-clock"></i>Kehadiran</div>
+          <div class="ri-title"><i data-lucide="clock" class="lucide-ico"></i>Kehadiran</div>
           <div class="ri-desc">Wajib hadir pukul <strong>08 : 40 WIB</strong>. Jika pukul <strong>09.00 WIB</strong> belum hadir, pemain dinyatakan <strong>DISKUALIFIKASI</strong>.</div>
         </div>
       </div>
       <div class="rule-item">
         <div class="ri-num">02</div>
         <div class="ri-body">
-          <div class="ri-title"><i class="fa-solid fa-broom"></i>Kebersihan</div>
+          <div class="ri-title"><i data-lucide="brush" class="lucide-ico"></i>Kebersihan</div>
           <div class="ri-desc">Setiap pemain wajib menjaga kebersihan Dapur MBG.</div>
         </div>
       </div>
       <div class="rule-item">
         <div class="ri-num">03</div>
         <div class="ri-body">
-          <div class="ri-title"><i class="fa-solid fa-sitemap"></i>Format Turnamen</div>
+          <div class="ri-title"><i data-lucide="git-fork" class="lucide-ico"></i>Format Turnamen</div>
           <ul class="ri-sub">
             <li>Fase Grup (16 Besar): Sistem Klasemen Grup, 4 grup berisi 4 tim (round-robin). 2 tim teratas tiap grup lolos ke 8 besar.</li>
             <li>Babak 8 Besar s/d Final: Sistem Gugur (Single Elimination).</li>
@@ -1283,42 +1456,42 @@
       <div class="rule-item">
         <div class="ri-num">04</div>
         <div class="ri-body">
-          <div class="ri-title"><i class="fa-solid fa-stopwatch"></i>Shot Clock</div>
+          <div class="ri-title"><i data-lucide="timer" class="lucide-ico"></i>Shot Clock</div>
           <div class="ri-desc">Batas waktu membidik maksimal <strong>60 Detik / 1 Menit</strong>. Lewat waktu, giliran berlanjut ke lawan (bukan Foul/Freeball). Waktu diskusi tim maksimal 60 detik.</div>
         </div>
       </div>
       <div class="rule-item">
         <div class="ri-num">05</div>
         <div class="ri-body">
-          <div class="ri-title"><i class="fa-solid fa-circle-dot"></i>Break &amp; Bola 8</div>
+          <div class="ri-title"><i data-lucide="circle-dot" class="lucide-ico"></i>Break &amp; Bola 8</div>
           <div class="ri-desc">Break diawali SUIT, selanjutnya oleh pemenang frame. Bola 8 dimasukkan terakhir setelah bola target habis. Breakshoot masuk Bola 8 dihitung <strong>POINT / WIN</strong>.</div>
         </div>
       </div>
       <div class="rule-item">
         <div class="ri-num">06</div>
         <div class="ri-body">
-          <div class="ri-title"><i class="fa-solid fa-triangle-exclamation"></i>Pelanggaran (Foul)</div>
+          <div class="ri-title"><i data-lucide="triangle-alert" class="lucide-ico"></i>Pelanggaran (Foul)</div>
           <div class="ri-desc">Foul terjadi jika bola putih tidak kena target DAN tidak menyentuh BAN. Lawan mendapat <strong>FREEBALL</strong> (bebas peletakan bola putih). Foul 3x berturut-turut dihitung <strong>KALAH</strong> frame.</div>
         </div>
       </div>
       <div class="rule-item">
         <div class="ri-num">07</div>
         <div class="ri-body">
-          <div class="ri-title"><i class="fa-solid fa-ban"></i>Kalah Instan</div>
+          <div class="ri-title"><i data-lucide="ban" class="lucide-ico"></i>Kalah Instan</div>
           <div class="ri-desc">Bola 8 masuk sebelum bola lain habis = <strong>KALAH</strong>. Bola 8 keluar/melompat dari meja = <strong>KALAH</strong>.</div>
         </div>
       </div>
       <div class="rule-item">
         <div class="ri-num">08</div>
         <div class="ri-body">
-          <div class="ri-title"><i class="fa-solid fa-toolbox"></i>Stick billiard</div>
+          <div class="ri-title"><i data-lucide="wrench" class="lucide-ico"></i>Stick billiard</div>
           <div class="ri-desc">Panitia menyediakan 2 PCS stik meja. Pemain diperbolehkan membawa stik pribadi.</div>
         </div>
       </div>
       <div class="rule-item">
         <div class="ri-num">09</div>
         <div class="ri-body">
-          <div class="ri-title"><i class="fa-solid fa-shuffle"></i>Jalur Babak 8 Besar</div>
+          <div class="ri-title"><i data-lucide="shuffle" class="lucide-ico"></i>Jalur Babak 8 Besar</div>
           <div class="ri-desc">Susunan pertandingan babak 8 besar:</div>
           <ul class="ri-sub">
             <li><strong>Juara Group:</strong> Group A vs Group C</li>
@@ -1331,7 +1504,7 @@
       <div class="rule-item">
         <div class="ri-num">10</div>
         <div class="ri-body">
-          <div class="ri-title"><i class="fa-solid fa-rotate"></i>Poin Sama di Fase Grup</div>
+          <div class="ri-title"><i data-lucide="rotate-cw" class="lucide-ico"></i>Poin Sama di Fase Grup</div>
           <div class="ri-desc">Jika di fase grup peringkat <strong>2 dan 3</strong> memiliki poin yang sama, maka kedua tim akan <strong>ditandingkan ulang saat itu juga</strong> untuk menentukan peringkat akhir.</div>
         </div>
       </div>
@@ -1342,7 +1515,7 @@
     <div class="page-title">Sponsor Official</div>
     <div class="page-sub">Terima kasih kepada seluruh sponsor Rainbow SL</div>
     <div class="section-rule"></div>
-    <div class="people-grid" id="sponsorsGrid"></div>
+    <div class="sponsor-grid-pro" id="sponsorsGrid"></div>
   </section>
 
   <!-- ===== PAGE: COMMITTEE (read-only) ===== -->
@@ -1363,11 +1536,11 @@
 
   <!-- ===== BOTTOM NAVIGATION ===== -->
   <nav class="bottom-nav">
-    <button class="nav-btn active" data-page="home"><span class="ni"><i class="fa-solid fa-house"></i></span><span class="nt">Beranda</span></button>
-    <button class="nav-btn" data-page="bracket"><span class="ni"><i class="fa-solid fa-ranking-star"></i></span><span class="nt">Peringkat</span></button>
-    <button class="nav-btn" data-page="scores"><span class="ni"><i class="fa-solid fa-clipboard-list"></i></span><span class="nt">Skor</span></button>
-    <button class="nav-btn" data-page="participants"><span class="ni"><i class="fa-solid fa-users-gear"></i></span><span class="nt">Peserta</span></button>
-    <button class="nav-btn" data-page="champion"><span class="ni"><i class="fa-solid fa-trophy"></i></span><span class="nt">Juara</span></button>
+    <button class="nav-btn active" data-page="home"><span class="ni"><i data-lucide="home" class="lucide-ico"></i></span><span class="nt">Beranda</span></button>
+    <button class="nav-btn" data-page="bracket"><span class="ni"><i data-lucide="list-ordered" class="lucide-ico"></i></span><span class="nt">Peringkat</span></button>
+    <button class="nav-btn" data-page="scores"><span class="ni"><i data-lucide="clipboard-list" class="lucide-ico"></i></span><span class="nt">Skor</span></button>
+    <button class="nav-btn" data-page="participants"><span class="ni"><i data-lucide="users" class="lucide-ico"></i></span><span class="nt">Peserta</span></button>
+    <button class="nav-btn" data-page="champion"><span class="ni"><i data-lucide="trophy" class="lucide-ico"></i></span><span class="nt">Juara</span></button>
   </nav>
 
   <!-- ===== BURGER DRAWER ===== -->
@@ -1375,26 +1548,26 @@
   <div class="drawer" id="drawer">
     <div class="drawer-head">
       <span class="dt">Menu Lainnya</span>
-      <div class="drawer-close" id="drawerClose"><i class="fa-solid fa-xmark"></i></div>
+      <div class="drawer-close" id="drawerClose"><i data-lucide="x" class="lucide-ico"></i></div>
     </div>
-    <div class="drawer-item" data-goto="rules"><span class="di"><i class="fa-solid fa-scroll"></i></span><span class="dl">Aturan Pertandingan</span></div>
-    <div class="drawer-item" data-modal="prizeModal"><span class="di"><i class="fa-solid fa-trophy"></i></span><span class="dl">Hadiah Pemenang</span></div>
-    <div class="drawer-item" data-modal="raceoffModal"><span class="di"><i class="fa-solid fa-bolt"></i></span><span class="dl">Race Off</span></div>
-    <div class="drawer-item" data-goto="sponsors"><span class="di"><i class="fa-solid fa-handshake"></i></span><span class="dl">Sponsor</span></div>
-    <div class="drawer-item" data-goto="committee"><span class="di"><i class="fa-solid fa-user-tie"></i></span><span class="dl">Pengurus / Penanggung Jawab</span></div>
-    <div class="drawer-item" data-goto="gallery"><span class="di"><i class="fa-solid fa-images"></i></span><span class="dl">Galeri Foto</span></div>
+    <div class="drawer-item" data-goto="rules"><span class="di"><i data-lucide="scroll" class="lucide-ico"></i></span><span class="dl">Aturan Pertandingan</span></div>
+    <div class="drawer-item" data-modal="prizeModal"><span class="di"><i data-lucide="trophy" class="lucide-ico"></i></span><span class="dl">Hadiah Pemenang</span></div>
+    <div class="drawer-item" data-modal="raceoffModal"><span class="di"><i data-lucide="zap" class="lucide-ico"></i></span><span class="dl">Race Off</span></div>
+    <div class="drawer-item" data-goto="sponsors"><span class="di"><i data-lucide="handshake" class="lucide-ico"></i></span><span class="dl">Sponsor</span></div>
+    <div class="drawer-item" data-goto="committee"><span class="di"><i data-lucide="user-check" class="lucide-ico"></i></span><span class="dl">Pengurus / Penanggung Jawab</span></div>
+    <div class="drawer-item" data-goto="gallery"><span class="di"><i data-lucide="images" class="lucide-ico"></i></span><span class="dl">Galeri Foto</span></div>
   </div>
 
   <!-- LIGHTBOX for bracket image -->
   <div class="lightbox" id="lightbox">
-    <div class="lightbox-close" id="lightboxClose"><i class="fa-solid fa-xmark"></i></div>
+    <div class="lightbox-close" id="lightboxClose"><i data-lucide="x" class="lucide-ico"></i></div>
     <img src="https://i.imgur.com/9dstLbM.png" alt="Bagan Turnamen (perbesar)">
   </div>
 
   <!-- MATCH DETAIL MODAL (read-only) -->
   <div class="modal-overlay" id="matchModal">
     <div class="modal-box">
-      <div class="modal-title" id="mmRound"><i class="fa-solid fa-clipboard-list"></i>GRUP 1 — MATCH 1</div>
+      <div class="modal-title" id="mmRound"><i data-lucide="clipboard-list" class="lucide-ico"></i>GRUP 1 — MATCH 1</div>
       <div class="modal-subtitle" id="mmMatchLabel">Team 01 vs Team 02</div>
       <div class="modal-players" id="mmPlayers"></div>
       <div class="score-input-row">
@@ -1418,25 +1591,25 @@
   <!-- HADIAH PEMENANG MODAL -->
   <div class="modal-overlay" id="prizeModal">
     <div class="modal-box">
-      <div class="modal-title"><i class="fa-solid fa-trophy"></i>Hadiah Pemenang Tournament</div>
+      <div class="modal-title"><i data-lucide="trophy" class="lucide-ico"></i>Hadiah Pemenang Tournament</div>
       <div class="modal-subtitle">Total Hadiah Rainbow SL</div>
       <div class="info-modal-list">
         <div class="info-modal-row gold">
-          <div class="imr-rank"><i class="fa-solid fa-trophy"></i></div>
+          <div class="imr-rank"><i data-lucide="trophy" class="lucide-ico"></i></div>
           <div class="imr-body">
             <div class="imr-title">Juara 1</div>
             <div class="imr-desc">200.000 LKR + Stick Billiard + Piala + Penghargaan</div>
           </div>
         </div>
         <div class="info-modal-row">
-          <div class="imr-rank"><i class="fa-solid fa-medal"></i></div>
+          <div class="imr-rank"><i data-lucide="medal" class="lucide-ico"></i></div>
           <div class="imr-body">
             <div class="imr-title">Juara 2</div>
             <div class="imr-desc">150.000 LKR + Stick Billiard + Piala + Penghargaan</div>
           </div>
         </div>
         <div class="info-modal-row">
-          <div class="imr-rank"><i class="fa-solid fa-award"></i></div>
+          <div class="imr-rank"><i data-lucide="award" class="lucide-ico"></i></div>
           <div class="imr-body">
             <div class="imr-title">Juara 3</div>
             <div class="imr-desc">75.000 LKR + Stick Billiard + Piala + Penghargaan</div>
@@ -1452,7 +1625,7 @@
   <!-- RACE OFF MODAL -->
   <div class="modal-overlay" id="raceoffModal">
     <div class="modal-box">
-      <div class="modal-title"><i class="fa-solid fa-bolt"></i>Format Race Off Pertandingan</div>
+      <div class="modal-title"><i data-lucide="zap" class="lucide-ico"></i>Format Race Off Pertandingan</div>
       <div class="modal-subtitle">Ketentuan Race Per Babak</div>
       <div class="info-modal-list">
         <div class="info-modal-row">
@@ -1512,7 +1685,7 @@
   <div class="modal-overlay" id="teamProfileModal">
     <div class="modal-box">
       <div class="tp-header">
-        <div class="tp-avatar" id="tpAvatar"><i class="fa-solid fa-users"></i></div>
+        <div class="tp-avatar" id="tpAvatar"><i data-lucide="users" class="lucide-ico"></i></div>
         <div class="tp-name" id="tpName">—</div>
         <div class="tp-players" id="tpPlayers"></div>
       </div>
@@ -1548,8 +1721,8 @@
 
   <audio id="bgMusic" src="music-kita.mp3" loop preload="none"></audio>
   <button class="music-toggle-btn" id="musicToggleBtn" title="Putar/Jeda Musik" aria-label="Putar atau jeda musik latar">
-    <i class="fa-solid fa-music mi-playing"></i>
-    <i class="fa-solid fa-volume-xmark mi-muted"></i>
+    <i data-lucide="music" class="lucide-ico mi-playing"></i>
+    <i data-lucide="volume-x" class="lucide-ico mi-muted"></i>
     <span class="mi-dot"></span>
   </button>
 
@@ -1580,12 +1753,12 @@
   /* ===== KONFIGURASI TAMPILAN BABAK GUGUR (statis, mengikuti admin.html) ===== */
   const ELIM_ORDER = ['qf','sf','final'];
   const ELIM_DEFS = {
-    qf:    { label:'8 Besar',              sub:'Sistem Gugur', icon:'fa-chart-simple',   defaultRace:3 },
-    sf:    { label:'4 Besar',              sub:'Sistem Gugur', icon:'fa-fire',            defaultRace:4 },
-    final: { label:'Final (Grand Final)',  sub:'Sistem Gugur', icon:'fa-flag-checkered',  defaultRace:5 },
+    qf:    { label:'8 Besar',              sub:'Sistem Gugur', icon:'bar-chart-3',   defaultRace:3 },
+    sf:    { label:'4 Besar',              sub:'Sistem Gugur', icon:'flame',            defaultRace:4 },
+    final: { label:'Final (Grand Final)',  sub:'Sistem Gugur', icon:'flag',  defaultRace:5 },
   };
   const STAGE_SHORT_LABELS = ['Fase Grup','8 Besar','4 Besar','Final'];
-  const STAGE_ICONS = ['fa-users', ...ELIM_ORDER.map(k => ELIM_DEFS[k].icon)];
+  const STAGE_ICONS = ['users', ...ELIM_ORDER.map(k => ELIM_DEFS[k].icon)];
   const GROUP_DEFAULT_RACE = 2;
   const FALLBACK_BANNER = { image_url:'https://i.imgur.com/zmKX20U.png', caption_sub:'', caption_main:'' };
 
@@ -1709,7 +1882,7 @@
   }
 
   /* ===== HELPER TIM ===== */
-  function findTeam(id){ return state.teams.find(t => t.id === id) || null; }
+  function findTeam(id){ return state.teams.find(t => String(t.id) === String(id)) || null; }
   function teamDisplayName(teamId, labelFallback){
     const t = findTeam(teamId);
     if(t) return t.name || 'Tim';
@@ -1966,12 +2139,16 @@
   function renderHomeSponsors(){
     const strip = document.getElementById('homeSponsorStrip');
     strip.innerHTML = state.sponsors.map(sp => `
-      <div class="sponsor-badge" data-sponsor-id="${escapeHtml(sp.id)}">
-        <div class="sb-icon">${sp.photo_url ? `<img src="${escapeHtml(sp.photo_url)}" alt="${escapeHtml(sp.name)}">` : `<i class="fa-solid fa-image"></i>`}</div>
-        <div class="sb-name">${escapeHtml(sp.name || 'Sponsor')}</div>
+      <div class="sponsor-card-pro" data-sponsor-id="${escapeHtml(sp.id)}">
+        <div class="scp-logo">${sp.photo_url ? `<img src="${escapeHtml(sp.photo_url)}" alt="${escapeHtml(sp.name)}">` : `<svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/></svg>`}</div>
+        <div class="scp-info">
+          <div class="scp-name">${escapeHtml(sp.name || 'Sponsor')}</div>
+          <div class="scp-label">Official Sponsor</div>
+        </div>
+        <div class="scp-cta"><svg viewBox="0 0 24 24"><path d="M7 17 17 7"/><path d="M7 7h10v10"/></svg></div>
       </div>
     `).join('') || `<p style="grid-column:1/-1;color:var(--white-text-mid);font-size:12px;">Belum ada data sponsor.</p>`;
-    strip.querySelectorAll('.sponsor-badge[data-sponsor-id]').forEach(card => {
+    strip.querySelectorAll('.sponsor-card-pro[data-sponsor-id]').forEach(card => {
       card.addEventListener('click', () => {
         const sp = state.sponsors.find(s => String(s.id) === card.getAttribute('data-sponsor-id'));
         if(sp) openSponsorModal(sp);
@@ -1990,12 +2167,12 @@
       let cls = 'stage-step';
       if(i < stage) cls += ' completed';
       else if(i === stage) cls += ' active';
-      const icon = i < stage ? 'fa-check' : STAGE_ICONS[i];
+      const icon = i < stage ? 'check' : STAGE_ICONS[i];
       const step = document.createElement('div');
       step.className = cls;
       step.innerHTML = `
         <div class="stage-line"></div>
-        <div class="stage-dot"><i class="fa-solid ${icon}"></i></div>
+        <div class="stage-dot"><i data-lucide="${icon}" class="lucide-ico"></i></div>
         <div class="stage-label">${STAGE_SHORT_LABELS[i]}</div>
       `;
       track.appendChild(step);
@@ -2006,7 +2183,7 @@
     champStep.className = champCls;
     champStep.innerHTML = `
       <div class="stage-line"></div>
-      <div class="stage-dot"><i class="fa-solid fa-crown"></i></div>
+      <div class="stage-dot"><i data-lucide="crown" class="lucide-ico"></i></div>
       <div class="stage-label">Juara</div>
     `;
     track.appendChild(champStep);
@@ -2053,7 +2230,7 @@
       const photoUrl = state.settings.mvp_photo_url;
       document.getElementById('mvpPhoto').innerHTML = photoUrl
         ? `<img src="${escapeHtml(photoUrl)}" alt="${escapeHtml(mvpName)}">`
-        : `<i class="fa-solid fa-star"></i>`;
+        : `<i data-lucide="star" class="lucide-ico"></i>`;
       document.getElementById('mvpName').textContent = mvpName;
       document.getElementById('mvpTeam').textContent = state.settings.mvp_team_name || '';
       document.getElementById('mvpNote').textContent = state.settings.mvp_note || '';
@@ -2118,7 +2295,7 @@
       return `
         <div class="leaderboard-row ${rankCls}" data-team-id="${x.team.id}">
           <div class="lb-rank">${rank}</div>
-          <div class="lb-avatar">${x.team.photo_url ? `<img src="${escapeHtml(x.team.photo_url)}" alt="${escapeHtml(x.team.name)}">` : `<i class="fa-solid fa-users"></i>`}</div>
+          <div class="lb-avatar">${x.team.photo_url ? `<img src="${escapeHtml(x.team.photo_url)}" alt="${escapeHtml(x.team.name)}">` : `<i data-lucide="users" class="lucide-ico"></i>`}</div>
           <div class="lb-info">
             <div class="lb-name">${escapeHtml(x.team.name || 'Tim')}</div>
             <div class="lb-record">${x.stats.wins}W - ${x.stats.losses}L &bull; ${x.stats.racksFor}-${x.stats.racksAgainst} rack</div>
@@ -2132,7 +2309,7 @@
       rowsHtml += `<div class="lb-notplayed-title">Belum Bertanding</div>` + notPlayed.map(t => `
         <div class="leaderboard-row lb-inactive">
           <div class="lb-rank">-</div>
-          <div class="lb-avatar">${t.photo_url ? `<img src="${escapeHtml(t.photo_url)}" alt="${escapeHtml(t.name)}">` : `<i class="fa-solid fa-users"></i>`}</div>
+          <div class="lb-avatar">${t.photo_url ? `<img src="${escapeHtml(t.photo_url)}" alt="${escapeHtml(t.name)}">` : `<i data-lucide="users" class="lucide-ico"></i>`}</div>
           <div class="lb-info"><div class="lb-name">${escapeHtml(t.name || 'Tim')}</div><div class="lb-record">Belum ada pertandingan selesai</div></div>
           <div class="lb-winrate">—</div>
         </div>
@@ -2213,7 +2390,7 @@
       <div class="gmatch-team right ${completed && winnerSlot===1 ? 'winner' : ''}" title="${escapeHtml(nameB)}">${escapeHtml(nameB)}</div>
     `;
     row.addEventListener('click', () => openMatchDetail({
-      icon:'fa-users',
+      icon:'users',
       label:`${escapeHtml((group.name || 'GRUP').toUpperCase())} &bull; ${escapeHtml(formatDate(group.match_date))}`,
       teamAName:nameA, teamAPlayers:teamDisplayPlayers(m.team1_id),
       teamBName:nameB, teamBPlayers:teamDisplayPlayers(m.team2_id),
@@ -2226,9 +2403,9 @@
       const meta = document.createElement('div');
       meta.className = 'gmatch-meta';
       meta.innerHTML = `
-        <span class="gm-tag">${m.match_time ? `<i class="fa-solid fa-clock"></i>${escapeHtml(m.match_time.slice(0,5))}` : ''}</span>
-        <span class="gm-tag">${m.table_number ? `<i class="fa-solid fa-table-cells-large"></i>Meja ${escapeHtml(m.table_number)}` : ''}</span>
-        <span class="gm-tag ${statusCls}"><i class="fa-solid fa-circle-dot"></i>${escapeHtml(status)}</span>
+        ${m.match_time ? `<span class="gm-tag"><i data-lucide="clock" class="lucide-ico"></i>${escapeHtml(m.match_time.slice(0,5))}</span>` : ''}
+        ${m.table_number ? `<span class="gm-tag"><i data-lucide="layout-grid" class="lucide-ico"></i>Meja ${escapeHtml(m.table_number)}</span>` : ''}
+        ${status ? `<span class="gm-tag ${statusCls}"><i data-lucide="circle-dot" class="lucide-ico"></i>${escapeHtml(status)}</span>` : ''}
       `;
       wrap.appendChild(meta);
     }
@@ -2246,10 +2423,10 @@
       block.className = 'round-block';
       block.innerHTML = `
         <div class="round-block-head">
-          <h3><i class="fa-solid ${def.icon}"></i>${def.label}</h3>
+          <h3><i data-lucide="${def.icon}" class="lucide-ico"></i>${def.label}</h3>
           <div class="rbh-tags">
             <span class="rbh-tag">${def.sub}</span>
-            <span class="rbh-tag race">Race to ${def.defaultRace}</span>
+            <span class="rbh-tag race">Race to ${rows.length > 0 && rows[0].race_to ? rows[0].race_to : def.defaultRace}</span>
           </div>
         </div>
       `;
@@ -2322,14 +2499,14 @@
       return `
         <div class="team-card" data-team-id="${t.id}">
           <div class="team-card-head">
-            <div class="team-mini-avatar">${t.photo_url ? `<img src="${escapeHtml(t.photo_url)}" alt="${escapeHtml(t.name)}">` : `<i class="fa-solid fa-users"></i>`}</div>
+            <div class="team-mini-avatar">${t.photo_url ? `<img src="${escapeHtml(t.photo_url)}" alt="${escapeHtml(t.name)}">` : `<i data-lucide="users" class="lucide-ico"></i>`}</div>
             <span class="team-num mono">${pad(idx+1)}</span>
             <div class="team-name-display">${escapeHtml(t.name || 'Tim ' + pad(idx+1))}</div>
             ${g ? `<span class="team-group-tag">${escapeHtml(g.name)}</span>` : ''}
           </div>
           <div class="players-row">
-            <div class="player-input-wrap"><i class="fa-solid fa-user"></i><div class="player-display">${escapeHtml(t.player1 || '-')}</div></div>
-            <div class="player-input-wrap"><i class="fa-solid fa-user"></i><div class="player-display">${escapeHtml(t.player2 || '-')}</div></div>
+            <div class="player-input-wrap"><i data-lucide="user" class="lucide-ico"></i><div class="player-display">${escapeHtml(t.player1 || '-')}</div></div>
+            <div class="player-input-wrap"><i data-lucide="user" class="lucide-ico"></i><div class="player-display">${escapeHtml(t.player2 || '-')}</div></div>
           </div>
         </div>
       `;
@@ -2343,12 +2520,16 @@
   function renderSponsorsPage(){
     const grid = document.getElementById('sponsorsGrid');
     grid.innerHTML = state.sponsors.map(sp => `
-      <div class="people-card sponsor-clickable" data-sponsor-id="${escapeHtml(sp.id)}">
-        <div class="avatar">${sp.photo_url ? `<img src="${escapeHtml(sp.photo_url)}" alt="${escapeHtml(sp.name)}">` : `<i class="fa-solid fa-image avatar-icon"></i>`}</div>
-        <div class="pname">${escapeHtml(sp.name || 'Sponsor')}</div>
+      <div class="sponsor-card-pro" data-sponsor-id="${escapeHtml(sp.id)}">
+        <div class="scp-logo">${sp.photo_url ? `<img src="${escapeHtml(sp.photo_url)}" alt="${escapeHtml(sp.name)}">` : `<svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/></svg>`}</div>
+        <div class="scp-info">
+          <div class="scp-name">${escapeHtml(sp.name || 'Sponsor')}</div>
+          <div class="scp-label">Official Sponsor</div>
+        </div>
+        <div class="scp-cta"><svg viewBox="0 0 24 24"><path d="M7 17 17 7"/><path d="M7 7h10v10"/></svg></div>
       </div>
     `).join('') || `<p class="empty-note" style="grid-column:1/-1;">Belum ada data sponsor.</p>`;
-    grid.querySelectorAll('.people-card[data-sponsor-id]').forEach(card => {
+    grid.querySelectorAll('.sponsor-card-pro[data-sponsor-id]').forEach(card => {
       card.addEventListener('click', () => {
         const sp = state.sponsors.find(s => String(s.id) === card.getAttribute('data-sponsor-id'));
         if(sp) openSponsorModal(sp);
@@ -2359,7 +2540,7 @@
     const grid = document.getElementById('committeeGrid');
     grid.innerHTML = state.committee.map(p => `
       <div class="people-card">
-        <div class="avatar">${p.photo_url ? `<img src="${escapeHtml(p.photo_url)}" alt="${escapeHtml(p.name || p.role)}">` : `<i class="fa-solid fa-user avatar-icon"></i>`}</div>
+        <div class="avatar">${p.photo_url ? `<img src="${escapeHtml(p.photo_url)}" alt="${escapeHtml(p.name || p.role)}">` : `<i data-lucide="user" class="lucide-ico avatar-icon"></i>`}</div>
         <div class="pname">${escapeHtml(p.name || '-')}</div>
         <div class="prole">${escapeHtml(p.role || '')}</div>
       </div>
@@ -2386,7 +2567,7 @@
   /* ===== MATCH DETAIL MODAL (read-only) ===== */
   const matchModal = document.getElementById('matchModal');
   function openMatchDetail(d){
-    document.getElementById('mmRound').innerHTML = `<i class="fa-solid ${d.icon}"></i>${d.label}`;
+    document.getElementById('mmRound').innerHTML = `<i data-lucide="${d.icon}" class="lucide-ico"></i>${d.label}`;
     document.getElementById('mmMatchLabel').textContent = `${d.teamAName} vs ${d.teamBName}`;
     const pA = d.teamAPlayers, pB = d.teamBPlayers;
     let playersText = (pA || pB) ? `${pA || '—'}  vs  ${pB || '—'}` : '';
@@ -2453,7 +2634,7 @@
     const stats = getTeamStats(teamId);
     document.getElementById('tpAvatar').innerHTML = team.photo_url
       ? `<img src="${escapeHtml(team.photo_url)}" alt="${escapeHtml(team.name)}">`
-      : `<i class="fa-solid fa-users"></i>`;
+      : `<i data-lucide="users" class="lucide-ico"></i>`;
     document.getElementById('tpName').textContent = team.name || 'Tim';
     document.getElementById('tpPlayers').textContent = playersLine(team.player1, team.player2);
     document.getElementById('tpWinRateValue').textContent = stats.winRate + '%';
@@ -2593,6 +2774,12 @@
 
   /* ===== PAGE NAVIGATION ===== */
   function goToPage(pageName){
+    if(pageName !== 'home'){
+      clearInterval(bannerTimer);
+      bannerTimer = null;
+    } else {
+      setupHeroBanner();
+    }
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById('page-' + pageName).classList.add('active');
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.getAttribute('data-page') === pageName));
@@ -2616,7 +2803,10 @@
     btn.addEventListener('click', () => goToPage(btn.getAttribute('data-page')));
   });
   document.querySelectorAll('.quick-card').forEach(card => {
-    card.addEventListener('click', () => goToPage(card.getAttribute('data-goto')));
+    card.addEventListener('click', () => {
+      const dest = card.getAttribute('data-goto');
+      if(dest) goToPage(dest);
+    });
   });
   document.querySelectorAll('.drawer-item[data-goto]').forEach(item => {
     item.addEventListener('click', () => goToPage(item.getAttribute('data-goto')));
@@ -2856,5 +3046,46 @@
 
 })();
 </script>
+
+<script>
+(function(){
+  function renderIcons(){
+    if(window.lucide && typeof window.lucide.createIcons === 'function'){
+      try { window.lucide.createIcons(); } catch(e){ console.error('Lucide createIcons error:', e); }
+    } else {
+      console.warn('Lucide belum termuat — ikon tidak akan tampil. Cek koneksi/CDN https://unpkg.com/lucide@latest');
+    }
+  }
+  // Initial render
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', renderIcons, { once:true });
+  } else {
+    renderIcons();
+  }
+  // Re-render on dynamic DOM updates (debounced)
+  var pending = false;
+  var mo = new MutationObserver(function(muts){
+    for(var i=0;i<muts.length;i++){
+      var m = muts[i];
+      if(m.type === 'childList' && (m.addedNodes.length || m.removedNodes.length)){
+        // only trigger if some added node contains data-lucide
+        for(var j=0;j<m.addedNodes.length;j++){
+          var n = m.addedNodes[j];
+          if(n.nodeType === 1 && (n.hasAttribute && n.hasAttribute('data-lucide') ||
+             (n.querySelector && n.querySelector('[data-lucide]')))){
+            if(!pending){
+              pending = true;
+              requestAnimationFrame(function(){ pending=false; renderIcons(); });
+            }
+            return;
+          }
+        }
+      }
+    }
+  });
+  document.addEventListener('DOMContentLoaded', function(){
+    mo.observe(document.body, { childList:true, subtree:true });
+  }, { once:true });
+})();
+</script>
 </body>
-</html>
