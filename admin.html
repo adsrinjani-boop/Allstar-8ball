@@ -540,7 +540,7 @@ async function renderSponsorsTab(){
 
       <div class="space-y-3" id="sponsorList">
         ${rows.map(s => {
-          const logo = s.logo_url || s.photo_url || '';
+          const logo = s.photo_url || '';
           const shortDesc = (s.description || '').length > 80 ? esc((s.description||'').slice(0,80)) + '…' : esc(s.description || '');
           return `
           <div class="border border-slate-200 rounded-xl p-3 space-y-3" data-id="${s.id}">
@@ -622,7 +622,7 @@ async function renderSponsorsTab(){
       const url = await pickImage();
       if(url){
         logoInput.value = url;
-        await q(sb.from('sponsors').update({ logo_url:url }).eq('id', id), 'Logo disimpan');
+        await q(sb.from('sponsors').update({ photo_url:url }).eq('id', id), 'Logo disimpan');
         renderSponsorsTab();
       }
     });
@@ -633,7 +633,7 @@ async function renderSponsorsTab(){
     row.querySelector('.sp-save').addEventListener('click', async () => {
       await q(sb.from('sponsors').update({
         name: row.querySelector('.sp-name').value,
-        logo_url: logoInput.value,
+        photo_url: logoInput.value,
         description: row.querySelector('.sp-desc').value,
         cta_link: row.querySelector('.sp-cta').value
       }).eq('id', id), 'Sponsor disimpan');
