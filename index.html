@@ -483,9 +483,23 @@ body{ overflow-x:hidden; max-width:100vw; }
   .gmatch-row:first-child{ border-top:none; }
   .gmatch-row:hover{ background:#fff8d6; }
   .gmatch-row:active{ background:#fff8d6; }
-  .gmatch-team{ font-size:11px; font-weight:700; color:var(--text-dark); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-  .gmatch-team.right{ text-align:right; }
+  .gmatch-team{
+    font-size:11px; font-weight:700; color:var(--text-dark);
+    display:flex; align-items:center; gap:6px; min-width:0;
+  }
+  .gmatch-team.right{ text-align:right; flex-direction:row-reverse; justify-content:flex-start; }
   .gmatch-team.winner{ color:var(--blue); }
+  .gmatch-team-name{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; min-width:0; }
+  .gmatch-avatar{
+    width:22px; height:22px; min-width:22px; border-radius:50%; overflow:hidden;
+    background:var(--surface-soft); border:2px solid #000;
+    box-shadow:1px 1px 0px 0px rgba(0,0,0,1);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .gmatch-avatar img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .gmatch-avatar-initials{
+    font-family:'JetBrains Mono', monospace; font-size:8.5px; font-weight:800; color:#000;
+  }
   .gmatch-score-box{
     text-align:center; font-family:'JetBrains Mono', monospace; font-weight:800; font-size:12px;
     background:#fff; border:2.5px solid #000; border-radius:6px; padding:7px 3px; color:#000;
@@ -1321,7 +1335,7 @@ input:focus{
 
   <!-- ===== PAGE: LEADERBOARD (PAPAN PERINGKAT) ===== -->
   <section class="page" id="page-bracket">
-    <div class="page-title">Papan Peringkat & Bagan</div>
+    <div class="page-title">Papan Peringkat dan Bagan</div>
     <div class="page-sub">Peringkat 16 tim berdasarkan win rate &amp; statistik keseluruhan turnamen</div>
     <div class="section-rule"></div>
 
@@ -1358,7 +1372,7 @@ input:focus{
     <div class="section-rule"></div>
     <div class="search-box">
       <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-      <input type="text" id="participantSearchInput" placeholder="Cari nama pemain / tim...">
+      <input type="text" id="participantSearchInput" placeholder="Cari nama pemain/ tim...">
     </div>
     <div id="participantsList"></div>
     <p class="empty-note hidden" id="participantsNoResults">Pemain atau pertandingan tidak ditemukan</p>
@@ -1378,7 +1392,7 @@ input:focus{
     <div class="section-rule"></div>
     <div class="search-box">
       <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-      <input type="text" id="scoresSearchInput" placeholder="Cari nama pemain / tim...">
+      <input type="text" id="scoresSearchInput" placeholder="Cari nama  tim...">
     </div>
     <div class="groups-scroll-wrap" id="groupsScrollWrap"></div>
 
@@ -1841,6 +1855,21 @@ input:focus{
     if(!p1 && !p2) return '';
     if(p1 && p2) return p1 + ' & ' + p2;
     return p1 || p2;
+  }
+  function getTeamInitials(name){
+    const trimmed = (name || '').trim();
+    if(!trimmed) return '?';
+    const parts = trimmed.split(/\s+/).filter(Boolean);
+    if(parts.length === 1) return parts[0].slice(0,2).toUpperCase();
+    return (parts[0][0] + parts[1][0]).toUpperCase();
+  }
+  function teamAvatarHtml(teamId){
+    const t = findTeam(teamId);
+    if(t && t.photo_url){
+      return `<div class="gmatch-avatar"><img src="${escapeHtml(t.photo_url)}" alt="${escapeHtml(t.name || '')}"></div>`;
+    }
+    const initials = getTeamInitials(t ? t.name : '');
+    return `<div class="gmatch-avatar"><span class="gmatch-avatar-initials">${escapeHtml(initials)}</span></div>`;
   }
   function formatDate(dateStr){
     if(!dateStr) return '';
@@ -2389,9 +2418,15 @@ input:focus{
     const row = document.createElement('div');
     row.className = 'gmatch-row' + (completed ? ' completed' : '');
     row.innerHTML = `
-      <div class="gmatch-team ${completed && winnerSlot===0 ? 'winner' : ''}" title="${escapeHtml(nameA)}">${escapeHtml(nameA)}</div>
+      <div class="gmatch-team ${completed && winnerSlot===0 ? 'winner' : ''}" title="${escapeHtml(nameA)}">
+        ${teamAvatarHtml(m.team1_id)}
+        <span class="gmatch-team-name">${escapeHtml(nameA)}</span>
+      </div>
       <div class="gmatch-score-box ${completed ? 'completed' : ''}">${(m.score1!==null && m.score2!==null) ? (m.score1 + ' - ' + m.score2) : 'VS'}</div>
-      <div class="gmatch-team right ${completed && winnerSlot===1 ? 'winner' : ''}" title="${escapeHtml(nameB)}">${escapeHtml(nameB)}</div>
+      <div class="gmatch-team right ${completed && winnerSlot===1 ? 'winner' : ''}" title="${escapeHtml(nameB)}">
+        ${teamAvatarHtml(m.team2_id)}
+        <span class="gmatch-team-name">${escapeHtml(nameB)}</span>
+      </div>
     `;
     row.addEventListener('click', () => openMatchDetail({
       icon:'users',
