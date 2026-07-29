@@ -1448,7 +1448,7 @@ input:focus{
       <div class="stage-track" id="stageTrack"></div>
     </div>
 
-    <div class="status-banner">
+    <div class="status-banner" id="championStatusBanner" style="cursor:pointer;">
       <div class="si"><i data-lucide="crown" class="lucide-ico"></i></div>
       <div>
         <div class="st">Status Juara Saat Ini</div>
@@ -1834,6 +1834,21 @@ input:focus{
     </div>
   </div>
 
+  <!-- CHAMPION STATUS MODAL -->
+  <div class="modal-overlay" id="championStatusModal">
+    <div class="modal-box sp-modal-box">
+      <div class="sp-modal-close-x" id="championStatusModalClose">
+        <svg viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg>
+      </div>
+      <div class="modal-title" id="csModalIconTitle"><i data-lucide="crown" class="lucide-ico"></i><span id="csModalTitleText">STATUS JUARA</span></div>
+      <span class="rbh-tag" id="csModalStatusBadge" style="display:inline-block;margin-bottom:12px;">BELUM DITENTUKAN</span>
+      <div class="modal-subtitle" id="csModalSubtitle"></div>
+      <div class="modal-players" id="csModalDesc" style="margin-bottom:18px;"></div>
+      <div class="modal-actions">
+        <button class="btn btn-primary" id="csModalCtaBtn">Lihat Jadwal &amp; Skor</button>
+      </div>
+    </div>
+  </div>
   <!-- SPONSOR PROFILE MODAL -->
   <div class="modal-overlay" id="sponsorModal">
     <div class="modal-box sp-modal-box">
@@ -3218,6 +3233,46 @@ wrap.appendChild(row);
     closeStagePhaseModal();
     goToPage('scores');
   });
+
+  /* ===== CHAMPION STATUS MODAL (klik kartu "Status Juara Saat Ini") ===== */
+  const championStatusModal = document.getElementById('championStatusModal');
+  function openChampionStatusModal(){
+    const champ = getChampion();
+    const stage = getCurrentStage();
+    const iconTitleEl = document.getElementById('csModalIconTitle');
+    const badge = document.getElementById('csModalStatusBadge');
+    const subtitleEl = document.getElementById('csModalSubtitle');
+    const descEl = document.getElementById('csModalDesc');
+    const ctaBtn = document.getElementById('csModalCtaBtn');
+
+    if(champ){
+      iconTitleEl.innerHTML = `<i data-lucide="crown" class="lucide-ico"></i><span>JUARA DITENTUKAN</span>`;
+      badge.textContent = 'TURNAMEN SELESAI';
+      badge.className = 'rbh-tag';
+      subtitleEl.textContent = champ.name;
+      descEl.textContent = `Selamat kepada ${champ.name} (${champ.players}) yang resmi menjadi Juara Turnamen Rainbow SL 2026 setelah memenangkan babak Final. Kunjungi halaman Juara untuk melihat detail peringkat 1, 2, dan 3 secara lengkap.`;
+      ctaBtn.textContent = 'Lihat Halaman Juara';
+      ctaBtn.onclick = () => { closeChampionStatusModal(); goToPage('champion'); };
+    } else {
+      const stageName = STAGE_SHORT_LABELS[stage] || 'Fase Grup';
+      iconTitleEl.innerHTML = `<i data-lucide="crown" class="lucide-ico"></i><span>STATUS JUARA</span>`;
+      badge.textContent = 'BELUM DITENTUKAN';
+      badge.className = 'rbh-tag race';
+      subtitleEl.textContent = `Turnamen sedang di babak: ${stageName}`;
+      descEl.textContent = `Juara Rainbow SL 2026 baru akan ditentukan setelah seluruh rangkaian babak selesai, termasuk babak Final. Saat ini turnamen masih berlangsung di babak ${stageName} — pantau terus halaman Skor untuk mengikuti perkembangan hasil pertandingan terbaru.`;
+      ctaBtn.textContent = 'Lihat Jadwal & Skor';
+      ctaBtn.onclick = () => { closeChampionStatusModal(); goToPage('scores'); };
+    }
+
+    if(window.lucide && typeof window.lucide.createIcons === 'function'){
+      try { window.lucide.createIcons(); } catch(e){}
+    }
+    championStatusModal.classList.add('open');
+  }
+  function closeChampionStatusModal(){ championStatusModal.classList.remove('open'); }
+  document.getElementById('championStatusModalClose').addEventListener('click', closeChampionStatusModal);
+  championStatusModal.addEventListener('click', (e) => { if(e.target === championStatusModal) closeChampionStatusModal(); });
+  document.getElementById('championStatusBanner').addEventListener('click', openChampionStatusModal);
 
   /* ===== SPONSOR PROFILE MODAL ===== */
   const sponsorModal = document.getElementById('sponsorModal');
