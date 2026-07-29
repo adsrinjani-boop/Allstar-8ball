@@ -302,7 +302,9 @@ body{ overflow-x:hidden; max-width:100vw; }
     display:flex; align-items:center; justify-content:center; font-size:18px;
     background:var(--blue-dim); border:2.5px solid var(--blue-line); color:var(--blue);
     box-shadow:2.5px 2.5px 0px 0px rgba(0,0,0,1);
+    position:relative; z-index:1; pointer-events:none;
   }
+  .quick-card{ position:relative; z-index:1; }
   .quick-card:nth-child(1) .qi{ background:#cdeeff; color:#0057a3; }
   .quick-card:nth-child(2) .qi{ background:#fff4b8; color:#8a6d00; }
   .quick-card:nth-child(3) .qi{ background:#ffd7ea; color:#b3005c; }
@@ -333,6 +335,7 @@ body{ overflow-x:hidden; max-width:100vw; }
   }
   .stage-step.completed .stage-dot{ background:var(--blue); border-color:#000; color:#fff; }
   .stage-step.active .stage-dot{ background:var(--gold); border-color:#000; color:#000; box-shadow:2px 2px 0px 0px rgba(0,0,0,1); }
+  .stage-dot svg{ width:14px; height:14px; pointer-events:none; }
   .stage-label{ font-size:9px; font-weight:700; color:var(--text-muted); text-align:center; margin-top:7px; letter-spacing:0.3px; line-height:1.25; }
   .stage-step.active .stage-label{ color:var(--gold); }
   .stage-step.completed .stage-label{ color:var(--blue); }
@@ -1104,6 +1107,92 @@ body{ overflow-x:hidden; max-width:100vw; }
   html.light-mode .chatbot-window{ background:#fff; }
   html.light-mode .chatbot-bubble{ background:#f4f4f0; }
 
+  /* ===== STAT CARD INTERAKTIF + MODAL INFO ===== */
+  .lb-summary-grid .tp-stat-box{
+    position:relative; cursor:pointer;
+  }
+  .lb-summary-grid .tp-stat-box:active{ transform:scale(0.97); }
+  .lb-stat-info-icon{
+    position:absolute; top:6px; right:6px; width:18px; height:18px;
+    display:flex; align-items:center; justify-content:center;
+    color:#000; opacity:0.5;
+  }
+  .lb-stat-info-icon svg{ width:14px; height:14px; stroke:currentColor; stroke-width:2.3; fill:none; }
+
+  .stat-info-modal-box{
+    background:#fff; border:3px solid #000; border-radius:16px;
+    box-shadow:6px 6px 0px 0px rgba(0,0,0,1); padding:20px;
+    max-width:360px; width:90%;
+  }
+  html.dark-mode .stat-info-modal-box{ background:#0f172a; color:#fff; }
+  .stat-info-modal-title{ font-family:'Fraunces', serif; font-weight:800; font-size:16px; margin-bottom:10px; display:flex; align-items:center; gap:8px; }
+  .stat-info-modal-title svg{ width:20px; height:20px; stroke:#000; stroke-width:2.3; fill:none; }
+  .stat-info-modal-text{ font-size:13px; line-height:1.6; color:var(--text-body); }
+  .stat-info-modal-close{
+    margin-top:16px; width:100%; padding:11px; border-radius:10px; border:2.5px solid #000;
+    background:#FFD700; font-weight:800; font-size:13px; cursor:pointer;
+    box-shadow:2.5px 2.5px 0px 0px rgba(0,0,0,1); transition:all .15s ease;
+  }
+  .stat-info-modal-close:hover{ transform:translate(-2px,-2px); box-shadow:4.5px 4.5px 0px 0px rgba(0,0,0,1); }
+  .stat-info-modal-close:active{ transform:translate(2px,2px); box-shadow:none; }
+
+  .stat-info-modal-box{ max-width:400px; }
+  .sim-match-filter-bar{ display:flex; align-items:center; gap:8px; margin-bottom:10px; }
+  .sim-match-filter-bar label{ font-size:11.5px; font-weight:800; color:var(--text-dark); text-transform:uppercase; letter-spacing:0.4px; }
+  .sim-match-filter-bar select{
+    border:2.5px solid #000; border-radius:9px; padding:6px 9px;
+    background:#fff; font-weight:700; font-size:12.5px; color:#000;
+    box-shadow:2px 2px 0px 0px rgba(0,0,0,1); cursor:pointer;
+  }
+  .sim-match-list{ display:flex; flex-direction:column; gap:7px; max-height:280px; overflow-y:auto; margin-top:4px; }
+  .sim-match-row{
+    display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:8px;
+    background:var(--surface-soft); border:2px solid #000; border-radius:9px; padding:9px 10px;
+  }
+  .sim-match-stage{ grid-column:1 / -1; font-size:9.5px; font-weight:800; letter-spacing:0.8px; text-transform:uppercase; color:var(--blue); margin-bottom:1px; }
+  .sim-match-team{ font-size:11.5px; font-weight:700; color:var(--text-dark); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .sim-match-team.right{ text-align:right; }
+  .sim-match-score{ font-family:'JetBrains Mono',monospace; font-weight:800; font-size:13px; background:#FFD700; border:2px solid #000; border-radius:7px; padding:3px 8px; white-space:nowrap; }
+  .sim-empty{ font-size:12.5px; color:var(--text-muted); text-align:center; padding:16px 6px; }
+
+  .sim-breakdown-list{ display:flex; flex-direction:column; gap:11px; margin-top:6px; }
+  .sim-breakdown-row .sbr-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:5px; }
+  .sim-breakdown-row .sbr-label{ font-size:12px; font-weight:800; color:var(--text-dark); }
+  .sim-breakdown-row .sbr-value{ font-family:'JetBrains Mono',monospace; font-weight:800; font-size:12.5px; color:var(--blue); }
+  .sim-breakdown-track{ height:9px; border-radius:999px; background:var(--surface-soft); border:2px solid #000; overflow:hidden; }
+  .sim-breakdown-fill{ height:100%; background:linear-gradient(90deg, var(--blue), #FFD700); }
+  .sim-avg-highlight{
+    text-align:center; background:#fff8d6; border:2.5px solid #000; border-radius:12px;
+    padding:14px; margin-bottom:14px; box-shadow:3px 3px 0px 0px rgba(0,0,0,1);
+  }
+  .sim-avg-highlight .sah-value{ font-family:'JetBrains Mono',monospace; font-size:28px; font-weight:800; color:#000; }
+  .sim-avg-highlight .sah-label{ font-size:10px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px; margin-top:2px; }
+
+  /* ===== PAGINATION ===== */
+  .lb-pagination-bar{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    flex-wrap:wrap; margin-bottom:14px;
+  }
+  .lb-display-select-wrap{ display:flex; align-items:center; gap:8px; }
+  .lb-display-select-wrap label{ font-size:12px; font-weight:800; color:#fff; text-transform:uppercase; letter-spacing:0.6px; text-shadow:0 1px 3px rgba(0,0,0,0.7); }
+  html.light-mode .lb-display-select-wrap label{ color:#0a0a0a; text-shadow:none; }
+  .lb-display-select{
+    border:2.5px solid #000; border-radius:10px; padding:7px 10px;
+    background:#fff; font-weight:700; font-size:12.5px; color:#000;
+    box-shadow:2px 2px 0px 0px rgba(0,0,0,1); cursor:pointer;
+  }
+  .lb-pagination-nav{ display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+  .lb-page-btn{
+    border:2.5px solid #000; border-radius:9px; padding:7px 11px;
+    background:#fff; font-weight:800; font-size:12px; cursor:pointer;
+    box-shadow:2px 2px 0px 0px rgba(0,0,0,1); transition:all .15s ease;
+  }
+  .lb-page-btn:hover{ transform:translate(-1px,-1px); box-shadow:3px 3px 0px 0px rgba(0,0,0,1); }
+  .lb-page-btn:active{ transform:translate(1px,1px); box-shadow:none; }
+  .lb-page-btn.active{ background:#FFD700; }
+  .lb-page-btn:disabled{ background:#e5e5e5; color:#666; cursor:default; box-shadow:2px 2px 0px 0px rgba(0,0,0,0.4); }
+  .lb-page-btn:disabled:hover{ transform:none; box-shadow:2px 2px 0px 0px rgba(0,0,0,0.4); }
+
   /* ===== LIGHT MODE OVERRIDES (Neobrutalism terang) ===== */
   html.light-mode{
     --white-text:#0a0a0a;
@@ -1824,6 +1913,15 @@ input:focus{
     <div class="chatbot-body" id="chatbotMessages"></div>
   </div>
 
+  <!-- STAT INFO MODAL -->
+  <div class="modal-overlay" id="statInfoModal">
+    <div class="stat-info-modal-box">
+      <div class="stat-info-modal-title"><span id="statInfoIcon"></span><span id="statInfoTitle">Statistik</span></div>
+      <div class="stat-info-modal-text" id="statInfoText"></div>
+      <button class="stat-info-modal-close" id="statInfoCloseBtn">Tutup</button>
+    </div>
+  </div>
+
   <div class="toast" id="toast">Tersimpan</div>
 
 <script>
@@ -1841,6 +1939,14 @@ input:focus{
   };
   const STAGE_SHORT_LABELS = ['Fase Grup','8 Besar','4 Besar','Final'];
   const STAGE_ICONS = ['users', ...ELIM_ORDER.map(k => ELIM_DEFS[k].icon)];
+  const TRACKER_ICON_SVG = {
+    users: `<svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
+    'bar-chart-3': `<svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>`,
+    flame: `<svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>`,
+    flag: `<svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" x2="4" y1="22" y2="15"/></svg>`,
+    crown: `<svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="m2 4 4 12h12l4-12-6.5 6-3.5-6-3.5 6z"/><path d="M5 20h14"/></svg>`,
+    check: `<svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>`
+  };
   const GROUP_DEFAULT_RACE = 2;
   const FALLBACK_BANNER = { image_url:'https://i.imgur.com/zmKX20U.png', caption_sub:'', caption_main:'' };
 
@@ -2346,12 +2452,13 @@ input:focus{
       let cls = 'stage-step';
       if(i < stage) cls += ' completed';
       else if(i === stage) cls += ' active';
-      const icon = i < stage ? 'check' : STAGE_ICONS[i];
+      const iconKey = i < stage ? 'check' : STAGE_ICONS[i];
+      const iconSvg = TRACKER_ICON_SVG[iconKey] || '';
       const step = document.createElement('div');
       step.className = cls;
       step.innerHTML = `
         <div class="stage-line"></div>
-        <div class="stage-dot"><i data-lucide="${icon}" class="lucide-ico"></i></div>
+        <div class="stage-dot">${iconSvg}</div>
         <div class="stage-label">${STAGE_SHORT_LABELS[i]}</div>
       `;
       step.dataset.stageIdx = String(i);
@@ -2363,11 +2470,12 @@ input:focus{
     champStep.className = champCls;
     champStep.innerHTML = `
       <div class="stage-line"></div>
-      <div class="stage-dot"><i data-lucide="crown" class="lucide-ico"></i></div>
+      <div class="stage-dot">${TRACKER_ICON_SVG.crown}</div>
       <div class="stage-label">Juara</div>
     `;
     champStep.dataset.stageIdx = String(totalStages);
     track.appendChild(champStep);
+track.appendChild(champStep);
 
     if(!track.dataset.tapBound){
       track.dataset.tapBound = '1';
@@ -2457,21 +2565,36 @@ input:focus{
     };
   }
 
+  let lbCurrentPage = 1;
+  let lbPageSize = 10;
+
   function renderLeaderboardPage(){
     const wrap = document.getElementById('leaderboardWrap');
     if(!wrap) return;
     const tstats = getTournamentStats();
     const summaryHtml = `
       <div class="lb-summary-grid">
-        <div class="tp-stat-box"><div class="tsb-value">${tstats.matchesPlayed}</div><div class="tsb-label">Match Dimainkan</div></div>
-        <div class="tp-stat-box"><div class="tsb-value">${tstats.totalRacks}</div><div class="tsb-label">Total Rack</div></div>
-        <div class="tp-stat-box"><div class="tsb-value">${tstats.avgRacks}</div><div class="tsb-label">Rata² Rack/Match</div></div>
+        <div class="tp-stat-box" data-stat="played">
+          <span class="lb-stat-info-icon"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></span>
+          <div class="tsb-value">${tstats.matchesPlayed}</div><div class="tsb-label">Match Dimainkan</div>
+        </div>
+        <div class="tp-stat-box" data-stat="racks">
+          <span class="lb-stat-info-icon"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></span>
+          <div class="tsb-value">${tstats.totalRacks}</div><div class="tsb-label">Total Rack</div>
+        </div>
+        <div class="tp-stat-box" data-stat="avg">
+          <span class="lb-stat-info-icon"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></span>
+          <div class="tsb-value">${tstats.avgRacks}</div><div class="tsb-label">Rata&sup2; Rack/Match</div>
+        </div>
       </div>
     `;
+
     if(state.teams.length === 0){
       wrap.innerHTML = summaryHtml + `<p class="empty-note">Belum ada data tim.</p>`;
+      bindStatCardClicks();
       return;
     }
+
     const ranked = state.teams
       .map(t => ({ team:t, stats:getTeamStats(t.id) }))
       .filter(x => x.stats.played > 0)
@@ -2479,39 +2602,254 @@ input:focus{
         || b.stats.wins - a.stats.wins
         || (b.stats.racksFor - b.stats.racksAgainst) - (a.stats.racksFor - a.stats.racksAgainst));
     const notPlayed = state.teams.filter(t => getTeamStats(t.id).played === 0);
+    const combinedTotal = ranked.length + notPlayed.length;
 
-    let rowsHtml = ranked.map((x, idx) => {
-      const rank = idx + 1;
-      const rankCls = rank === 1 ? 'rank-1' : rank === 2 ? 'rank-2' : rank === 3 ? 'rank-3' : '';
-      return `
-        <div class="leaderboard-row ${rankCls}" data-team-id="${x.team.id}">
-          <div class="lb-rank">${rank}</div>
-          <div class="lb-avatar">${x.team.photo_url ? `<img src="${escapeHtml(x.team.photo_url)}" alt="${escapeHtml(x.team.name)}">` : `<i data-lucide="users" class="lucide-ico"></i>`}</div>
-          <div class="lb-info">
-            <div class="lb-name">${escapeHtml(x.team.name || 'Tim')}</div>
-            <div class="lb-record">${x.stats.wins}W - ${x.stats.losses}L &bull; ${x.stats.racksFor}-${x.stats.racksAgainst} rack</div>
+    const effectivePageSize = lbPageSize === 'all' ? (combinedTotal || 1) : lbPageSize;
+    const totalPages = Math.max(1, Math.ceil(combinedTotal / effectivePageSize));
+    if(lbCurrentPage > totalPages) lbCurrentPage = totalPages;
+    if(lbCurrentPage < 1) lbCurrentPage = 1;
+
+    const startIdx = (lbCurrentPage - 1) * effectivePageSize;
+    const endIdx = startIdx + effectivePageSize;
+    const allRowsData = ranked.map((x, idx) => ({ type:'ranked', x, rank: idx + 1 }))
+      .concat(notPlayed.map(t => ({ type:'notplayed', team:t })));
+    const pageRows = allRowsData.slice(startIdx, endIdx);
+
+    let rowsHtml = '';
+    let lastType = null;
+    pageRows.forEach(row => {
+      if(row.type === 'notplayed' && lastType !== 'notplayed'){
+        rowsHtml += `<div class="lb-notplayed-title">Belum Bertanding</div>`;
+      }
+      lastType = row.type;
+
+      if(row.type === 'ranked'){
+        const rank = row.rank;
+        const rankCls = rank === 1 ? 'rank-1' : rank === 2 ? 'rank-2' : rank === 3 ? 'rank-3' : '';
+        const x = row.x;
+        rowsHtml += `
+          <div class="leaderboard-row ${rankCls}" data-team-id="${x.team.id}">
+            <div class="lb-rank">${rank}</div>
+            <div class="lb-avatar">${x.team.photo_url ? `<img src="${escapeHtml(x.team.photo_url)}" alt="${escapeHtml(x.team.name)}">` : `<i data-lucide="users" class="lucide-ico"></i>`}</div>
+            <div class="lb-info">
+              <div class="lb-name">${escapeHtml(x.team.name || 'Tim')}</div>
+              <div class="lb-record">${x.stats.wins}W - ${x.stats.losses}L &bull; ${x.stats.racksFor}-${x.stats.racksAgainst} rack</div>
+            </div>
+            <div class="lb-winrate">${x.stats.winRate}%</div>
           </div>
-          <div class="lb-winrate">${x.stats.winRate}%</div>
-        </div>
-      `;
-    }).join('');
+        `;
+      } else {
+        const t = row.team;
+        rowsHtml += `
+          <div class="leaderboard-row lb-inactive">
+            <div class="lb-rank">-</div>
+            <div class="lb-avatar">${t.photo_url ? `<img src="${escapeHtml(t.photo_url)}" alt="${escapeHtml(t.name)}">` : `<i data-lucide="users" class="lucide-ico"></i>`}</div>
+            <div class="lb-info"><div class="lb-name">${escapeHtml(t.name || 'Tim')}</div><div class="lb-record">Belum ada pertandingan selesai</div></div>
+            <div class="lb-winrate">&mdash;</div>
+          </div>
+        `;
+      }
+    });
 
-    if(notPlayed.length > 0){
-      rowsHtml += `<div class="lb-notplayed-title">Belum Bertanding</div>` + notPlayed.map(t => `
-        <div class="leaderboard-row lb-inactive">
-          <div class="lb-rank">-</div>
-          <div class="lb-avatar">${t.photo_url ? `<img src="${escapeHtml(t.photo_url)}" alt="${escapeHtml(t.name)}">` : `<i data-lucide="users" class="lucide-ico"></i>`}</div>
-          <div class="lb-info"><div class="lb-name">${escapeHtml(t.name || 'Tim')}</div><div class="lb-record">Belum ada pertandingan selesai</div></div>
-          <div class="lb-winrate">—</div>
+    const paginationHtml = `
+      <div class="lb-pagination-bar">
+        <div class="lb-display-select-wrap">
+          <label for="lbDisplaySelect">Tampilkan</label>
+          <select class="lb-display-select" id="lbDisplaySelect">
+            <option value="10" ${lbPageSize === 10 ? 'selected' : ''}>10</option>
+            <option value="25" ${lbPageSize === 25 ? 'selected' : ''}>25</option>
+            <option value="50" ${lbPageSize === 50 ? 'selected' : ''}>50</option>
+            <option value="all" ${lbPageSize === 'all' ? 'selected' : ''}>Semua Tim</option>
+          </select>
         </div>
-      `).join('');
-    }
+        ${totalPages > 1 ? `
+        <div class="lb-pagination-nav" id="lbPaginationNav">
+          <button class="lb-page-btn" id="lbPrevBtn" ${lbCurrentPage === 1 ? 'disabled' : ''}>Prev</button>
+          ${Array.from({length: totalPages}, (_, i) => i + 1).map(p => `<button class="lb-page-btn ${p === lbCurrentPage ? 'active' : ''}" data-page-num="${p}">${p}</button>`).join('')}
+          <button class="lb-page-btn" id="lbNextBtn" ${lbCurrentPage === totalPages ? 'disabled' : ''}>Next</button>
+        </div>` : ''}
+      </div>
+    `;
 
-    wrap.innerHTML = summaryHtml + `<div class="leaderboard-list">${rowsHtml}</div>`;
+    wrap.innerHTML = summaryHtml + paginationHtml + `<div class="leaderboard-list">${rowsHtml}</div>`;
+
     wrap.querySelectorAll('.leaderboard-row[data-team-id]').forEach(row => {
       row.addEventListener('click', () => openTeamProfile(row.getAttribute('data-team-id')));
     });
+
+    const displaySelect = document.getElementById('lbDisplaySelect');
+    if(displaySelect){
+      displaySelect.addEventListener('change', () => {
+        lbPageSize = displaySelect.value === 'all' ? 'all' : Number(displaySelect.value);
+        lbCurrentPage = 1;
+        renderLeaderboardPage();
+      });
+    }
+    const prevBtn = document.getElementById('lbPrevBtn');
+    const nextBtn = document.getElementById('lbNextBtn');
+    if(prevBtn) prevBtn.addEventListener('click', () => { lbCurrentPage--; renderLeaderboardPage(); });
+    if(nextBtn) nextBtn.addEventListener('click', () => { lbCurrentPage++; renderLeaderboardPage(); });
+    wrap.querySelectorAll('.lb-page-btn[data-page-num]').forEach(btn => {
+      btn.addEventListener('click', () => { lbCurrentPage = Number(btn.getAttribute('data-page-num')); renderLeaderboardPage(); });
+    });
+
+    bindStatCardClicks();
+    if(window.lucide) lucide.createIcons();
   }
+
+  const STAT_INFO_META = {
+    played: {
+      icon: `<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect width="8" height="4" x="8" y="2" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4"/><path d="M12 16h4"/><path d="M8 11h.01"/><path d="M8 16h.01"/></svg>`,
+      title: 'Match Dimainkan'
+    },
+    racks: {
+      icon: `<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" x2="9.01" y1="9" y2="9"/><line x1="15" x2="15.01" y1="9" y2="9"/></svg>`,
+      title: 'Total Rack'
+    },
+    avg: {
+      icon: `<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>`,
+      title: 'Rata-rata Rack per Match'
+    }
+  };
+
+  let simMatchPageSize = 10;
+
+  function renderPlayedMatchesModalContent(textBox){
+    const matches = getAllCompletedMatchesList();
+    if(matches.length === 0){
+      textBox.innerHTML = `<p class="sim-empty">Belum ada pertandingan yang selesai.</p>`;
+      return;
+    }
+    const shown = simMatchPageSize === 'all' ? matches : matches.slice(0, simMatchPageSize);
+    textBox.innerHTML = `
+      <div class="sim-match-filter-bar">
+        <label for="simMatchPageSizeSelect">Tampilkan</label>
+        <select id="simMatchPageSizeSelect">
+          <option value="5" ${simMatchPageSize === 5 ? 'selected' : ''}>5</option>
+          <option value="10" ${simMatchPageSize === 10 ? 'selected' : ''}>10</option>
+          <option value="50" ${simMatchPageSize === 50 ? 'selected' : ''}>50</option>
+        </select>
+      </div>
+      <div class="sim-match-list">${shown.map(m => `
+        <div class="sim-match-row">
+          <div class="sim-match-stage">${escapeHtml(m.stage)}</div>
+          <div class="sim-match-team">${escapeHtml(m.team1)}</div>
+          <div class="sim-match-score">${m.score1} - ${m.score2}</div>
+          <div class="sim-match-team right">${escapeHtml(m.team2)}</div>
+        </div>
+      `).join('')}</div>
+    `;
+    document.getElementById('simMatchPageSizeSelect').addEventListener('change', (e) => {
+      simMatchPageSize = e.target.value === 'all' ? 'all' : Number(e.target.value);
+      renderPlayedMatchesModalContent(textBox);
+    });
+  }
+
+  function getAllCompletedMatchesList(){
+    const rows = [];
+    state.groups.forEach(g => {
+      const groupRaceTo = g.race_to || GROUP_DEFAULT_RACE;
+      groupMatchesFor(g.id).sort((a,b) => (a.match_order||0) - (b.match_order||0)).forEach(m => {
+        const raceTo = m.race_to || groupRaceTo;
+        if(isGroupMatchComplete(m, raceTo)){
+          rows.push({ stage:g.name, team1:teamDisplayName(m.team1_id), team2:teamDisplayName(m.team2_id), score1:m.score1, score2:m.score2 });
+        }
+      });
+    });
+    ELIM_ORDER.forEach(key => {
+      const def = ELIM_DEFS[key];
+      (state.elimMatches[key] || []).forEach(m => {
+        const raceTo = m.race_to || def.defaultRace;
+        if(isElimMatchComplete(m, raceTo)){
+          rows.push({ stage:def.label, team1:teamDisplayName(m.team1_id, m.team1_label), team2:teamDisplayName(m.team2_id, m.team2_label), score1:m.score1, score2:m.score2 });
+        }
+      });
+    });
+    return rows;
+  }
+
+  function getRackBreakdownByStage(){
+    const breakdown = [];
+    state.groups.forEach(g => {
+      const groupRaceTo = g.race_to || GROUP_DEFAULT_RACE;
+      let racks = 0, matches = 0;
+      groupMatchesFor(g.id).forEach(m => {
+        const raceTo = m.race_to || groupRaceTo;
+        if(isGroupMatchComplete(m, raceTo)){ racks += Number(m.score1) + Number(m.score2); matches++; }
+      });
+      if(matches > 0) breakdown.push({ label:g.name, racks, matches });
+    });
+    ELIM_ORDER.forEach(key => {
+      const def = ELIM_DEFS[key];
+      let racks = 0, matches = 0;
+      (state.elimMatches[key] || []).forEach(m => {
+        const raceTo = m.race_to || def.defaultRace;
+        if(isElimMatchComplete(m, raceTo)){ racks += Number(m.score1) + Number(m.score2); matches++; }
+      });
+      if(matches > 0) breakdown.push({ label:def.label, racks, matches });
+    });
+    return breakdown;
+  }
+
+  function bindStatCardClicks(){
+    document.querySelectorAll('.tp-stat-box[data-stat]').forEach(card => {
+      card.addEventListener('click', () => openStatInfoModal(card.getAttribute('data-stat')));
+    });
+  }
+
+  function openStatInfoModal(key){
+    const meta = STAT_INFO_META[key];
+    if(!meta) return;
+    document.getElementById('statInfoIcon').innerHTML = meta.icon;
+    document.getElementById('statInfoTitle').textContent = meta.title;
+
+    const textBox = document.getElementById('statInfoText');
+
+    if(key === 'played'){
+      renderPlayedMatchesModalContent(textBox);
+    }
+
+    else if(key === 'racks'){
+      const breakdown = getRackBreakdownByStage();
+      const maxRacks = Math.max(1, ...breakdown.map(b => b.racks));
+      if(breakdown.length === 0){
+        textBox.innerHTML = `<p class="sim-empty">Belum ada rack yang tercatat.</p>`;
+      } else {
+        textBox.innerHTML = `<div class="sim-breakdown-list">${breakdown.map(b => `
+          <div class="sim-breakdown-row">
+            <div class="sbr-head"><span class="sbr-label">${escapeHtml(b.label)}</span><span class="sbr-value">${b.racks} rack &bull; ${b.matches} match</span></div>
+            <div class="sim-breakdown-track"><div class="sim-breakdown-fill" style="width:${Math.round((b.racks / maxRacks) * 100)}%;"></div></div>
+          </div>
+        `).join('')}</div>`;
+      }
+    }
+
+    else if(key === 'avg'){
+      const tstats = getTournamentStats();
+      const breakdown = getRackBreakdownByStage().map(b => ({ ...b, avg: (b.racks / b.matches).toFixed(1) }));
+      const maxAvg = Math.max(1, ...breakdown.map(b => Number(b.avg)));
+      textBox.innerHTML = `
+        <div class="sim-avg-highlight">
+          <div class="sah-value">${tstats.avgRacks}</div>
+          <div class="sah-label">Rata&sup2; Rack / Match Keseluruhan</div>
+        </div>
+        <div class="sim-breakdown-list">${breakdown.map(b => `
+          <div class="sim-breakdown-row">
+            <div class="sbr-head"><span class="sbr-label">${escapeHtml(b.label)}</span><span class="sbr-value">${b.avg} rack/match</span></div>
+            <div class="sim-breakdown-track"><div class="sim-breakdown-fill" style="width:${Math.round((Number(b.avg) / maxAvg) * 100)}%;"></div></div>
+          </div>
+        `).join('')}</div>
+      `;
+    }
+
+    document.getElementById('statInfoModal').classList.add('open');
+  }
+  document.getElementById('statInfoCloseBtn').addEventListener('click', () => {
+    document.getElementById('statInfoModal').classList.remove('open');
+  });
+  document.getElementById('statInfoModal').addEventListener('click', (e) => {
+    if(e.target === document.getElementById('statInfoModal')) e.currentTarget.classList.remove('open');
+  });
 
   /* ===== RENDER: FASE GRUP (JADWAL & HASIL) ===== */
   function renderGroupsSection(){
@@ -3381,8 +3719,10 @@ wrap.appendChild(row);
     // BUKAN document.body secara keseluruhan — supaya topbar, bottom-nav, tombol tema,
     // dan tombol musik (yang statis, tidak pernah di-render ulang) tidak ikut terkena
     // proses bongkar-pasang ikon setiap kali ada update data live dari Supabase.
-    document.querySelectorAll('.page, .modal-overlay').forEach(function(el){
-      mo.observe(el, { childList:true, subtree:true });
+    document.querySelectorAll(
+      '#groupsScrollWrap, #scoresContainer, #leaderboardWrap, #participantsList, #sponsorsGrid, #committeeGrid, #galleryGrid, #trackerStageWrap, .modal-overlay'
+    ).forEach(function(el){
+      if(el) mo.observe(el, { childList:true, subtree:true });
     });
   }, { once:true });
 })();
